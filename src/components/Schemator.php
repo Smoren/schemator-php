@@ -17,6 +17,10 @@ class Schemator
      */
     protected $pathDelimiter;
 
+    /**
+     * Schemator constructor.
+     * @param string $pathDelimiter
+     */
     public function __construct(string $pathDelimiter = '.')
     {
         $this->pathDelimiter = $pathDelimiter;
