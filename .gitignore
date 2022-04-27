@@ -1,0 +1,4 @@
+vendor
+.idea
+tests/_support/_generated
+composer.lock
