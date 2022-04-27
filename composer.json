@@ -19,8 +19,8 @@
   },
   "autoload": {
     "psr-4": {
-      "Smoren\\Helpers\\": "src",
-      "Smoren\\Helpers\\Tests\\Unit\\": "tests/unit"
+      "Smoren\\Shemator\\": "src",
+      "Smoren\\Shemator\\Tests\\Unit\\": "tests/unit"
     }
   },
   "config": {

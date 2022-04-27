@@ -1,10 +1,10 @@
 <?php
 
-namespace Smoren\Helpers\Tests\Unit;
+namespace Smoren\Shemator\Tests\Unit;
 
 
 use Smoren\ExtendedExceptions\BadDataException;
-use Smoren\Helpers\components\Schemator;
+use Smoren\Shemator\Schemator;
 
 class SchematorTest extends \Codeception\Test\Unit
 {
