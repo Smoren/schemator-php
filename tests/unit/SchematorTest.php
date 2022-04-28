@@ -312,6 +312,7 @@ class SchematorTest extends \Codeception\Test\Unit
             }]],
             'msk' => ['msk_path', ['path']],
             'city_street_houses' => ['streets.houses', ['flatten']],
+            'const' => [['const', 'my const']],
         ]);
         $this->assertEquals('Tverskaya, Leninskiy, Tarusskaya', $data['city_street_names']['first']);
         $this->assertEquals(['Tverskaya', 'Leninskiy', 'Tarusskaya'], $data['city_street_names']['second']);
@@ -320,6 +321,7 @@ class SchematorTest extends \Codeception\Test\Unit
         $this->assertEquals(['Leninskiy'], $data['city_street_names']['filtered']);
         $this->assertEquals('Moscow', $data['msk']);
         $this->assertEquals([1, 5, 9, 22, 35, 49, 11, 12, 15], $data['city_street_houses']);
+        $this->assertEquals('my const', $data['const']);
     }
 
     /**
