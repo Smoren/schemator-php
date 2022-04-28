@@ -6,6 +6,7 @@ namespace Smoren\Schemator;
 
 use Smoren\Helpers\ArrHelper;
 use Smoren\Schemator\Exceptions\SchematorException;
+use Throwable;
 
 /**
  * Class for schematic data converting
@@ -151,11 +152,25 @@ class Schemator
         if(!isset($this->filters[$filterName])) {
             throw new SchematorException(
                 "filter '{$filterName}' not found",
-                SchematorException::STATUS_FILTER_NOT_FOUND
+                SchematorException::FILTER_NOT_FOUND
             );
         }
 
-        return $this->filters[$filterName]($this, $source, $rootSource, ...$filterConfig);
+        try {
+            return $this->filters[$filterName]($this, $source, $rootSource, ...$filterConfig);
+        } catch(Throwable $e) {
+            throw new SchematorException(
+                "filter error: '{$filterName}'",
+                SchematorException::FILTER_ERROR,
+                $e,
+                [
+                    'error' => $e->getMessage(),
+                    'name' => $filterName,
+                    'config' => $filterConfig,
+                    'source' => $source,
+                ]
+            );
+        }
     }
 
     /**

@@ -91,7 +91,7 @@ class SchematorTest extends \Codeception\Test\Unit
             ], $input);
             $this->assertTrue(false);
         } catch(SchematorException $e) {
-            $this->assertEquals(SchematorException::STATUS_FILTER_NOT_FOUND, $e->getCode());
+            $this->assertEquals(SchematorException::FILTER_NOT_FOUND, $e->getCode());
         }
 
         $schemator->addFilter('implode', function(Schemator $schemator, array $source, array $rootSource, string $delimiter) {
@@ -215,7 +215,7 @@ class SchematorTest extends \Codeception\Test\Unit
             ], $input);
             $this->assertTrue(false);
         } catch(SchematorException $e) {
-            $this->assertEquals(SchematorException::STATUS_FILTER_NOT_FOUND, $e->getCode());
+            $this->assertEquals(SchematorException::FILTER_NOT_FOUND, $e->getCode());
         }
 
         $schemator->addFilter('implode', function(Schemator $schemator, array $source, array $rootSource, string $delimiter) {

@@ -8,5 +8,6 @@ use Smoren\ExtendedExceptions\BaseException;
 
 class SchematorException extends BaseException
 {
-    const STATUS_FILTER_NOT_FOUND = 1;
+    const FILTER_NOT_FOUND = 1;
+    const FILTER_ERROR = 2;
 }
