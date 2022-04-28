@@ -105,7 +105,7 @@ class SchematorTest extends \Codeception\Test\Unit
             });
         });
 
-        $schemator->addFilter('byDynamicPath', function(Schemator $schematorecutor, string $source, array $rootSource) {
+        $schemator->addFilter('path', function(Schemator $schematorecutor, string $source, array $rootSource) {
             return $schematorecutor->getValue($rootSource, $source);
         });
 
@@ -125,7 +125,7 @@ class SchematorTest extends \Codeception\Test\Unit
         $this->assertEquals('Tverskaya, Tarusskaya', $data['city_street_names']);
 
         $data = $schemator->exec([
-            'msk' => ['msk_path', ['byDynamicPath']]
+            'msk' => ['msk_path', ['path']]
         ], $input);
         $this->assertEquals('Moscow', $data['msk']);
     }
@@ -226,7 +226,7 @@ class SchematorTest extends \Codeception\Test\Unit
             });
         });
 
-        $schemator->addFilter('byDynamicPath', function(Schemator $schematorecutor, string $source, array $rootSource) {
+        $schemator->addFilter('path', function(Schemator $schematorecutor, string $source, array $rootSource) {
             return $schematorecutor->getValue($rootSource, $source);
         });
 
@@ -246,7 +246,7 @@ class SchematorTest extends \Codeception\Test\Unit
         $this->assertEquals('Tverskaya, Tarusskaya', $data['city_street_names']);
 
         $data = $schemator->exec([
-            'msk' => ['msk_path', ['byDynamicPath']]
+            'msk' => ['msk_path', ['path']]
         ], $input);
         $this->assertEquals('Moscow', $data['msk']);
     }
