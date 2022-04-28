@@ -61,21 +61,31 @@ class SchematorFactory
 
         $schemator->addFilter(
             'implode',
-            function(Schemator $executor, array $source, array $rootSource, string $delimiter = ', ') {
+            function(Schemator $executor, ?array $source, array $rootSource, string $delimiter = ', ') {
+                if($source === null) {
+                    return null;
+                }
                 return implode($delimiter, $source);
             }
         );
 
         $schemator->addFilter(
             'explode',
-            function(Schemator $executor, string $source, array $rootSource, string $delimiter = ', ') {
+            function(Schemator $executor, ?string $source, array $rootSource, string $delimiter = ', ') {
+                if($source === null) {
+                    return null;
+                }
                 return explode($delimiter, $source);
             }
         );
 
         $schemator->addFilter(
             'filter',
-            function(Schemator $executor, array $source, array $rootSource, $filterConfig) {
+            function(Schemator $executor, ?array $source, array $rootSource, $filterConfig) {
+                if($source === null) {
+                    return null;
+                }
+
                 if(is_callable($filterConfig)) {
                     return array_values(array_filter($source, $filterConfig));
                 }
@@ -99,7 +109,10 @@ class SchematorFactory
 
         $schemator->addFilter(
             'sort',
-            function(Schemator $executor, array $source, array $rootSource, ?callable $sortCallback = null) {
+            function(Schemator $executor, ?array $source, array $rootSource, ?callable $sortCallback = null) {
+                if($source === null) {
+                    return null;
+                }
                 if($sortCallback !== null) {
                     usort($source, $sortCallback);
                 } else {
@@ -111,14 +124,20 @@ class SchematorFactory
 
         $schemator->addFilter(
             'path',
-            function(Schemator $executor, string $source, array $rootSource) {
+            function(Schemator $executor, ?string $source, array $rootSource) {
+                if($source === null) {
+                    return null;
+                }
                 return $executor->getValue($rootSource, $source);
             }
         );
 
         $schemator->addFilter(
             'flatten',
-            function(Schemator $executor, array $source) {
+            function(Schemator $executor, ?array $source) {
+                if($source === null) {
+                    return null;
+                }
                 return ArrHelper::flatten($source);
             }
         );
@@ -126,6 +145,10 @@ class SchematorFactory
         $schemator->addFilter(
             'replace',
             function(Schemator $executor, $source, array $rootSource, array $rules) {
+                if($source === null) {
+                    return null;
+                }
+
                 $isArray = is_array($source);
 
                 if(!$isArray) {
