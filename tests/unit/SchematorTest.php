@@ -352,6 +352,23 @@ class SchematorTest extends \Codeception\Test\Unit
         ], $data['number_types']);
 
         $data = $schemator->exec($input, [
+            'number_types' => ['numbers', [
+                'replace',
+                [
+                    ['=0', '=', 0],
+                    ['>9', '>', 9],
+                    ['<0', '<', 0],
+                    ['1-8', 'between', 1, 8],
+                    ['another', 'else'],
+                ]
+            ]]
+        ]);
+
+        $this->assertEquals([
+            '<0', '>9', '1-8', '>9', '<0', '=0', '>9', '1-8', '1-8', 'another', '=0',
+        ], $data['number_types']);
+
+        $data = $schemator->exec($input, [
             'positive' => [
                 'numbers',
                 ['filter', [['>', 0]]],

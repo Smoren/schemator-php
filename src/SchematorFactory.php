@@ -163,6 +163,7 @@ class SchematorFactory
                 }
 
                 $result = [];
+                $elseValue = null;
 
                 foreach($source as $item) {
                     $isReplaced = false;
@@ -170,6 +171,10 @@ class SchematorFactory
                     foreach($rules as $args) {
                         $value = array_shift($args);
                         $rule = array_shift($args);
+
+                        if($rule === 'else') {
+                            $elseValue = $value;
+                        }
 
                         $replace = null;
 
@@ -183,7 +188,7 @@ class SchematorFactory
                     }
 
                     if(!$isReplaced) {
-                        $result[] = null;
+                        $result[] = $elseValue;
                     }
                 }
 
