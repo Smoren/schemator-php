@@ -64,13 +64,17 @@ class Schemator
 
     /**
      * Returns value from source by schema item
-     * @param array $source source to extract data from
+     * @param array|null $source source to extract data from
      * @param string|array $schemaItem item of schema (string as path or array as filter config)
      * @return mixed result value
      * @throws SchematorException
      */
-    public function getValue(array $source, $schemaItem)
+    public function getValue(?array $source, $schemaItem)
     {
+        if($source === null) {
+            return null;
+        }
+
         if(is_string($schemaItem)) {
             if($schemaItem === '') {
                 return $source;
