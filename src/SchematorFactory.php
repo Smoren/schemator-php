@@ -40,6 +40,13 @@ class SchematorFactory
     public static function addBaseFilters(Schemator $schemator)
     {
         $schemator->addFilter(
+            'const',
+            function(Schemator $schemator, $source, array $rootSource, $constValue) {
+                return $constValue;
+            }
+        );
+
+        $schemator->addFilter(
             'format',
             function(Schemator $schemator, $source, array $rootSource, callable $formatter, ...$args) {
                 return $formatter($source, ...$args);
