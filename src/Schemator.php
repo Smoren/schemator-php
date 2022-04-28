@@ -34,12 +34,12 @@ class Schemator
 
     /**
      * Converts input data with using schema
-     * @param array $schema schema for converting
      * @param array $source input data to convert
+     * @param array $schema schema for converting
      * @return array converted data
      * @throws SchematorException
      */
-    public function exec(array $schema, array $source): array
+    public function exec(array $source, array $schema): array
     {
         $result = [];
 

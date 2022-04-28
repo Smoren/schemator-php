@@ -68,7 +68,7 @@ $input = [
 ];
 
 $schemator = SchematorFactory::create();
-$output = $schemator->exec($schema, $input);
+$output = $schemator->exec($input, $schema);
 
 print_r($output);
 /* Array
@@ -158,7 +158,7 @@ $input = [
 ];
 
 $schemator = SchematorFactory::create();
-$output = $schemator->exec($schema, $input);
+$output = $schemator->exec($input, $schema);
 
 print_r($output);
 /*
@@ -203,7 +203,7 @@ $input = [
     'numbers' => [-1, 10, 5, 22, -10, 0, 35, 7, 8, 9, 0],
 ];
 
-$output = $schemator->exec([
+$output = $schemator->exec($input, [
     'positive' => [
         'numbers',
         ['filter', [['>', 0]]],
@@ -220,7 +220,7 @@ $output = $schemator->exec([
         ['filter', [['<', 22]]],
         ['sort'],
     ],
-], $input);
+]);
 
 print_r($output);
 /*
@@ -255,7 +255,7 @@ Array
 )
 */
 
-$output = $schemator->exec([
+$output = $schemator->exec($input, [
     'number_types' => ['numbers', [
         'replace',
         [
@@ -265,7 +265,7 @@ $output = $schemator->exec([
             ['1-8', 'between', 1, 8],
         ]
     ]]
-], $input);
+]);
 
 print_r($output);
 /*
@@ -312,7 +312,7 @@ $schema = [
     'street_names' => ['streets', ['startsWith', 'T'], ['implode', ', ']],
 ];
 
-$output = $schemator->exec($schema, $input);
+$output = $schemator->exec($input, $schema);
 
 print_r($output);
 /*
