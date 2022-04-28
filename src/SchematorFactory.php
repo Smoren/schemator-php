@@ -48,11 +48,11 @@ class SchematorFactory
 
         $schemator->addFilter(
             'date',
-            function(Schemator $executor, int $source, array $rootSource, string $format, bool $byGmt = false) {
-                if($byGmt) {
-                    return gmdate($format, $source);
+            function(Schemator $executor, int $source, array $rootSource, string $format, ?int $timezone = null) {
+                if($timezone === null) {
+                    return date($format, $source);
                 }
-                return date($format, $source);
+                return gmdate($format, $source+3600*$timezone);
             }
         );
 
