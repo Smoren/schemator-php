@@ -37,7 +37,7 @@ class Schemator
         $result = [];
 
         foreach($schema as $key => $schemaItem) {
-            $result[$key] = $this->getValue($source, $schemaItem);
+            $this->saveByPath($result, $key, $this->getValue($source, $schemaItem));
         }
 
         return $result;
@@ -130,6 +130,7 @@ class Schemator
     /**
      * @param array $filterConfig
      * @param $source
+     * @param $rootSource
      * @return mixed
      * @throws BadDataException
      */
@@ -142,6 +143,22 @@ class Schemator
         }
 
         return $this->filters[$filterName]($this, $source, $rootSource, ...$filterConfig);
+    }
+
+    /**
+     * @param array $source
+     * @param string $path
+     * @param $value
+     */
+    protected function saveByPath(array &$source, string $path, $value)
+    {
+        $arPath = explode($this->pathDelimiter, $path);
+        $temp = &$source;
+        foreach($arPath as $key) {
+            $temp = &$temp[$key];
+        }
+        $temp = $value;
+        unset($temp);
     }
 
     /**

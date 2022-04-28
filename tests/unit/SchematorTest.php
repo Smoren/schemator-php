@@ -59,6 +59,8 @@ class SchematorTest extends \Codeception\Test\Unit
             'unknown_another' => 'country.unknown',
             'unknown_array' => 'streets.unknown',
             'raw' => '',
+            'country_data.country_id' => 'country.id',
+            'country_data.country_name' => 'country.name',
         ], $input);
 
         $this->assertEquals(100, $data['city_id']);
@@ -73,6 +75,10 @@ class SchematorTest extends \Codeception\Test\Unit
         $this->assertEquals(null, $data['unknown']);
         $this->assertEquals(null, $data['unknown_another']);
         $this->assertEquals([null, null, null], $data['unknown_array']);
+        $this->assertEquals([
+            'country_id' => 10,
+            'country_name' => 'Russia',
+        ], $data['country_data']);
 
         try {
             $ex->exec([
@@ -173,6 +179,8 @@ class SchematorTest extends \Codeception\Test\Unit
             'unknown_another' => 'country/unknown',
             'unknown_array' => 'streets/unknown',
             'raw' => '',
+            'country_data/country_id' => 'country/id',
+            'country_data/country_name' => 'country/name',
         ], $input);
 
         $this->assertEquals(100, $data['city_id']);
@@ -187,6 +195,10 @@ class SchematorTest extends \Codeception\Test\Unit
         $this->assertEquals(null, $data['unknown']);
         $this->assertEquals(null, $data['unknown_another']);
         $this->assertEquals([null, null, null], $data['unknown_array']);
+        $this->assertEquals([
+            'country_id' => 10,
+            'country_name' => 'Russia',
+        ], $data['country_data']);
 
         try {
             $ex->exec([
