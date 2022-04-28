@@ -40,6 +40,23 @@ class SchematorFactory
     public static function addBaseFilters(Schemator $schemator)
     {
         $schemator->addFilter(
+            'format',
+            function(Schemator $executor, $source, array $rootSource, callable $formatter, ...$args) {
+                return $formatter($source, ...$args);
+            }
+        );
+
+        $schemator->addFilter(
+            'date',
+            function(Schemator $executor, int $source, array $rootSource, string $format, bool $byGmt = false) {
+                if($byGmt) {
+                    return gmdate($format, $source);
+                }
+                return date($format, $source);
+            }
+        );
+
+        $schemator->addFilter(
             'implode',
             function(Schemator $executor, array $source, array $rootSource, string $delimiter = ', ') {
                 return implode($delimiter, $source);

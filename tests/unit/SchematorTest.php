@@ -372,4 +372,28 @@ class SchematorTest extends \Codeception\Test\Unit
         $this->assertEquals([-10, -1], $data['negative']);
         $this->assertEquals([-10, -1, 8, 9, 10], $data['complicated']);
     }
+
+    public function testFormat()
+    {
+        $schemator = SchematorFactory::create();
+
+        $input = [
+            'date' => 1651161688,
+        ];
+
+        $schema = [
+            'date' => ['date', ['format', function(int $source, string $format) {
+                return gmdate($format, $source);
+            }, 'Y-m-d']]
+        ];
+
+        $output = $schemator->exec($schema, $input);
+        $this->assertEquals('2022-04-28', $output['date']);
+
+        $schema = [
+            'date' => ['date', ['date', 'Y-m-d']]
+        ];
+        $output = $schemator->exec($schema, $input);
+        $this->assertEquals('2022-04-28', $output['date']);
+    }
 }
