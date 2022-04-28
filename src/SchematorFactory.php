@@ -122,7 +122,13 @@ class SchematorFactory
 
         $schemator->addFilter(
             'replace',
-            function(Schemator $executor, array $source, array $rootSource, array $rules) {
+            function(Schemator $executor, $source, array $rootSource, array $rules) {
+                $isArray = is_array($source);
+
+                if(!$isArray) {
+                    $source = [$source];
+                }
+
                 $result = [];
 
                 foreach($source as $item) {
@@ -146,6 +152,10 @@ class SchematorFactory
                     if(!$isReplaced) {
                         $result[] = null;
                     }
+                }
+
+                if(!$isArray) {
+                    $result = $result[0];
                 }
 
                 return $result;
