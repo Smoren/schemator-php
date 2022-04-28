@@ -373,6 +373,9 @@ class SchematorTest extends \Codeception\Test\Unit
         $this->assertEquals([-10, -1, 8, 9, 10], $data['complicated']);
     }
 
+    /**
+     * @throws SchematorException
+     */
     public function testFormat()
     {
         $schemator = SchematorFactory::create();
