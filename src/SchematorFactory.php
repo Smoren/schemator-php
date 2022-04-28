@@ -41,14 +41,14 @@ class SchematorFactory
     {
         $schemator->addFilter(
             'format',
-            function(Schemator $executor, $source, array $rootSource, callable $formatter, ...$args) {
+            function(Schemator $schemator, $source, array $rootSource, callable $formatter, ...$args) {
                 return $formatter($source, ...$args);
             }
         );
 
         $schemator->addFilter(
             'date',
-            function(Schemator $executor, ?int $source, array $rootSource, string $format, ?int $timezone = null) {
+            function(Schemator $schemator, ?int $source, array $rootSource, string $format, ?int $timezone = null) {
                 if($source === null) {
                     return null;
                 }
@@ -61,7 +61,7 @@ class SchematorFactory
 
         $schemator->addFilter(
             'implode',
-            function(Schemator $executor, ?array $source, array $rootSource, string $delimiter = ', ') {
+            function(Schemator $schemator, ?array $source, array $rootSource, string $delimiter = ', ') {
                 if($source === null) {
                     return null;
                 }
@@ -71,7 +71,7 @@ class SchematorFactory
 
         $schemator->addFilter(
             'explode',
-            function(Schemator $executor, ?string $source, array $rootSource, string $delimiter = ', ') {
+            function(Schemator $schemator, ?string $source, array $rootSource, string $delimiter = ', ') {
                 if($source === null) {
                     return null;
                 }
@@ -81,7 +81,7 @@ class SchematorFactory
 
         $schemator->addFilter(
             'filter',
-            function(Schemator $executor, ?array $source, array $rootSource, $filterConfig) {
+            function(Schemator $schemator, ?array $source, array $rootSource, $filterConfig) {
                 if($source === null) {
                     return null;
                 }
@@ -109,7 +109,7 @@ class SchematorFactory
 
         $schemator->addFilter(
             'sort',
-            function(Schemator $executor, ?array $source, array $rootSource, ?callable $sortCallback = null) {
+            function(Schemator $schemator, ?array $source, array $rootSource, ?callable $sortCallback = null) {
                 if($source === null) {
                     return null;
                 }
@@ -124,17 +124,17 @@ class SchematorFactory
 
         $schemator->addFilter(
             'path',
-            function(Schemator $executor, ?string $source, array $rootSource) {
+            function(Schemator $schemator, ?string $source, array $rootSource) {
                 if($source === null) {
                     return null;
                 }
-                return $executor->getValue($rootSource, $source);
+                return $schemator->getValue($rootSource, $source);
             }
         );
 
         $schemator->addFilter(
             'flatten',
-            function(Schemator $executor, ?array $source) {
+            function(Schemator $schemator, ?array $source) {
                 if($source === null) {
                     return null;
                 }
@@ -144,7 +144,7 @@ class SchematorFactory
 
         $schemator->addFilter(
             'replace',
-            function(Schemator $executor, $source, array $rootSource, array $rules) {
+            function(Schemator $schemator, $source, array $rootSource, array $rules) {
                 if($source === null) {
                     return null;
                 }
