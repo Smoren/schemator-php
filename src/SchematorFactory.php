@@ -3,6 +3,9 @@
 
 namespace Smoren\Schemator;
 
+use Smoren\Helpers\ArrHelper;
+use Smoren\Helpers\RuleHelper;
+
 /**
  * Factory class for creating Schemator instance
  * @author Smoren <ofigate@gmail.com>
@@ -63,7 +66,7 @@ class SchematorFactory
                     foreach($filterConfig as $args) {
                         $rule = array_shift($args);
 
-                        if(Helper::checkRule($item, $rule, $args)) {
+                        if(RuleHelper::check($item, $rule, $args)) {
                             $result[] = $item;
                             break;
                         }
@@ -96,7 +99,7 @@ class SchematorFactory
         $schemator->addFilter(
             'flatten',
             function(Schemator $executor, array $source) {
-                return Helper::flattenArray($source);
+                return ArrHelper::flatten($source);
             }
         );
 
@@ -114,7 +117,7 @@ class SchematorFactory
 
                         $replace = null;
 
-                        if(Helper::checkRule($item, $rule, $args)) {
+                        if(RuleHelper::check($item, $rule, $args)) {
                             $replace = $value;
                             $isReplaced = true;
 

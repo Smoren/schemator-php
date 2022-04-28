@@ -4,6 +4,7 @@
 namespace Smoren\Schemator;
 
 
+use Smoren\Helpers\ArrHelper;
 use Smoren\Schemator\Exceptions\SchematorException;
 
 /**
@@ -115,7 +116,7 @@ class Schemator
         $source = $source[$pathItem];
 
         if(count($path)) {
-            if(Helper::isArrayAssoc($source)) {
+            if(ArrHelper::isAssoc($source)) {
                 return $this->getValueRecursive($source, $path);
             }
 
