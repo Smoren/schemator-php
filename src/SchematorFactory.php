@@ -58,52 +58,7 @@ class SchematorFactory
                     foreach($filterConfig as $args) {
                         $rule = array_shift($args);
 
-                        $found = false;
-
-                        switch($rule) {
-                            case '=':
-                                if((string)$item === (string)$args[0]) {
-                                    $found = true;
-                                }
-                                break;
-                            case '!=':
-                                if((string)$item !== (string)$args[0]) {
-                                    $found = true;
-                                }
-                                break;
-                            case '>':
-                                if($item > $args[0]) {
-                                    $found = true;
-                                }
-                                break;
-                            case '>=':
-                                if($item >= $args[0]) {
-                                    $found = true;
-                                }
-                                break;
-                            case '<':
-                                if($item < $args[0]) {
-                                    $found = true;
-                                }
-                                break;
-                            case '<=':
-                                if($item <= $args[0]) {
-                                    $found = true;
-                                }
-                                break;
-                            case 'between':
-                                if($item >= $args[0] && $item <= $args[1]) {
-                                    $found = true;
-                                }
-                                break;
-                            case 'between_strict':
-                                if($item > $args[0] && $item < $args[1]) {
-                                    $found = true;
-                                }
-                                break;
-                        }
-
-                        if($found) {
+                        if(Helper::checkRule($item, $rule, $args)) {
                             $result[] = $item;
                             break;
                         }
@@ -154,55 +109,9 @@ class SchematorFactory
 
                         $replace = null;
 
-                        switch($rule) {
-                            case '=':
-                                if((string)$item === (string)$args[0]) {
-                                    $replace = $value;
-                                    $isReplaced = true;
-                                }
-                                break;
-                            case '!=':
-                                if((string)$item !== (string)$args[0]) {
-                                    $replace = $value;
-                                    $isReplaced = true;
-                                }
-                                break;
-                            case '>':
-                                if($item > $args[0]) {
-                                    $replace = $value;
-                                    $isReplaced = true;
-                                }
-                                break;
-                            case '>=':
-                                if($item >= $args[0]) {
-                                    $replace = $value;
-                                    $isReplaced = true;
-                                }
-                                break;
-                            case '<':
-                                if($item < $args[0]) {
-                                    $replace = $value;
-                                    $isReplaced = true;
-                                }
-                                break;
-                            case '<=':
-                                if($item <= $args[0]) {
-                                    $replace = $value;
-                                    $isReplaced = true;
-                                }
-                                break;
-                            case 'between':
-                                if($item >= $args[0] && $item <= $args[1]) {
-                                    $replace = $value;
-                                    $isReplaced = true;
-                                }
-                                break;
-                            case 'between_strict':
-                                if($item > $args[0] && $item < $args[1]) {
-                                    $replace = $value;
-                                    $isReplaced = true;
-                                }
-                                break;
+                        if(Helper::checkRule($item, $rule, $args)) {
+                            $replace = $value;
+                            $isReplaced = true;
                         }
 
                         if($isReplaced) {
