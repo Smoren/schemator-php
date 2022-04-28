@@ -3,12 +3,15 @@
 namespace Smoren\Schemator\Tests\Unit;
 
 
-use Smoren\ExtendedExceptions\BadDataException;
+use Smoren\Schemator\Exceptions\SchematorException;
 use Smoren\Schemator\Schemator;
 use Smoren\Schemator\SchematorFactory;
 
 class SchematorTest extends \Codeception\Test\Unit
 {
+    /**
+     * @throws SchematorException
+     */
     public function testDefaultDelimiter()
     {
         $schemator = new Schemator();
@@ -87,8 +90,8 @@ class SchematorTest extends \Codeception\Test\Unit
                 'city_street_names' => ['streets.name', ['join', ', ']]
             ], $input);
             $this->assertTrue(false);
-        } catch(BadDataException $e) {
-            $this->assertEquals(1, $e->getCode());
+        } catch(SchematorException $e) {
+            $this->assertEquals(SchematorException::STATUS_FILTER_NOT_FOUND, $e->getCode());
         }
 
         $schemator->addFilter('implode', function(Schemator $schematorecutor, array $source, array $rootSource, string $delimiter) {
@@ -130,6 +133,9 @@ class SchematorTest extends \Codeception\Test\Unit
         $this->assertEquals('Moscow', $data['msk']);
     }
 
+    /**
+     * @throws SchematorException
+     */
     public function testSpecificDelimiter()
     {
         $schemator = new Schemator('/');
@@ -208,8 +214,8 @@ class SchematorTest extends \Codeception\Test\Unit
                 'city_street_names' => ['streets/name', ['join', ', ']]
             ], $input);
             $this->assertTrue(false);
-        } catch(BadDataException $e) {
-            $this->assertEquals(1, $e->getCode());
+        } catch(SchematorException $e) {
+            $this->assertEquals(SchematorException::STATUS_FILTER_NOT_FOUND, $e->getCode());
         }
 
         $schemator->addFilter('implode', function(Schemator $schematorecutor, array $source, array $rootSource, string $delimiter) {
@@ -250,7 +256,10 @@ class SchematorTest extends \Codeception\Test\Unit
         ], $input);
         $this->assertEquals('Moscow', $data['msk']);
     }
-    
+
+    /**
+     * @throws SchematorException
+     */
     public function testFactory()
     {
         $schemator = SchematorFactory::create(true, [
@@ -313,6 +322,9 @@ class SchematorTest extends \Codeception\Test\Unit
         $this->assertEquals([1, 5, 9, 22, 35, 49, 11, 12, 15], $data['city_street_houses']);
     }
 
+    /**
+     * @throws SchematorException
+     */
     public function testReplaceAndFilter()
     {
         $input = [

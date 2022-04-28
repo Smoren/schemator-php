@@ -4,22 +4,26 @@
 namespace Smoren\Schemator;
 
 
-use Smoren\ExtendedExceptions\BadDataException;
+use Smoren\Schemator\Exceptions\SchematorException;
 
+/**
+ * Class for schematic data converting
+ * @author Smoren <ofigate@gmail.com>
+ */
 class Schemator
 {
     /**
-     * @var callable[]
+     * @var callable[] filters map
      */
     protected $filters = [];
     /**
-     * @var string
+     * @var string delimiter for multilevel paths
      */
     protected $pathDelimiter;
 
     /**
      * Schemator constructor.
-     * @param string $pathDelimiter
+     * @param string $pathDelimiter delimiter for multilevel paths
      */
     public function __construct(string $pathDelimiter = '.')
     {
@@ -27,10 +31,11 @@ class Schemator
     }
 
     /**
-     * @param array $schema
-     * @param array $source
-     * @return array
-     * @throws BadDataException
+     * Converts input data with using schema
+     * @param array $schema schema for converting
+     * @param array $source input data to convert
+     * @return array converted data
+     * @throws SchematorException
      */
     public function exec(array $schema, array $source): array
     {
@@ -44,8 +49,9 @@ class Schemator
     }
 
     /**
-     * @param string $filterName
-     * @param callable $callback
+     * Adds new filter
+     * @param string $filterName filter name
+     * @param callable $callback filter callback
      * @return $this
      */
     public function addFilter(string $filterName, callable $callback): self
@@ -55,10 +61,11 @@ class Schemator
     }
 
     /**
-     * @param array $source
-     * @param $schemaItem
-     * @return array|mixed|null
-     * @throws BadDataException
+     * Returns value from source by schema item
+     * @param array $source source to extract data from
+     * @param string|array $schemaItem item of schema (string as path or array as filter config)
+     * @return mixed result value
+     * @throws SchematorException
      */
     public function getValue(array $source, $schemaItem)
     {
@@ -88,9 +95,10 @@ class Schemator
     }
 
     /**
-     * @param array $source
-     * @param array $path
-     * @return mixed
+     * Internal recursive method to extract value from source
+     * @param array $source source to extract value from
+     * @param array $path path to extract value by
+     * @return mixed result value
      */
     protected function getValueRecursive(array $source, array $path)
     {
@@ -107,7 +115,7 @@ class Schemator
         $source = $source[$pathItem];
 
         if(count($path)) {
-            if($this->isArrayAssoc($source)) {
+            if(Helper::isArrayAssoc($source)) {
                 return $this->getValueRecursive($source, $path);
             }
 
@@ -128,29 +136,35 @@ class Schemator
     }
 
     /**
-     * @param array $filterConfig
-     * @param $source
-     * @param $rootSource
-     * @return mixed
-     * @throws BadDataException
+     * Returns value from source by filter
+     * @param array $filterConfig filter config [filterName, ...args]
+     * @param mixed $source source to extract value from
+     * @param array $rootSource root source
+     * @return mixed result value
+     * @throws SchematorException
      */
-    protected function runFilter(array $filterConfig, $source, $rootSource)
+    protected function runFilter(array $filterConfig, $source, array $rootSource)
     {
         $filterName = array_shift($filterConfig);
 
         if(!isset($this->filters[$filterName])) {
-            throw new BadDataException("filter '{$filterName}' not found", 1);
+            throw new SchematorException(
+                "filter '{$filterName}' not found",
+                SchematorException::STATUS_FILTER_NOT_FOUND
+            );
         }
 
         return $this->filters[$filterName]($this, $source, $rootSource, ...$filterConfig);
     }
 
     /**
-     * @param array $source
-     * @param string $path
-     * @param $value
+     * Creates path and saves the value by it
+     * @param array $source source container to save value to
+     * @param string $path path destination of value
+     * @param mixed $value value to save
+     * @return $this
      */
-    protected function saveByPath(array &$source, string $path, $value)
+    protected function saveByPath(array &$source, string $path, $value): self
     {
         $arPath = explode($this->pathDelimiter, $path);
         $temp = &$source;
@@ -159,15 +173,7 @@ class Schemator
         }
         $temp = $value;
         unset($temp);
-    }
 
-    /**
-     * @param array $input
-     * @return bool
-     */
-    protected function isArrayAssoc(array $input): bool
-    {
-        if([] === $input) return false;
-        return array_keys($input) !== range(0, count($input) - 1);
+        return $this;
     }
 }

@@ -3,12 +3,16 @@
 
 namespace Smoren\Schemator;
 
-
+/**
+ * Factory class for creating Schemator instance
+ * @author Smoren <ofigate@gmail.com>
+ */
 class SchematorFactory
 {
     /**
-     * @param bool $withBaseFilters
-     * @param array $extraFilters
+     * Creates Schemator instance
+     * @param bool $withBaseFilters flag of using base filters
+     * @param callable[] $extraFilters extra filters map ([filterName => filterCallback])
      * @return Schemator
      */
     public static function create(bool $withBaseFilters = true, array $extraFilters = []): Schemator
@@ -27,7 +31,8 @@ class SchematorFactory
     }
 
     /**
-     * @param Schemator $schemator
+     * Adds base filters to Schemator instance
+     * @param Schemator $schemator instance
      */
     public static function addBaseFilters(Schemator $schemator)
     {
