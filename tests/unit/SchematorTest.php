@@ -94,22 +94,22 @@ class SchematorTest extends \Codeception\Test\Unit
             $this->assertEquals(SchematorException::STATUS_FILTER_NOT_FOUND, $e->getCode());
         }
 
-        $schemator->addFilter('implode', function(Schemator $schematorecutor, array $source, array $rootSource, string $delimiter) {
+        $schemator->addFilter('implode', function(Schemator $schemator, array $source, array $rootSource, string $delimiter) {
             return implode($delimiter, $source);
         });
 
-        $schemator->addFilter('explode', function(Schemator $schematorecutor, string $source, array $rootSource, string $delimiter) {
+        $schemator->addFilter('explode', function(Schemator $schemator, string $source, array $rootSource, string $delimiter) {
             return explode($delimiter, $source);
         });
 
-        $schemator->addFilter('startsWith', function(Schemator $schematorecutor, array $source, array $rootSource, string $start) {
+        $schemator->addFilter('startsWith', function(Schemator $schemator, array $source, array $rootSource, string $start) {
             return array_filter($source, function(string $candidate) use ($start) {
                 return strpos($candidate, $start) === 0;
             });
         });
 
-        $schemator->addFilter('path', function(Schemator $schematorecutor, string $source, array $rootSource) {
-            return $schematorecutor->getValue($rootSource, $source);
+        $schemator->addFilter('path', function(Schemator $schemator, string $source, array $rootSource) {
+            return $schemator->getValue($rootSource, $source);
         });
 
         $data = $schemator->exec([
@@ -218,22 +218,22 @@ class SchematorTest extends \Codeception\Test\Unit
             $this->assertEquals(SchematorException::STATUS_FILTER_NOT_FOUND, $e->getCode());
         }
 
-        $schemator->addFilter('implode', function(Schemator $schematorecutor, array $source, array $rootSource, string $delimiter) {
+        $schemator->addFilter('implode', function(Schemator $schemator, array $source, array $rootSource, string $delimiter) {
             return implode($delimiter, $source);
         });
 
-        $schemator->addFilter('explode', function(Schemator $schematorecutor, string $source, array $rootSource, string $delimiter) {
+        $schemator->addFilter('explode', function(Schemator $schemator, string $source, array $rootSource, string $delimiter) {
             return explode($delimiter, $source);
         });
 
-        $schemator->addFilter('startsWith', function(Schemator $schematorecutor, array $source, array $rootSource, string $start) {
+        $schemator->addFilter('startsWith', function(Schemator $schemator, array $source, array $rootSource, string $start) {
             return array_filter($source, function(string $candidate) use ($start) {
                 return strpos($candidate, $start) === 0;
             });
         });
 
-        $schemator->addFilter('path', function(Schemator $schematorecutor, string $source, array $rootSource) {
-            return $schematorecutor->getValue($rootSource, $source);
+        $schemator->addFilter('path', function(Schemator $schemator, string $source, array $rootSource) {
+            return $schemator->getValue($rootSource, $source);
         });
 
         $data = $schemator->exec([
@@ -263,7 +263,7 @@ class SchematorTest extends \Codeception\Test\Unit
     public function testFactory()
     {
         $schemator = SchematorFactory::create(true, [
-            'startsWith' => function(Schemator $schematorecutor, array $source, array $rootSource, string $start) {
+            'startsWith' => function(Schemator $schemator, array $source, array $rootSource, string $start) {
                 return array_filter($source, function(string $candidate) use ($start) {
                     return strpos($candidate, $start) === 0;
                 });
