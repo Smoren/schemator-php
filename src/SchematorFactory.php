@@ -112,9 +112,7 @@ class SchematorFactory
                         if(Helper::checkRule($item, $rule, $args)) {
                             $replace = $value;
                             $isReplaced = true;
-                        }
 
-                        if($isReplaced) {
                             $result[] = $replace;
                             break;
                         }
