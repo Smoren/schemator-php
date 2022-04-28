@@ -1,16 +1,17 @@
 <?php
 
-namespace Smoren\Shemator\Tests\Unit;
+namespace Smoren\Schemator\Tests\Unit;
 
 
 use Smoren\ExtendedExceptions\BadDataException;
-use Smoren\Shemator\Schemator;
+use Smoren\Schemator\Schemator;
+use Smoren\Schemator\SchematorFactory;
 
 class SchematorTest extends \Codeception\Test\Unit
 {
-    public function testMain()
+    public function testDefaultDelimiter()
     {
-        $ex = new Schemator();
+        $schemator = new Schemator();
 
         $input = [
             'id' => 100,
@@ -44,7 +45,7 @@ class SchematorTest extends \Codeception\Test\Unit
             'msk_path' => 'country.capitals.msk',
         ];
 
-        $data = $ex->exec([
+        $data = $schemator->exec([
             'city_id' => 'id',
             'city_name' => 'name',
             'city_street_names' => 'streets.name',
@@ -75,13 +76,14 @@ class SchematorTest extends \Codeception\Test\Unit
         $this->assertEquals(null, $data['unknown']);
         $this->assertEquals(null, $data['unknown_another']);
         $this->assertEquals([null, null, null], $data['unknown_array']);
+        $this->assertEquals($input, $data['raw']);
         $this->assertEquals([
             'country_id' => 10,
             'country_name' => 'Russia',
         ], $data['country_data']);
 
         try {
-            $ex->exec([
+            $schemator->exec([
                 'city_street_names' => ['streets.name', ['join', ', ']]
             ], $input);
             $this->assertTrue(false);
@@ -89,40 +91,40 @@ class SchematorTest extends \Codeception\Test\Unit
             $this->assertEquals(1, $e->getCode());
         }
 
-        $ex->addFilter('implode', function(Schemator $executor, array $source, array $rootSource, string $delimiter) {
+        $schemator->addFilter('implode', function(Schemator $schematorecutor, array $source, array $rootSource, string $delimiter) {
             return implode($delimiter, $source);
         });
 
-        $ex->addFilter('explode', function(Schemator $executor, string $source, array $rootSource, string $delimiter) {
+        $schemator->addFilter('explode', function(Schemator $schematorecutor, string $source, array $rootSource, string $delimiter) {
             return explode($delimiter, $source);
         });
 
-        $ex->addFilter('startsWith', function(Schemator $executor, array $source, array $rootSource, string $start) {
+        $schemator->addFilter('startsWith', function(Schemator $schematorecutor, array $source, array $rootSource, string $start) {
             return array_filter($source, function(string $candidate) use ($start) {
                 return strpos($candidate, $start) === 0;
             });
         });
 
-        $ex->addFilter('byDynamicPath', function(Schemator $executor, string $source, array $rootSource) {
-            return $executor->getValue($rootSource, $source);
+        $schemator->addFilter('byDynamicPath', function(Schemator $schematorecutor, string $source, array $rootSource) {
+            return $schematorecutor->getValue($rootSource, $source);
         });
 
-        $data = $ex->exec([
+        $data = $schemator->exec([
             'city_street_names' => ['streets.name', ['implode', ', ']]
         ], $input);
         $this->assertEquals('Tverskaya, Leninskiy, Tarusskaya', $data['city_street_names']);
 
-        $data = $ex->exec([
+        $data = $schemator->exec([
             'city_street_names' => ['streets.name', ['implode', ', '], ['explode', ', ']]
         ], $input);
         $this->assertEquals(['Tverskaya', 'Leninskiy', 'Tarusskaya'], $data['city_street_names']);
 
-        $data = $ex->exec([
+        $data = $schemator->exec([
             'city_street_names' => ['streets.name', ['startsWith', 'T'], ['implode', ', ']]
         ], $input);
         $this->assertEquals('Tverskaya, Tarusskaya', $data['city_street_names']);
 
-        $data = $ex->exec([
+        $data = $schemator->exec([
             'msk' => ['msk_path', ['byDynamicPath']]
         ], $input);
         $this->assertEquals('Moscow', $data['msk']);
@@ -130,7 +132,7 @@ class SchematorTest extends \Codeception\Test\Unit
 
     public function testSpecificDelimiter()
     {
-        $ex = new Schemator('/');
+        $schemator = new Schemator('/');
 
         $input = [
             'id' => 100,
@@ -164,7 +166,7 @@ class SchematorTest extends \Codeception\Test\Unit
             'msk_path' => 'country/capitals/msk',
         ];
 
-        $data = $ex->exec([
+        $data = $schemator->exec([
             'city_id' => 'id',
             'city_name' => 'name',
             'city_street_names' => 'streets/name',
@@ -195,13 +197,14 @@ class SchematorTest extends \Codeception\Test\Unit
         $this->assertEquals(null, $data['unknown']);
         $this->assertEquals(null, $data['unknown_another']);
         $this->assertEquals([null, null, null], $data['unknown_array']);
+        $this->assertEquals($input, $data['raw']);
         $this->assertEquals([
             'country_id' => 10,
             'country_name' => 'Russia',
         ], $data['country_data']);
 
         try {
-            $ex->exec([
+            $schemator->exec([
                 'city_street_names' => ['streets/name', ['join', ', ']]
             ], $input);
             $this->assertTrue(false);
@@ -209,42 +212,152 @@ class SchematorTest extends \Codeception\Test\Unit
             $this->assertEquals(1, $e->getCode());
         }
 
-        $ex->addFilter('implode', function(Schemator $executor, array $source, array $rootSource, string $delimiter) {
+        $schemator->addFilter('implode', function(Schemator $schematorecutor, array $source, array $rootSource, string $delimiter) {
             return implode($delimiter, $source);
         });
 
-        $ex->addFilter('explode', function(Schemator $executor, string $source, array $rootSource, string $delimiter) {
+        $schemator->addFilter('explode', function(Schemator $schematorecutor, string $source, array $rootSource, string $delimiter) {
             return explode($delimiter, $source);
         });
 
-        $ex->addFilter('startsWith', function(Schemator $executor, array $source, array $rootSource, string $start) {
+        $schemator->addFilter('startsWith', function(Schemator $schematorecutor, array $source, array $rootSource, string $start) {
             return array_filter($source, function(string $candidate) use ($start) {
                 return strpos($candidate, $start) === 0;
             });
         });
 
-        $ex->addFilter('byDynamicPath', function(Schemator $executor, string $source, array $rootSource) {
-            return $executor->getValue($rootSource, $source);
+        $schemator->addFilter('byDynamicPath', function(Schemator $schematorecutor, string $source, array $rootSource) {
+            return $schematorecutor->getValue($rootSource, $source);
         });
 
-        $data = $ex->exec([
+        $data = $schemator->exec([
             'city_street_names' => ['streets/name', ['implode', ', ']]
         ], $input);
         $this->assertEquals('Tverskaya, Leninskiy, Tarusskaya', $data['city_street_names']);
 
-        $data = $ex->exec([
+        $data = $schemator->exec([
             'city_street_names' => ['streets/name', ['implode', ', '], ['explode', ', ']]
         ], $input);
         $this->assertEquals(['Tverskaya', 'Leninskiy', 'Tarusskaya'], $data['city_street_names']);
 
-        $data = $ex->exec([
+        $data = $schemator->exec([
             'city_street_names' => ['streets/name', ['startsWith', 'T'], ['implode', ', ']]
         ], $input);
         $this->assertEquals('Tverskaya, Tarusskaya', $data['city_street_names']);
 
-        $data = $ex->exec([
+        $data = $schemator->exec([
             'msk' => ['msk_path', ['byDynamicPath']]
         ], $input);
         $this->assertEquals('Moscow', $data['msk']);
+    }
+    
+    public function testFactory()
+    {
+        $schemator = SchematorFactory::create(true, [
+            'startsWith' => function(Schemator $schematorecutor, array $source, array $rootSource, string $start) {
+                return array_filter($source, function(string $candidate) use ($start) {
+                    return strpos($candidate, $start) === 0;
+                });
+            },
+        ]);
+
+        $input = [
+            'id' => 100,
+            'name' => 'Novgorod',
+            'country' => [
+                'id' => 10,
+                'name' => 'Russia',
+                'friends' => ['Kazakhstan', 'Belarus', 'Armenia'],
+                'capitals' => [
+                    'msk' => 'Moscow',
+                    'spb' => 'St. Petersburg',
+                ],
+            ],
+            'streets' => [
+                [
+                    'id' => 1000,
+                    'name' => 'Tverskaya',
+                    'houses' => [1, 5, 9],
+                ],
+                [
+                    'id' => 1002,
+                    'name' => 'Leninskiy',
+                    'houses' => [22, 35, 49],
+                ],
+                [
+                    'id' => 1003,
+                    'name' => 'Tarusskaya',
+                    'houses' => [11, 12, 15],
+                ],
+            ],
+            'msk_path' => 'country.capitals.msk',
+        ];
+
+        $data = $schemator->exec([
+            'city_street_names.first' => ['streets.name', ['implode', ', ']],
+            'city_street_names.second' => ['streets.name', ['implode', ', '], ['explode', ', ']],
+            'city_street_names.third' => ['streets.name', ['startsWith', 'T'], ['implode', ', ']],
+            'city_street_names.sorted' => ['streets.name', ['sort'], ['implode', ', ']],
+            'city_street_names.filtered' => ['streets.name', ['filter', function(string $candidate) {
+                return strpos($candidate, 'Len') !== false;
+            }]],
+            'msk' => ['msk_path', ['path']],
+            'city_street_houses' => ['streets.houses', ['flatten']],
+        ], $input);
+        $this->assertEquals('Tverskaya, Leninskiy, Tarusskaya', $data['city_street_names']['first']);
+        $this->assertEquals(['Tverskaya', 'Leninskiy', 'Tarusskaya'], $data['city_street_names']['second']);
+        $this->assertEquals('Tverskaya, Tarusskaya', $data['city_street_names']['third']);
+        $this->assertEquals('Leninskiy, Tarusskaya, Tverskaya', $data['city_street_names']['sorted']);
+        $this->assertEquals(['Leninskiy'], $data['city_street_names']['filtered']);
+        $this->assertEquals('Moscow', $data['msk']);
+        $this->assertEquals([1, 5, 9, 22, 35, 49, 11, 12, 15], $data['city_street_houses']);
+    }
+
+    public function testReplaceAndFilter()
+    {
+        $input = [
+            'numbers' => [-1, 10, 5, 22, -10, 0, 35, 7, 8, 9, 0],
+        ];
+
+        $schemator = SchematorFactory::create();
+
+        $data = $schemator->exec([
+            'number_types' => ['numbers', [
+                'replace',
+                [
+                    ['=0', '=', 0],
+                    ['>9', '>', 9],
+                    ['<0', '<', 0],
+                    ['1-8', 'between', 1, 8],
+                ]
+            ]]
+        ], $input);
+
+        $this->assertEquals([
+            '<0', '>9', '1-8', '>9', '<0', '=0', '>9', '1-8', '1-8', null, '=0',
+        ], $data['number_types']);
+
+        $data = $schemator->exec([
+            'positive' => [
+                'numbers',
+                ['filter', [['>', 0]]],
+                ['sort'],
+            ],
+            'negative' => [
+                'numbers',
+                ['filter', [['<', 0]]],
+                ['sort'],
+            ],
+            'complicated' => [
+                'numbers',
+                ['filter', [['>=', 8], ['<', 0]]],
+                ['filter', [['<', 22]]],
+                ['sort'],
+            ],
+        ], $input);
+
+        $this->assertEquals([5, 7, 8, 9, 10, 22, 35], $data['positive']);
+        $this->assertEquals([-10, -1], $data['negative']);
+        $this->assertEquals([-10, -1, 8, 9, 10], $data['complicated']);
     }
 }

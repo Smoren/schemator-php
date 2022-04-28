@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Smoren\Shemator;
+namespace Smoren\Schemator;
 
 
 use Smoren\ExtendedExceptions\BadDataException;
