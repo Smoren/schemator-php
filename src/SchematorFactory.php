@@ -87,6 +87,26 @@ class SchematorFactory
         );
 
         $schemator->addFilter(
+            'sum',
+            function(Schemator $schemator, ?array $source) {
+                if($source === null) {
+                    return null;
+                }
+                return array_sum($source);
+            }
+        );
+
+        $schemator->addFilter(
+            'average',
+            function(Schemator $schemator, ?array $source) {
+                if($source === null) {
+                    return null;
+                }
+                return array_sum($source)/count($source);
+            }
+        );
+
+        $schemator->addFilter(
             'filter',
             function(Schemator $schemator, ?array $source, array $rootSource, $filterConfig) {
                 if($source === null) {

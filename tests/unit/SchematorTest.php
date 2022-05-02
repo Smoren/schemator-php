@@ -448,4 +448,25 @@ class SchematorTest extends \Codeception\Test\Unit
             $this->assertEquals($input['date'], $e->getData()['source']);
         }
     }
+
+    public function testFilters()
+    {
+        $input = [
+            'numbers' => [-1, 10, 5, 22, -10, 0, 35, 7, 8, 9, 0],
+        ];
+
+        $schemator = SchematorFactory::create();
+
+        $schema = [
+            'result' => ['numbers', ['sum']],
+        ];
+        $output = $schemator->exec($input, $schema);
+        $this->assertEquals(85, $output['result']);
+
+        $schema = [
+            'result' => ['numbers', ['average']],
+        ];
+        $output = $schemator->exec($input, $schema);
+        $this->assertEquals(7.73, round($output['result'], 2));
+    }
 }
