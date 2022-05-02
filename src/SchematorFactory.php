@@ -150,6 +150,18 @@ class SchematorFactory
         );
 
         $schemator->addFilter(
+            'rsort',
+            function(Schemator $schemator, ?array $source, array $rootSource) {
+                if($source === null) {
+                    return null;
+                }
+
+                rsort($source);
+                return $source;
+            }
+        );
+
+        $schemator->addFilter(
             'path',
             function(Schemator $schemator, ?string $source, array $rootSource) {
                 if($source === null) {
