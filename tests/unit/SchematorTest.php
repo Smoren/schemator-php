@@ -468,5 +468,35 @@ class SchematorTest extends \Codeception\Test\Unit
         ];
         $output = $schemator->exec($input, $schema);
         $this->assertEquals(7.73, round($output['result'], 2));
+
+        $input = [
+            'id' => 1,
+            'name' => 'Product 1',
+            'color_variants' => [
+                [
+                    'color' => 'red',
+                    'size_variants' => [
+                        ['size' => 'XS', 'price' => 500],
+                        ['size' => 'S', 'price' => 1000],
+                    ],
+                ],
+                [
+                    'color' => 'green',
+                    'size_variants' => [
+                        ['size' => 'XS', 'price' => 800],
+                        ['size' => 'S', 'price' => 1200],
+                    ],
+                ],
+            ],
+        ];
+        $schema = [
+            'value' => [
+                'color_variants.size_variants.price',
+                ['flatten'],
+                ['average'],
+            ],
+        ];
+        $output = $schemator->exec($input, $schema);
+        $this->assertEquals(['value' => 875], $output);
     }
 }
