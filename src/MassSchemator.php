@@ -42,7 +42,7 @@ class MassSchemator
 
     /**
      * Converts input data array with using schema
-     * @param array $source iterable source of items to convert every one by schemator
+     * @param iterable $source iterable source of items to convert every one by schemator
      * @param array $schema schema for converting
      * @return array array of converted items
      * @throws Exceptions\SchematorException
