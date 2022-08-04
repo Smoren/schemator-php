@@ -39,7 +39,7 @@ class SchematorFactory
      * @param callable[] $extraFilters extra filters map ([filterName => filterCallback])
      * @return MassSchemator
      */
-    public static function createMassGenerator(
+    public static function createMass(
         bool $withBaseFilters = true, array $extraFilters = []
     ): MassSchemator
     {
