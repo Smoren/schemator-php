@@ -10,7 +10,7 @@
     }
   ],
   "require": {
-    "php": ">=7.2.0",
+    "php": ">=7.4.0",
     "smoren/extended-exceptions": "1.0.0",
     "smoren/helpers": "^0.1.4"
   },

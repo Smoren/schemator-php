@@ -322,3 +322,99 @@ Array
 )
 */
 ```
+
+#### Mass usage
+
+```php
+use Smoren\Schemator\Schemator;
+use Smoren\Schemator\MassSchemator;
+
+$massSchemator = new MassSchemator(new Schemator());
+
+$cities = [
+    [
+        'id' => 100,
+        'name' => 'Novgorod',
+        'country' => [
+            'id' => 10,
+            'name' => 'Russia',
+        ],
+        'streets' => [
+            [
+                'id' => 1001,
+                'name' => 'Glavnaya',
+            ],
+            [
+                'id' => 1002,
+                'name' => 'Lenina',
+            ],
+        ],
+    ],
+    [
+        'id' => 101,
+        'name' => 'Moscow',
+        'country' => [
+            'id' => 10,
+            'name' => 'Russia',
+        ],
+        'streets' => [
+            [
+                'id' => 1003,
+                'name' => 'Tverskaya',
+            ],
+            [
+                'id' => 1004,
+                'name' => 'Tarusskaya',
+            ],
+        ],
+    ],
+];
+
+$schema = [
+    'city_id' => 'id',
+    'city_name' => 'name',
+    'city_street_names' => 'streets.name',
+    'country_id' => 'country.id',
+    'country_name' => 'country.name',
+];
+
+$gen = $massSchemator->generate($cities, $schema);
+
+$result = [];
+foreach($gen as $item) {
+    $result[] = $item;
+}
+
+print_r($result);
+/*
+Array
+(
+    [0] => Array
+        (
+            [city_id] => 100
+            [city_name] => Novgorod
+            [city_street_names] => Array
+                (
+                    [0] => Glavnaya
+                    [1] => Lenina
+                )
+
+            [country_id] => 10
+            [country_name] => Russia
+        )
+    [1] => Array
+        (
+            [city_id] => 101
+            [city_name] => Moscow
+            [city_street_names] => Array
+                (
+                    [0] => Tverskaya
+                    [1] => Tarusskaya
+                )
+
+            [country_id] => 10
+            [country_name] => Russia
+        )
+)
+*/
+```

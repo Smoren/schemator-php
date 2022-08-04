@@ -17,11 +17,11 @@ class Schemator
     /**
      * @var callable[] filters map
      */
-    protected $filters = [];
+    protected array $filters = [];
     /**
      * @var string delimiter for multilevel paths
      */
-    protected $pathDelimiter;
+    protected string $pathDelimiter;
 
     /**
      * Schemator constructor.

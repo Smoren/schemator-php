@@ -34,6 +34,19 @@ class SchematorFactory
     }
 
     /**
+     * Creates SchematorMassGenerator instance
+     * @param bool $withBaseFilters flag of using base filters
+     * @param callable[] $extraFilters extra filters map ([filterName => filterCallback])
+     * @return MassSchemator
+     */
+    public static function createMassGenerator(
+        bool $withBaseFilters = true, array $extraFilters = []
+    ): MassSchemator
+    {
+        return new MassSchemator(static::create($withBaseFilters, $extraFilters));
+    }
+
+    /**
      * Adds base filters to Schemator instance
      * @param Schemator $schemator instance
      */
