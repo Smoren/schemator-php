@@ -81,7 +81,7 @@ class MassSchematorTest extends \Codeception\Test\Unit
             $result[] = $item;
         }
 
-        $exprectedResult = [
+        $expectedResult = [
             [
                 'my_city_id' => 100,
                 'my_country' => [
@@ -98,7 +98,19 @@ class MassSchematorTest extends \Codeception\Test\Unit
             ],
         ];
 
-        $this->assertEquals($exprectedResult, $result);
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    public function testExtra()
+    {
+        $massSchemator = new MassSchemator(new Schemator());
+        $cities = $this->getCities();
+
+        $result = $massSchemator->exec($cities, [
+            '' => 'name',
+        ]);
+
+        $this->assertEquals(['Novgorod', 'Moscow'], $result);
     }
 
     /**

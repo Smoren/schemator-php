@@ -36,15 +36,18 @@ class Schemator
      * Converts input data with using schema
      * @param array $source input data to convert
      * @param array $schema schema for converting
-     * @return array converted data
+     * @return array|mixed converted data
      * @throws SchematorException
      */
-    public function exec(array $source, array $schema): array
+    public function exec(array $source, array $schema)
     {
         $result = [];
 
         foreach($schema as $key => $schemaItem) {
             $this->saveByPath($result, $key, $this->getValue($source, $schemaItem));
+            if($key === '') {
+                break;
+            }
         }
 
         return $result;
@@ -186,6 +189,11 @@ class Schemator
      */
     protected function saveByPath(array &$source, string $path, $value): self
     {
+        if($path === '') {
+            $source = $value;
+            return $this;
+        }
+
         $arPath = explode($this->pathDelimiter, $path);
         $temp = &$source;
         foreach($arPath as $key) {
