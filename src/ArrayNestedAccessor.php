@@ -17,9 +17,9 @@ class ArrayNestedAccessor
      * @param array $source
      * @param string $pathDelimiter
      */
-    public function __construct(array $source, string $pathDelimiter)
+    public function __construct(array &$source, string $pathDelimiter)
     {
-        $this->source = $source;
+        $this->source = &$source;
         $this->pathDelimiter = $pathDelimiter;
     }
 
@@ -35,7 +35,7 @@ class ArrayNestedAccessor
         try {
             return $this->_get($this->source, explode($this->pathDelimiter, $path), $strict) ?? $defaultValue;
         } catch(ArrayNestedAccessorException $e) {
-            if($defaultValue === null) {
+            if($strict && $defaultValue === null) {
                 throw $e;
             }
             return $defaultValue;
@@ -50,6 +50,14 @@ class ArrayNestedAccessor
     public function set(string $path, $value): self
     {
         return $this->_set($this->source, explode($this->pathDelimiter, $path), $value);
+    }
+
+    /**
+     * @return array
+     */
+    public function getSource(): array
+    {
+        return $this->source;
     }
 
     /**
@@ -71,15 +79,7 @@ class ArrayNestedAccessor
             if(!$strict) {
                 return null;
             }
-            throw new ArrayNestedAccessorException(
-                "key '{$key}' not found",
-                ArrayNestedAccessorException::KEY_NOT_FOUND,
-                null,
-                [
-                    'key' => $key,
-                    'source' => $source,
-                ]
-            );
+            ArrayNestedAccessorException::throwWithKeyNotFound($key, $source);
         }
 
         $source = $source[$key];

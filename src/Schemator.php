@@ -4,7 +4,7 @@
 namespace Smoren\Schemator;
 
 
-use Smoren\Helpers\ArrHelper;
+use Smoren\Schemator\Exceptions\ArrayNestedAccessorException;
 use Smoren\Schemator\Exceptions\SchematorException;
 use Throwable;
 
@@ -36,21 +36,75 @@ class Schemator
      * Converts input data with using schema
      * @param array $source input data to convert
      * @param array $schema schema for converting
+     * @param bool $strict throw exception if key not exist
      * @return array|mixed converted data
      * @throws SchematorException
      */
-    public function exec(array $source, array $schema)
+    public function exec(array $source, array $schema, bool $strict = false)
     {
         $result = [];
+        $toAccessor = new ArrayNestedAccessor($result, $this->pathDelimiter);
 
-        foreach($schema as $key => $schemaItem) {
-            $this->saveByPath($result, $key, $this->getValue($source, $schemaItem));
-            if($key === '') {
-                break;
+        foreach($schema as $keyTo => $keyFrom) {
+            $value = $this->getValue($source, $keyFrom, $strict);
+            if($keyTo === '') {
+                return $value;
             }
+            $toAccessor->set($keyTo, $value);
         }
 
         return $result;
+    }
+
+    /**
+     * Returns value from source by schema item
+     * @param array|null $source source to extract data from
+     * @param string|array $key item of schema (string as path or array as filter config)
+     * @param bool $strict throw exception if key not exist
+     * @return mixed result value
+     * @throws SchematorException
+     */
+    public function getValue(?array $source, $key, bool $strict = false)
+    {
+        if($key === '') {
+            return $source;
+        }
+
+        if($source === null) {
+            if(!$strict) {
+                return null;
+            }
+            // TODO need testing
+            SchematorException::throwWithNullSource($key);
+        }
+
+        if(is_string($key)) {
+            $fromAccessor = new ArrayNestedAccessor($source, $this->pathDelimiter);
+            try {
+                return $fromAccessor->get($key, null, $strict);
+            } catch(ArrayNestedAccessorException $e) {
+                // TODO need testing
+                SchematorException::throwWithUnknownKey($key, $fromAccessor->getSource(), $e);
+            }
+        }
+
+        if(is_array($key)) {
+            $result = $source;
+            foreach($key as $filterConfig) {
+                if(is_string($filterConfig)) {
+                    $result = $this->getValue($result, $filterConfig, $strict);
+                } elseif(is_array($filterConfig)) {
+                    $result = $this->runFilter($filterConfig, $result, $source);
+                } else {
+                    // TODO need testing, maybe exception?
+                    $result = null;
+                }
+            }
+
+            return $result;
+        }
+
+        return null;
     }
 
     /**
@@ -66,85 +120,6 @@ class Schemator
     }
 
     /**
-     * Returns value from source by schema item
-     * @param array|null $source source to extract data from
-     * @param string|array $schemaItem item of schema (string as path or array as filter config)
-     * @return mixed result value
-     * @throws SchematorException
-     */
-    public function getValue(?array $source, $schemaItem)
-    {
-        if($source === null) {
-            return null;
-        }
-
-        if(is_string($schemaItem)) {
-            if($schemaItem === '') {
-                return $source;
-            }
-            return $this->getValueRecursive($source, explode($this->pathDelimiter, $schemaItem));
-        }
-
-        if(is_array($schemaItem)) {
-            $result = $source;
-            foreach($schemaItem as $filterConfig) {
-                if(is_string($filterConfig)) {
-                    $result = $this->getValue($result, $filterConfig);
-                } elseif(is_array($filterConfig)) {
-                    $result = $this->runFilter($filterConfig, $result, $source);
-                } else {
-                    $result = null;
-                }
-            }
-
-            return $result;
-        }
-
-        return null;
-    }
-
-    /**
-     * Internal recursive method to extract value from source
-     * @param array $source source to extract value from
-     * @param array $path path to extract value by
-     * @return mixed result value
-     */
-    protected function getValueRecursive(array $source, array $path)
-    {
-        if(!count($path)) {
-            return null;
-        }
-
-        $pathItem = array_shift($path);
-
-        if(!array_key_exists($pathItem, $source)) {
-            return null;
-        }
-
-        $source = $source[$pathItem];
-
-        if(count($path)) {
-            if(ArrHelper::isAssoc($source)) {
-                return $this->getValueRecursive($source, $path);
-            }
-
-            $subValues = [];
-
-            foreach($source as $sourceItem) {
-                $subValues[] = $this->getValueRecursive($sourceItem, $path);
-            }
-
-            return $subValues;
-        }
-
-        if(is_object($source)) {
-            return null;
-        }
-
-        return $source;
-    }
-
-    /**
      * Returns value from source by filter
      * @param array $filterConfig filter config [filterName, ...args]
      * @param mixed $source source to extract value from
@@ -156,52 +131,14 @@ class Schemator
     {
         $filterName = array_shift($filterConfig);
 
-        if(!isset($this->filters[$filterName])) {
-            throw new SchematorException(
-                "filter '{$filterName}' not found",
-                SchematorException::FILTER_NOT_FOUND
-            );
-        }
+        SchematorException::ensureFilterExists($this->filters, $filterName);
 
         try {
             return $this->filters[$filterName]($this, $source, $rootSource, ...$filterConfig);
         } catch(Throwable $e) {
-            throw new SchematorException(
-                "filter error: '{$filterName}'",
-                SchematorException::FILTER_ERROR,
-                $e,
-                [
-                    'error' => $e->getMessage(),
-                    'name' => $filterName,
-                    'config' => $filterConfig,
-                    'source' => $source,
-                ]
-            );
-        }
-    }
-
-    /**
-     * Creates path and saves the value by it
-     * @param array $source source container to save value to
-     * @param string $path path destination of value
-     * @param mixed $value value to save
-     * @return $this
-     */
-    protected function saveByPath(array &$source, string $path, $value): self
-    {
-        if($path === '') {
-            $source = $value;
-            return $this;
+            SchematorException::throwWithFilterError($filterName, $filterConfig, $source, $e);
         }
 
-        $arPath = explode($this->pathDelimiter, $path);
-        $temp = &$source;
-        foreach($arPath as $key) {
-            $temp = &$temp[$key];
-        }
-        $temp = $value;
-        unset($temp);
-
-        return $this;
+        return null;
     }
 }

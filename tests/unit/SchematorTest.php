@@ -43,6 +43,7 @@ class SchematorTest extends \Codeception\Test\Unit
                     'id' => 1003,
                     'name' => 'Tarusskaya',
                     'houses' => [11, 12, 15],
+                    'unknown' => 'some value',
                 ],
             ],
             'msk_path' => 'country.capitals.msk',
@@ -78,7 +79,7 @@ class SchematorTest extends \Codeception\Test\Unit
         $this->assertEquals('St. Petersburg', $data['country_second_capital']);
         $this->assertEquals(null, $data['unknown']);
         $this->assertEquals(null, $data['unknown_another']);
-        $this->assertEquals([null, null, null], $data['unknown_array']);
+        $this->assertEquals([null, null, 'some value'], $data['unknown_array']);
         $this->assertEquals($input, $data['raw']);
         $this->assertEquals([
             'country_id' => 10,
@@ -444,7 +445,7 @@ class SchematorTest extends \Codeception\Test\Unit
             $this->assertTrue(false);
         } catch(SchematorException $e) {
             $this->assertEquals(SchematorException::FILTER_ERROR, $e->getCode());
-            $this->assertEquals('date', $e->getData()['name']);
+            $this->assertEquals('date', $e->getData()['filter_name']);
             $this->assertEquals($input['date'], $e->getData()['source']);
         }
     }
