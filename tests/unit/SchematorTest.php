@@ -499,4 +499,57 @@ class SchematorTest extends \Codeception\Test\Unit
         $output = $schemator->exec($input, $schema);
         $this->assertEquals(['value' => 875], $output);
     }
+
+    public function testNestedArrays()
+    {
+        $data = [
+            'id' => 1,
+            'countries' => [
+                [
+                    'name' => 'Russia',
+                    'cities' => [
+                        [
+                            'name' => 'Moscow',
+                            'streets' => [
+                                ['name' => 'Tverskaya'],
+                                ['name' => 'Leninskiy'],
+                            ]
+                        ],
+                        [
+                        'name' => 'Novgorod',
+                        'streets' => [
+                            ['name' => 'Lenina'],
+                            ['name' => 'Komsomola'],
+                        ],
+                    ]
+                    ]
+                ],
+                [
+                    'name' => 'Belarus',
+                    'cities' => [
+                        [
+                            'name' => 'Minsk',
+                            'streets' => [
+                                ['name' => 'Moskovskaya'],
+                                ['name' => 'Russkaya'],
+                            ]
+                        ],
+                    ]
+                ],
+            ]
+        ];
+
+        $schema = [
+            'country_names' => 'countries.name',
+            'city_names' => ['countries.cities.name', ['flatten']],
+            'street_names' => ['countries.cities.streets.name', ['flatten']],
+        ];
+
+        $schemator = SchematorFactory::create();
+        $result = $schemator->exec($data, $schema);
+
+        $this->assertEquals(['Russia', 'Belarus'], $result['country_names']);
+        $this->assertEquals(['Moscow', 'Novgorod', 'Minsk'], $result['city_names']);
+        $this->assertEquals(['Tverskaya', 'Leninskiy', 'Lenina', 'Komsomola', 'Moskovskaya', 'Russkaya'], $result['street_names']);
+    }
 }
