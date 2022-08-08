@@ -6,20 +6,20 @@ namespace Smoren\Schemator\Exceptions;
 
 use Smoren\ExtendedExceptions\BaseException;
 
-class ArrayNestedAccessorException extends BaseException
+class NestedAccessorException extends BaseException
 {
     const KEY_NOT_FOUND = 1;
 
     /**
      * @param string $key
      * @param array $source
-     * @throws ArrayNestedAccessorException
+     * @return NestedAccessorException
      */
-    public static function throwWithKeyNotFound(string $key, array $source): void
+    public static function createAsKeyNotFound(string $key, array $source): NestedAccessorException
     {
-        throw new ArrayNestedAccessorException(
+        return new NestedAccessorException(
             "key '{$key}' not found",
-            ArrayNestedAccessorException::KEY_NOT_FOUND,
+            NestedAccessorException::KEY_NOT_FOUND,
             null,
             [
                 'key' => $key,

@@ -5,20 +5,31 @@ namespace Smoren\Schemator;
 
 
 use Smoren\Helpers\ArrHelper;
-use Smoren\Schemator\Exceptions\ArrayNestedAccessorException;
+use Smoren\Schemator\Exceptions\NestedAccessorException;
 
-class ArrayNestedAccessor
+class NestedAccessor
 {
-    protected array $source;
+    /**
+     * @var array
+     */
+    protected array $source; // TODO object?
+    /**
+     * @var string
+     */
     protected string $pathDelimiter;
 
     /**
      * ArrayNestedAccessor constructor.
-     * @param array $source
+     * @param array|null $source
      * @param string $pathDelimiter
      */
-    public function __construct(array &$source, string $pathDelimiter)
+    public function __construct(?array &$source, string $pathDelimiter)
     {
+        if($source === null) {
+            $source = [];
+        }
+
+        /** @var array $source */
         $this->source = &$source;
         $this->pathDelimiter = $pathDelimiter;
     }
@@ -28,13 +39,15 @@ class ArrayNestedAccessor
      * @param null $defaultValue
      * @param bool $strict
      * @return array|mixed|null
-     * @throws ArrayNestedAccessorException
+     * @throws NestedAccessorException
      */
     public function get(string $path, $defaultValue = null, bool $strict = false)
     {
         try {
-            return $this->_get($this->source, explode($this->pathDelimiter, $path), $strict) ?? $defaultValue;
-        } catch(ArrayNestedAccessorException $e) {
+            return $this->_get(
+                $this->source, array_reverse(explode($this->pathDelimiter, $path)), $strict
+            ) ?? $defaultValue;
+        } catch(NestedAccessorException $e) {
             if($strict && $defaultValue === null) {
                 throw $e;
             }
@@ -65,7 +78,7 @@ class ArrayNestedAccessor
      * @param array $arPath
      * @param bool $strict
      * @return array|mixed
-     * @throws ArrayNestedAccessorException
+     * @throws NestedAccessorException
      */
     protected function _get(array $source, array $arPath, bool $strict)
     {
@@ -73,13 +86,14 @@ class ArrayNestedAccessor
             return $source;
         }
 
-        $key = array_shift($arPath);
+        $key = array_pop($arPath);
 
         if(!array_key_exists($key, $source)) {
             if(!$strict) {
                 return null;
             }
-            ArrayNestedAccessorException::throwWithKeyNotFound($key, $source);
+            // TODO need testing
+            throw NestedAccessorException::createAsKeyNotFound($key, $source);
         }
 
         $source = $source[$key];

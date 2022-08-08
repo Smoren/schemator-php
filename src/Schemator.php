@@ -4,7 +4,7 @@
 namespace Smoren\Schemator;
 
 
-use Smoren\Schemator\Exceptions\ArrayNestedAccessorException;
+use Smoren\Schemator\Exceptions\NestedAccessorException;
 use Smoren\Schemator\Exceptions\SchematorException;
 use Throwable;
 
@@ -42,8 +42,7 @@ class Schemator
      */
     public function exec(array $source, array $schema, bool $strict = false)
     {
-        $result = [];
-        $toAccessor = new ArrayNestedAccessor($result, $this->pathDelimiter);
+        $toAccessor = new NestedAccessor($result, $this->pathDelimiter);
 
         foreach($schema as $keyTo => $keyFrom) {
             $value = $this->getValue($source, $keyFrom, $strict);
@@ -71,39 +70,18 @@ class Schemator
         }
 
         if($source === null) {
-            if(!$strict) {
-                return null;
-            }
-            // TODO need testing
-            SchematorException::throwWithNullSource($key);
+            return $this->getValueOfNullSource($key, $strict);
         }
 
         if(is_string($key)) {
-            $fromAccessor = new ArrayNestedAccessor($source, $this->pathDelimiter);
-            try {
-                return $fromAccessor->get($key, null, $strict);
-            } catch(ArrayNestedAccessorException $e) {
-                // TODO need testing
-                SchematorException::throwWithUnknownKey($key, $fromAccessor->getSource(), $e);
-            }
+            return $this->getValueByKey($source, $key, $strict);
         }
 
         if(is_array($key)) {
-            $result = $source;
-            foreach($key as $filterConfig) {
-                if(is_string($filterConfig)) {
-                    $result = $this->getValue($result, $filterConfig, $strict);
-                } elseif(is_array($filterConfig)) {
-                    $result = $this->runFilter($filterConfig, $result, $source);
-                } else {
-                    // TODO need testing, maybe exception?
-                    $result = null;
-                }
-            }
-
-            return $result;
+            return $this->getValueByFilters($source, $key, $strict);
         }
 
+        // TODO need testing, maybe exception?
         return null;
     }
 
@@ -117,6 +95,63 @@ class Schemator
     {
         $this->filters[$filterName] = $callback;
         return $this;
+    }
+
+    /**
+     * @param array $source
+     * @param string $key
+     * @param bool $strict
+     * @return array|mixed|null
+     * @throws SchematorException
+     */
+    protected function getValueByKey(array $source, string $key, bool $strict)
+    {
+        $fromAccessor = new NestedAccessor($source, $this->pathDelimiter);
+        try {
+            return $fromAccessor->get($key, null, $strict);
+        } catch(NestedAccessorException $e) {
+            // TODO need testing
+            throw SchematorException::createAsUnknownKey($key, $fromAccessor->getSource(), $e);
+        }
+    }
+
+    /**
+     * @param array $source
+     * @param array $filters
+     * @param bool $strict
+     * @return array|mixed|null
+     * @throws SchematorException
+     */
+    protected function getValueByFilters(array $source, array $filters, bool $strict)
+    {
+        $result = $source;
+        foreach($filters as $filterConfig) {
+            if(is_string($filterConfig)) {
+                $result = $this->getValue($result, $filterConfig, $strict);
+            } elseif(is_array($filterConfig)) {
+                $result = $this->runFilter($filterConfig, $result, $source);
+            } else {
+                // TODO need testing, maybe exception?
+                $result = null;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param $key
+     * @param bool $strict
+     * @return null
+     * @throws SchematorException
+     */
+    protected function getValueOfNullSource($key, bool $strict)
+    {
+        if(!$strict) {
+            return null;
+        }
+        // TODO need testing
+        throw SchematorException::createAsNullSource($key);
     }
 
     /**
@@ -136,9 +171,7 @@ class Schemator
         try {
             return $this->filters[$filterName]($this, $source, $rootSource, ...$filterConfig);
         } catch(Throwable $e) {
-            SchematorException::throwWithFilterError($filterName, $filterConfig, $source, $e);
+            throw SchematorException::createAsFilterError($filterName, $filterConfig, $source, $e);
         }
-
-        return null;
     }
 }

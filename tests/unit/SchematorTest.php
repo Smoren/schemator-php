@@ -450,6 +450,9 @@ class SchematorTest extends \Codeception\Test\Unit
         }
     }
 
+    /**
+     * @throws SchematorException
+     */
     public function testFilters()
     {
         $input = [
@@ -501,6 +504,9 @@ class SchematorTest extends \Codeception\Test\Unit
         $this->assertEquals(['value' => 875], $output);
     }
 
+    /**
+     * @throws SchematorException
+     */
     public function testNestedArrays()
     {
         $data = [

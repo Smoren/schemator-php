@@ -37,13 +37,13 @@ class SchematorException extends BaseException
      * @param $filterConfig
      * @param $source
      * @param Throwable $previous
-     * @throws SchematorException
+     * @return SchematorException
      */
-    public static function throwWithFilterError(
+    public static function createAsFilterError(
         string $filterName, $filterConfig, $source, Throwable $previous
-    ): void
+    ): SchematorException
     {
-        throw new SchematorException(
+        return new SchematorException(
             "filter error: '{$filterName}'",
             SchematorException::FILTER_ERROR,
             $previous,
@@ -60,11 +60,11 @@ class SchematorException extends BaseException
      * @param $key
      * @param $source
      * @param Throwable|null $previous
-     * @throws SchematorException
+     * @return SchematorException
      */
-    public static function throwWithUnknownKey($key, $source, ?Throwable $previous = null): void
+    public static function createAsUnknownKey($key, $source, ?Throwable $previous = null): SchematorException
     {
-        throw new SchematorException(
+        return new SchematorException(
             "cannot get value by key '{$key}'",
             SchematorException::CANNOT_GET_VALUE,
             $previous,
@@ -78,11 +78,11 @@ class SchematorException extends BaseException
     /**
      * @param $key
      * @param Throwable|null $previous
-     * @throws SchematorException
+     * @return SchematorException
      */
-    public static function throwWithNullSource($key, ?Throwable $previous = null): void
+    public static function createAsNullSource($key, ?Throwable $previous = null): SchematorException
     {
-        throw new SchematorException(
+        return new SchematorException(
             "cannot get value from null",
             SchematorException::CANNOT_GET_VALUE,
             $previous,
