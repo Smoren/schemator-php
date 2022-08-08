@@ -117,7 +117,7 @@ class Schemator
 
         $pathItem = array_shift($path);
 
-        if(!isset($source[$pathItem])) {
+        if(!array_key_exists($pathItem, $source)) {
             return null;
         }
 
