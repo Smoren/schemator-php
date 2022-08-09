@@ -50,16 +50,11 @@ class NestedAccessor
         );
 
         if($strict && count($notFoundKeys)) {
-            // TODO уточнить параметры
-            throw NestedAccessorException::createAsKeyNotFound('test', []);
+            // TODO test it!
+            throw NestedAccessorException::createAsKeysNotFound(array_unique($notFoundKeys));
         }
 
         return $result;
-    }
-
-    public function getWithDefaultValue(string $path, $defaultValue)
-    {
-        // TODO implement
     }
 
     /**

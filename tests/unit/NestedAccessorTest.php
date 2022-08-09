@@ -46,34 +46,44 @@ class NestedAccessorTest extends \Codeception\Test\Unit
 
         $accessor = new NestedAccessor($input);
 
-//        $this->assertEquals('Novgorod', $accessor->get('name'));
-//        $this->assertEquals('Novgorod', $accessor->get('name', 'Unknown', true));
-//        $this->assertEquals('Novgorod', $accessor->get('name', 'Unknown', false));
-//
-//        $this->assertEquals(null, $accessor->get('name1', null, false));
-//        $this->assertEquals('Unknown', $accessor->get('name1', 'Unknown', false));
-//        $this->assertEquals('Unknown', $accessor->get('name1', 'Unknown', true));
-//
-//        try {
-//            $accessor->get('name1', null, true);
-//            $this->assertTrue(false);
-//        } catch(NestedAccessorException $e) {
-//            $this->assertEquals(NestedAccessorException::KEY_NOT_FOUND, $e->getCode());
-//        }
-//
-//        $this->assertEquals(null, $accessor->get('status'));
-//        $this->assertEquals(null, $accessor->get('status', null, true));
-//        $this->assertEquals('Unknown', $accessor->get('status', 'Unknown', false));
-//        $this->assertEquals('Unknown', $accessor->get('status', 'Unknown', true));
-//
-//        $this->assertEquals('Moscow', $accessor->get('country.capitals.msk'));
-//        $this->assertEquals('Unknown', $accessor->get('country.capitals.msk1', 'Unknown'));
-//        $this->assertEquals(null, $accessor->get('country.capitals.msk1', null, false));
-//        try {
-//            $accessor->get('country.capitals.msk1');
-//            $this->assertTrue(false);
-//        } catch(NestedAccessorException $e) {
-//            $this->assertEquals(NestedAccessorException::KEY_NOT_FOUND, $e->getCode());
-//        }
+        $this->assertEquals('Novgorod', $accessor->get('name'));
+        $this->assertEquals('Novgorod', $accessor->get('name', true));
+        $this->assertEquals('Novgorod', $accessor->get('name', false));
+
+        $this->assertEquals(null, $accessor->get('name1', false));
+
+        try {
+            $accessor->get('name1', true);
+            $this->assertTrue(false);
+        } catch(NestedAccessorException $e) {
+            $this->assertEquals(NestedAccessorException::KEYS_NOT_FOUND, $e->getCode());
+        }
+
+        try {
+            $accessor->get('name1');
+            $this->assertTrue(false);
+        } catch(NestedAccessorException $e) {
+            $this->assertEquals(NestedAccessorException::KEYS_NOT_FOUND, $e->getCode());
+        }
+
+        try {
+            $accessor->get('name1', true);
+            $this->assertTrue(false);
+        } catch(NestedAccessorException $e) {
+            $this->assertEquals(NestedAccessorException::KEYS_NOT_FOUND, $e->getCode());
+        }
+
+        $this->assertEquals(null, $accessor->get('status'));
+        $this->assertEquals(null, $accessor->get('status', true));
+        $this->assertEquals(null, $accessor->get('status', false));
+
+        $this->assertEquals('Moscow', $accessor->get('country.capitals.msk'));
+        $this->assertEquals(null, $accessor->get('country.capitals.msk1', false));
+        try {
+            $accessor->get('country.capitals.msk1');
+            $this->assertTrue(false);
+        } catch(NestedAccessorException $e) {
+            $this->assertEquals(NestedAccessorException::KEYS_NOT_FOUND, $e->getCode());
+        }
     }
 }
