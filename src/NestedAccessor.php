@@ -23,7 +23,7 @@ class NestedAccessor
      * @param array|null $source
      * @param string $pathDelimiter
      */
-    public function __construct(?array &$source, string $pathDelimiter)
+    public function __construct(?array &$source, string $pathDelimiter = '.')
     {
         if($source === null) {
             $source = [];
@@ -41,7 +41,7 @@ class NestedAccessor
      * @return array|mixed|null
      * @throws NestedAccessorException
      */
-    public function get(string $path, $defaultValue = null, bool $strict = false)
+    public function get(string $path, $defaultValue = null, bool $strict = true)
     {
         try {
             return $this->_get(
