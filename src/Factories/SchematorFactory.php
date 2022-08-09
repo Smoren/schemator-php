@@ -1,10 +1,11 @@
 <?php
 
 
-namespace Smoren\Schemator;
+namespace Smoren\Schemator\Factories;
 
 use Smoren\Helpers\ArrHelper;
 use Smoren\Helpers\RuleHelper;
+use Smoren\Schemator\Components\Schemator;
 
 /**
  * Factory class for creating Schemator instance

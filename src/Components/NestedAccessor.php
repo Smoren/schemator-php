@@ -1,13 +1,14 @@
 <?php
 
 
-namespace Smoren\Schemator;
+namespace Smoren\Schemator\Components;
 
 
 use Smoren\Helpers\ArrHelper;
 use Smoren\Schemator\Exceptions\NestedAccessorException;
+use Smoren\Schemator\Interfaces\NestedAccessorInterface;
 
-class NestedAccessor
+class NestedAccessor implements NestedAccessorInterface
 {
     /**
      * @var array

@@ -1,18 +1,20 @@
 <?php
 
 
-namespace Smoren\Schemator;
+namespace Smoren\Schemator\Components;
 
 
 use Smoren\Schemator\Exceptions\NestedAccessorException;
 use Smoren\Schemator\Exceptions\SchematorException;
+use Smoren\Schemator\Interfaces\NestedAccessorFactoryInterface;
+use Smoren\Schemator\Interfaces\SchematorInterface;
 use Throwable;
 
 /**
  * Class for schematic data converting
  * @author Smoren <ofigate@gmail.com>
  */
-class Schemator
+class Schemator implements SchematorInterface
 {
     /**
      * @var callable[] filters map
@@ -22,14 +24,22 @@ class Schemator
      * @var string delimiter for multilevel paths
      */
     protected string $pathDelimiter;
+    /**
+     * @var NestedAccessorFactoryInterface nested accessor factory
+     */
+    protected NestedAccessorFactoryInterface $nestedAccessorFactory;
 
     /**
      * Schemator constructor.
      * @param string $pathDelimiter delimiter for multilevel paths
      */
-    public function __construct(string $pathDelimiter = '.')
+    public function __construct(
+        string $pathDelimiter = '.',
+        NestedAccessorFactoryInterface $nestedAccessorFactory = null
+    )
     {
         $this->pathDelimiter = $pathDelimiter;
+        $this->nestedAccessorFactory = $nestedAccessorFactory ?? new NestedAccessorFactory();
     }
 
     /**
@@ -42,7 +52,7 @@ class Schemator
      */
     public function exec(array $source, array $schema, bool $strict = false)
     {
-        $toAccessor = new NestedAccessor($result, $this->pathDelimiter);
+        $toAccessor = $this->nestedAccessorFactory->create($result, $this->pathDelimiter);
 
         foreach($schema as $keyTo => $keyFrom) {
             $value = $this->getValue($source, $keyFrom, $strict);
@@ -106,7 +116,7 @@ class Schemator
      */
     protected function getValueByKey(array $source, string $key, bool $strict)
     {
-        $fromAccessor = new NestedAccessor($source, $this->pathDelimiter);
+        $fromAccessor = $this->nestedAccessorFactory->create($source, $this->pathDelimiter);
         try {
             return $fromAccessor->get($key, $strict);
         } catch(NestedAccessorException $e) {

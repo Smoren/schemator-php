@@ -1,10 +1,11 @@
 <?php
 
 
-namespace Smoren\Schemator;
+namespace Smoren\Schemator\Components;
 
 
 use Generator;
+use Smoren\Schemator\Exceptions\SchematorException;
 
 /**
  * Class for mass schematic data converting
@@ -31,7 +32,7 @@ class MassSchemator
      * @param iterable $source iterable source of items to convert every one by schemator
      * @param array $schema schema for converting
      * @return Generator
-     * @throws Exceptions\SchematorException
+     * @throws SchematorException
      */
     public function generate(iterable $source, array $schema): Generator
     {
@@ -45,7 +46,7 @@ class MassSchemator
      * @param iterable $source iterable source of items to convert every one by schemator
      * @param array $schema schema for converting
      * @return array array of converted items
-     * @throws Exceptions\SchematorException
+     * @throws SchematorException
      */
     public function exec(iterable $source, array $schema): array
     {

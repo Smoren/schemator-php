@@ -3,8 +3,8 @@
 namespace Smoren\Schemator\Tests\Unit;
 
 
+use Smoren\Schemator\Components\NestedAccessor;
 use Smoren\Schemator\Exceptions\NestedAccessorException;
-use Smoren\Schemator\NestedAccessor;
 
 class NestedAccessorTest extends \Codeception\Test\Unit
 {

@@ -3,9 +3,9 @@
 namespace Smoren\Schemator\Tests\Unit;
 
 
+use Smoren\Schemator\Components\Schemator;
 use Smoren\Schemator\Exceptions\SchematorException;
-use Smoren\Schemator\Schemator;
-use Smoren\Schemator\SchematorFactory;
+use Smoren\Schemator\Factories\SchematorFactory;
 
 class SchematorTest extends \Codeception\Test\Unit
 {
