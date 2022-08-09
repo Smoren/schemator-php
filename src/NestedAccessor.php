@@ -36,23 +36,30 @@ class NestedAccessor
 
     /**
      * @param string $path
-     * @param null $defaultValue
      * @param bool $strict
      * @return array|mixed|null
      * @throws NestedAccessorException
      */
-    public function get(string $path, $defaultValue = null, bool $strict = true)
+    public function get(string $path, bool $strict = true)
     {
-        try {
-            return $this->_get(
-                $this->source, array_reverse(explode($this->pathDelimiter, $path)), $strict
-            ) ?? $defaultValue;
-        } catch(NestedAccessorException $e) {
-            if($strict && $defaultValue === null) {
-                throw $e;
-            }
-            return $defaultValue;
+        $result = $this->_get(
+            $this->source,
+            array_reverse(explode($this->pathDelimiter, $path)),
+            $strict,
+            $notFoundKeys
+        );
+
+        if($strict && count($notFoundKeys)) {
+            // TODO уточнить параметры
+            throw NestedAccessorException::createAsKeyNotFound('test', []);
         }
+
+        return $result;
+    }
+
+    public function getWithDefaultValue(string $path, $defaultValue)
+    {
+        // TODO implement
     }
 
     /**
@@ -77,11 +84,16 @@ class NestedAccessor
      * @param array $source
      * @param array $arPath
      * @param bool $strict
+     * @param array|null $notFoundKeys
      * @return array|mixed
      * @throws NestedAccessorException
      */
-    protected function _get(array $source, array $arPath, bool $strict)
+    protected function _get(array $source, array $arPath, bool $strict, ?array &$notFoundKeys)
     {
+        if($notFoundKeys === null) {
+            $notFoundKeys = [];
+        }
+
         if(!count($arPath)) {
             return $source;
         }
@@ -89,23 +101,22 @@ class NestedAccessor
         $key = array_pop($arPath);
 
         if(!array_key_exists($key, $source)) {
-            if(!$strict) {
-                return null;
-            }
+            $notFoundKeys[] = implode(array_reverse([...$arPath, $key]));
+            return null;
             // TODO need testing
-            throw NestedAccessorException::createAsKeyNotFound($key, $source);
+            //throw NestedAccessorException::createAsKeyNotFound($key, $source);
         }
 
         $source = $source[$key];
 
         if(count($arPath)) {
             if(ArrHelper::isAssoc($source)) {
-                return $this->_get($source, $arPath, $strict);
+                return $this->_get($source, $arPath, $strict, $notFoundKeys);
             }
 
             $subValues = [];
             foreach($source as $sourceItem) {
-                $subValues[] = $this->_get($sourceItem, $arPath, $strict);
+                $subValues[] = $this->_get($sourceItem, $arPath, $strict, $notFoundKeys);
             }
             return $subValues;
         }

@@ -108,7 +108,7 @@ class Schemator
     {
         $fromAccessor = new NestedAccessor($source, $this->pathDelimiter);
         try {
-            return $fromAccessor->get($key, null, $strict);
+            return $fromAccessor->get($key, $strict);
         } catch(NestedAccessorException $e) {
             // TODO need testing
             throw SchematorException::createAsUnknownKey($key, $fromAccessor->getSource(), $e);
