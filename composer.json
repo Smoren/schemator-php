@@ -15,8 +15,8 @@
     "smoren/helpers": "^0.1.4"
   },
   "require-dev": {
-    "codeception/codeception": "^4.0",
-    "codeception/module-asserts": "^1.3"
+    "codeception/codeception": "^5.0",
+    "codeception/module-asserts": "^2.0"
   },
   "autoload": {
     "psr-4": {
