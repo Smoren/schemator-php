@@ -117,12 +117,12 @@ class Schemator implements SchematorInterface
      */
     protected function getValueByKey(array $source, string $key, bool $strict)
     {
-        $fromAccessor = $this->nestedAccessorFactory->create($source, $this->pathDelimiter);
         try {
+            $fromAccessor = $this->nestedAccessorFactory->create($source, $this->pathDelimiter);
             return $fromAccessor->get($key, $strict);
         } catch(NestedAccessorException $e) {
             // TODO need testing
-            throw SchematorException::createAsUnknownKey($key, $fromAccessor->getSource(), $e);
+            throw SchematorException::createAsUnknownKey($key, $source, $e);
         }
     }
 

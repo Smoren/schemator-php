@@ -6,6 +6,10 @@ namespace Smoren\Schemator\Exceptions;
 
 use Smoren\ExtendedExceptions\BaseException;
 
+/**
+ * Class NestedAccessorException
+ * @package Smoren\Schemator\Exceptions
+ */
 class NestedAccessorException extends BaseException
 {
     const SOURCE_IS_SCALAR = 1;
