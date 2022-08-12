@@ -86,4 +86,44 @@ class NestedAccessorTest extends \Codeception\Test\Unit
             $this->assertEquals(NestedAccessorException::KEYS_NOT_FOUND, $e->getCode());
         }
     }
+
+    public function testFlatten()
+    {
+        $input = [
+            'countries' => [
+                [
+                    'name' => 'Russia',
+                    'cities' => [
+                        [
+                            'name' => 'Moscow',
+                            'extra' => [
+                                'codes' => [495, 499],
+                            ],
+                        ],
+                        [
+                            'name' => 'Petersburg',
+                            'extra' => [
+                                'codes' => [500],
+                            ],
+                        ],
+                    ],
+                ],
+                [
+                    'name' => 'Belarus',
+                    'cities' => [
+                        [
+                            'name' => 'Minsk',
+                            'extra' => [
+                                'codes' => [800, 900],
+                            ],
+                        ],
+                    ],
+                ],
+            ]
+        ];
+
+        $accessor = new NestedAccessor($input);
+        $codes = $accessor->get('countries.cities.extra.codes');
+        $a = 1;
+    }
 }
