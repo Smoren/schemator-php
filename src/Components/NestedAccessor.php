@@ -11,9 +11,9 @@ use Smoren\Schemator\Interfaces\NestedAccessorInterface;
 class NestedAccessor implements NestedAccessorInterface
 {
     /**
-     * @var array
+     * @var array|object
      */
-    protected array $source; // TODO object?
+    protected $source;
     /**
      * @var string
      */
@@ -21,13 +21,18 @@ class NestedAccessor implements NestedAccessorInterface
 
     /**
      * ArrayNestedAccessor constructor.
-     * @param array|null $source
+     * @param array|object|null $source
      * @param string $pathDelimiter
+     * @throws NestedAccessorException
      */
-    public function __construct(?array &$source, string $pathDelimiter = '.')
+    public function __construct(&$source, string $pathDelimiter = '.')
     {
         if($source === null) {
             $source = [];
+        }
+
+        if(!is_array($source) && !is_object($source)) {
+            throw NestedAccessorException::createAsSourceIsNotAccessible($source);
         }
 
         /** @var array $source */
@@ -43,16 +48,18 @@ class NestedAccessor implements NestedAccessorInterface
      */
     public function get(string $path, bool $strict = true)
     {
-        $result = $this->_get(
+        $result = null;
+        $errorsCount = 0;
+
+        $this->_get(
             $this->source,
             array_reverse(explode($this->pathDelimiter, $path)),
-            $strict,
-            $notFoundKeys
+            $result,
+            $errorsCount
         );
 
-        if($strict && count($notFoundKeys)) {
-            // TODO test it!
-            throw NestedAccessorException::createAsKeysNotFound(array_unique($notFoundKeys));
+        if($strict && $errorsCount) {
+            throw NestedAccessorException::createAsKeyNotFound($path, $errorsCount);
         }
 
         return $result;
@@ -77,60 +84,77 @@ class NestedAccessor implements NestedAccessorInterface
     }
 
     /**
-     * @param array $source
-     * @param array $arPath
-     * @param bool $strict
-     * @param array|null $notFoundKeys
-     * @return array|mixed
-     * @throws NestedAccessorException
+     * @param mixed $source
+     * @param array $path
+     * @param array|mixed $result
+     * @param int $errorsCount
      */
-    protected function _get(array $source, array $arPath, bool $strict, ?array &$notFoundKeys)
+    protected function _get($source, array $path, &$result, int &$errorsCount)
     {
-        if($notFoundKeys === null) {
-            $notFoundKeys = [];
+        if(!count($path)) {
+            if(is_array($result)) {
+                $result[] = $source;
+            } else {
+                $result = $source;
+            }
+            return;
         }
 
-        if(!count($arPath)) {
-            return $source;
-        }
+        while(count($path)) {
+            $key = array_pop($path);
+            $pathPassed[] = $key;
 
-        $key = array_pop($arPath);
-
-        if(!array_key_exists($key, $source)) {
-            $notFoundKeys[] = implode(array_reverse([...$arPath, $key]));
-            return null;
-            // TODO need testing
-            //throw NestedAccessorException::createAsKeyNotFound($key, $source);
-        }
-
-        $source = $source[$key];
-
-        if(count($arPath)) {
-            if(ArrHelper::isAssoc($source)) {
-                return $this->_get($source, $arPath, $strict, $notFoundKeys);
+            if(is_array($source)) {
+                if(!array_key_exists($key, $source)) {
+                    $errorsCount++;
+                    return;
+                }
+                $source = $source[$key];
+            } elseif(is_object($source)) {
+                if(!property_exists($source, $key)) {
+                    $errorsCount++;
+                    return;
+                }
+                $source = $source->{$key};
+            } else {
+                $errorsCount++;
+                return;
             }
 
-            $subValues = [];
-            foreach($source as $sourceItem) {
-                $subValues[] = $this->_get($sourceItem, $arPath, $strict, $notFoundKeys);
+            if(count($path) && is_array($source) && !ArrHelper::isAssoc($source)) {
+                if(!is_array($result)) {
+                    $result = [];
+                }
+                foreach($source as $item) {
+                    $this->_get($item, $path, $result, $errorsCount);
+                }
+                return;
             }
-            return $subValues;
         }
 
-        return $source;
+        $this->_get($source, $path, $result, $errorsCount);
     }
 
     /**
-     * @param array $source
-     * @param array $arPath
+     * @param array|object $source
+     * @param array $path
      * @param $value
      * @return $this
      */
-    protected function _set(array &$source, array $arPath, $value): self
+    protected function _set(&$source, array $path, $value): self
     {
         $temp = &$source;
-        foreach($arPath as $key) {
-            $temp = &$temp[$key];
+        foreach($path as $key) {
+            if(isset($temp) && is_scalar($temp)) {
+                // value in the middle of the path must me an array
+                $temp = [];
+            }
+
+            if(is_object($source)) {
+                $temp = &$temp->{$key};
+            } else {
+                $temp = &$temp[$key];
+            }
         }
         $temp = $value;
         unset($temp);

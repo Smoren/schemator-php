@@ -8,20 +8,39 @@ use Smoren\ExtendedExceptions\BaseException;
 
 class NestedAccessorException extends BaseException
 {
-    const KEYS_NOT_FOUND = 1;
+    const SOURCE_IS_NOT_ACCESSIBLE = 1;
+    const KEY_NOT_FOUND = 2;
 
     /**
-     * @param array $keys
+     * @param mixed $source
      * @return NestedAccessorException
      */
-    public static function createAsKeysNotFound(array $keys): NestedAccessorException
+    public static function createAsSourceIsNotAccessible($source): NestedAccessorException
     {
         return new NestedAccessorException(
-            'keys ('.implode(', ', $keys).') not found',
-            NestedAccessorException::KEYS_NOT_FOUND,
+            'source is not accessible',
+            NestedAccessorException::SOURCE_IS_NOT_ACCESSIBLE,
             null,
             [
-                'keys' => $keys,
+                'source_type' => gettype($source),
+            ]
+        );
+    }
+
+    /**
+     * @param string $key
+     * @param int $count
+     * @return NestedAccessorException
+     */
+    public static function createAsKeyNotFound(string $key, int $count): NestedAccessorException
+    {
+        return new NestedAccessorException(
+            "key '{$key}' not found",
+            NestedAccessorException::KEY_NOT_FOUND,
+            null,
+            [
+                'key' => $key,
+                'count' => $count,
             ]
         );
     }

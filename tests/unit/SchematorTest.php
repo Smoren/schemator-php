@@ -38,6 +38,7 @@ class SchematorTest extends \Codeception\Test\Unit
                     'id' => 1002,
                     'name' => 'Leninskiy',
                     'houses' => [22, 35, 49],
+                    'unknown' => null,
                 ],
                 [
                     'id' => 1003,
@@ -79,7 +80,7 @@ class SchematorTest extends \Codeception\Test\Unit
         $this->assertEquals('St. Petersburg', $data['country_second_capital']);
         $this->assertEquals(null, $data['unknown']);
         $this->assertEquals(null, $data['unknown_another']);
-        $this->assertEquals([null, null, 'some value'], $data['unknown_array']);
+        $this->assertEquals([null, 'some value'], $data['unknown_array']);
         $this->assertEquals($input, $data['raw']);
         $this->assertEquals([
             'country_id' => 10,
@@ -203,7 +204,7 @@ class SchematorTest extends \Codeception\Test\Unit
         $this->assertEquals('St. Petersburg', $data['country_second_capital']);
         $this->assertEquals(null, $data['unknown']);
         $this->assertEquals(null, $data['unknown_another']);
-        $this->assertEquals([null, null, null], $data['unknown_array']);
+        $this->assertEquals([], $data['unknown_array']);
         $this->assertEquals($input, $data['raw']);
         $this->assertEquals([
             'country_id' => 10,
@@ -496,7 +497,6 @@ class SchematorTest extends \Codeception\Test\Unit
         $schema = [
             'value' => [
                 'color_variants.size_variants.price',
-                ['flatten'],
                 ['average'],
             ],
         ];
@@ -548,8 +548,8 @@ class SchematorTest extends \Codeception\Test\Unit
 
         $schema = [
             'country_names' => 'countries.name',
-            'city_names' => ['countries.cities.name', ['flatten']],
-            'street_names' => ['countries.cities.streets.name', ['flatten']],
+            'city_names' => 'countries.cities.name',
+            'street_names' => 'countries.cities.streets.name',
         ];
 
         $schemator = SchematorFactory::create();
