@@ -6,6 +6,7 @@ namespace Smoren\Schemator\Components;
 
 use Smoren\Schemator\Exceptions\NestedAccessorException;
 use Smoren\Schemator\Exceptions\SchematorException;
+use Smoren\Schemator\Factories\NestedAccessorFactory;
 use Smoren\Schemator\Interfaces\NestedAccessorFactoryInterface;
 use Smoren\Schemator\Interfaces\SchematorInterface;
 use Throwable;

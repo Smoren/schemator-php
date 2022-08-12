@@ -5,6 +5,7 @@ namespace Smoren\Schemator\Factories;
 
 use Smoren\Helpers\ArrHelper;
 use Smoren\Helpers\RuleHelper;
+use Smoren\Schemator\Components\MassSchemator;
 use Smoren\Schemator\Components\Schemator;
 
 /**
