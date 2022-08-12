@@ -31,8 +31,8 @@ class NestedAccessor implements NestedAccessorInterface
             $source = [];
         }
 
-        if(!is_array($source) && !is_object($source)) {
-            throw NestedAccessorException::createAsSourceIsNotAccessible($source);
+        if(is_scalar($source)) {
+            throw NestedAccessorException::createAsSourceIsScalar($source);
         }
 
         /** @var array $source */
@@ -41,13 +41,17 @@ class NestedAccessor implements NestedAccessorInterface
     }
 
     /**
-     * @param string $path
+     * @param string|null $path
      * @param bool $strict
-     * @return array|mixed|null
+     * @return array|object|null
      * @throws NestedAccessorException
      */
-    public function get(string $path, bool $strict = true)
+    public function get(?string $path = null, bool $strict = true)
     {
+        if($path === null || $path === '') {
+            return $this->source;
+        }
+
         $result = null;
         $errorsCount = 0;
 

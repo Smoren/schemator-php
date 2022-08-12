@@ -8,18 +8,18 @@ use Smoren\ExtendedExceptions\BaseException;
 
 class NestedAccessorException extends BaseException
 {
-    const SOURCE_IS_NOT_ACCESSIBLE = 1;
+    const SOURCE_IS_SCALAR = 1;
     const KEY_NOT_FOUND = 2;
 
     /**
      * @param mixed $source
      * @return NestedAccessorException
      */
-    public static function createAsSourceIsNotAccessible($source): NestedAccessorException
+    public static function createAsSourceIsScalar($source): NestedAccessorException
     {
         return new NestedAccessorException(
-            'source is not accessible',
-            NestedAccessorException::SOURCE_IS_NOT_ACCESSIBLE,
+            'source is scalar',
+            NestedAccessorException::SOURCE_IS_SCALAR,
             null,
             [
                 'source_type' => gettype($source),

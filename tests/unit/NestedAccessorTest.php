@@ -305,6 +305,9 @@ class NestedAccessorTest extends \Codeception\Test\Unit
     {
         $accessor = new NestedAccessor($input);
         $accessor->set('test.a.a', 1);
+        $this->assertEquals(['test' => ['a' => ['a' => 1]]], $accessor->get());
+        $this->assertEquals(['test' => ['a' => ['a' => 1]]], $accessor->get(''));
+        $this->assertEquals(['test' => ['a' => ['a' => 1]]], $accessor->get(null));
         $accessor->set('test.a.b', 2);
         $accessor->set('test.b.a', 3);
         $this->assertEquals(['a' => 1, 'b' => 2], $accessor->get('test.a'));
@@ -320,5 +323,54 @@ class NestedAccessorTest extends \Codeception\Test\Unit
         $this->assertEquals((object)['d' => 'e'], $accessor->get('test.b.c', false));
         $this->assertEquals('e', $accessor->get('test.b.c.d'));
         $this->assertEquals(['a' => 1, 'b' => 2], $accessor->get('test.a'));
+
+        $input = ['a' => 1];
+        $accessor = new NestedAccessor($input);
+        $this->assertEquals(1, $accessor->get('a'));
+        $this->assertEquals(['a' => 1], $accessor->get());
+        $this->assertEquals(['a' => 1], $accessor->get(''));
+        $accessor->set('a.b', 22);
+        $this->assertEquals(['b' => 22], $accessor->get('a'));
+        $accessor->set('c', 33);
+        $this->assertEquals(['a' => ['b' => 22], 'c' => 33], $accessor->get());
+    }
+
+    public function testBadSource()
+    {
+        $input = 123;
+        try {
+            new NestedAccessor($input);
+            $this->assertTrue(false);
+        } catch(NestedAccessorException $e) {
+            $this->assertEquals(NestedAccessorException::SOURCE_IS_SCALAR, $e->getCode());
+            $this->assertEquals('integer', $e->getData()['source_type']);
+        }
+
+        $input = 123.5;
+        try {
+            new NestedAccessor($input);
+            $this->assertTrue(false);
+        } catch(NestedAccessorException $e) {
+            $this->assertEquals(NestedAccessorException::SOURCE_IS_SCALAR, $e->getCode());
+            $this->assertEquals('double', $e->getData()['source_type']);
+        }
+
+        $input = 'str';
+        try {
+            new NestedAccessor($input);
+            $this->assertTrue(false);
+        } catch(NestedAccessorException $e) {
+            $this->assertEquals(NestedAccessorException::SOURCE_IS_SCALAR, $e->getCode());
+            $this->assertEquals('string', $e->getData()['source_type']);
+        }
+
+        $input = true;
+        try {
+            new NestedAccessor($input);
+            $this->assertTrue(false);
+        } catch(NestedAccessorException $e) {
+            $this->assertEquals(NestedAccessorException::SOURCE_IS_SCALAR, $e->getCode());
+            $this->assertEquals('boolean', $e->getData()['source_type']);
+        }
     }
 }
