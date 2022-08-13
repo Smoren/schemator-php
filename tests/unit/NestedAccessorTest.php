@@ -59,7 +59,7 @@ class NestedAccessorTest extends \Codeception\Test\Unit
             $accessor->get('name1', true);
             $this->assertTrue(false);
         } catch(NestedAccessorException $e) {
-            $this->assertEquals(NestedAccessorException::KEY_NOT_FOUND, $e->getCode());
+            $this->assertEquals(NestedAccessorException::CANNOT_GET_VALUE, $e->getCode());
             $this->assertEquals('name1', $e->getData()['key']);
             $this->assertEquals(1, $e->getData()['count']);
         }
@@ -68,7 +68,7 @@ class NestedAccessorTest extends \Codeception\Test\Unit
             $accessor->get('name1');
             $this->assertTrue(false);
         } catch(NestedAccessorException $e) {
-            $this->assertEquals(NestedAccessorException::KEY_NOT_FOUND, $e->getCode());
+            $this->assertEquals(NestedAccessorException::CANNOT_GET_VALUE, $e->getCode());
             $this->assertEquals('name1', $e->getData()['key']);
             $this->assertEquals(1, $e->getData()['count']);
         }
@@ -77,7 +77,7 @@ class NestedAccessorTest extends \Codeception\Test\Unit
             $accessor->get('name1', true);
             $this->assertTrue(false);
         } catch(NestedAccessorException $e) {
-            $this->assertEquals(NestedAccessorException::KEY_NOT_FOUND, $e->getCode());
+            $this->assertEquals(NestedAccessorException::CANNOT_GET_VALUE, $e->getCode());
             $this->assertEquals('name1', $e->getData()['key']);
             $this->assertEquals(1, $e->getData()['count']);
         }
@@ -92,7 +92,7 @@ class NestedAccessorTest extends \Codeception\Test\Unit
             $accessor->get('country.capitals.msk1');
             $this->assertTrue(false);
         } catch(NestedAccessorException $e) {
-            $this->assertEquals(NestedAccessorException::KEY_NOT_FOUND, $e->getCode());
+            $this->assertEquals(NestedAccessorException::CANNOT_GET_VALUE, $e->getCode());
             $this->assertEquals('country.capitals.msk1', $e->getData()['key']);
             $this->assertEquals(1, $e->getData()['count']);
         }
@@ -241,7 +241,7 @@ class NestedAccessorTest extends \Codeception\Test\Unit
             $accessor->get('countries.cities.extra.codes.value');
             $this->assertTrue(false);
         } catch(NestedAccessorException $e) {
-            $this->assertEquals(NestedAccessorException::KEY_NOT_FOUND, $e->getCode());
+            $this->assertEquals(NestedAccessorException::CANNOT_GET_VALUE, $e->getCode());
             $this->assertEquals('countries.cities.extra.codes.value', $e->getData()['key']);
             $this->assertEquals(3, $e->getData()['count']);
         }
@@ -321,7 +321,16 @@ class NestedAccessorTest extends \Codeception\Test\Unit
         $this->assertEquals(null, $accessor->get('test.b.c.d', false));
         $accessor->set('test.b.c', (object)['d' => 'e']);
         $this->assertEquals((object)['d' => 'e'], $accessor->get('test.b.c', false));
+        try {
+            $accessor->set('test.b.c.f', 123);
+            $this->assertTrue(false);
+        } catch(NestedAccessorException $e) {
+            $this->assertEquals(NestedAccessorException::CANNOT_SET_VALUE, $e->getCode());
+            $this->assertEquals('f', $e->getData()['key']);
+        }
         $this->assertEquals('e', $accessor->get('test.b.c.d'));
+        $accessor->set('test.b.c.f', 123, false);
+        $this->assertEquals(123, $accessor->get('test.b.c.f'));
         $this->assertEquals(['a' => 1, 'b' => 2], $accessor->get('test.a'));
 
         $input = ['a' => 1];

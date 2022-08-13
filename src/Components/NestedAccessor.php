@@ -73,7 +73,7 @@ class NestedAccessor implements NestedAccessorInterface
 
         // when strict mode is on and we got errors
         if($strict && $errorsCount) {
-            throw NestedAccessorException::createAsKeyNotFound($path, $errorsCount);
+            throw NestedAccessorException::createAsCannotGetValue($path, $errorsCount);
         }
 
         return $result;
@@ -83,11 +83,13 @@ class NestedAccessor implements NestedAccessorInterface
      * Setter of source part specified by nested path
      * @param string $path nested path
      * @param mixed $value value to save by path
+     * @param bool $strict when true throw exception if path not exist in source object
      * @return $this
+     * @throws NestedAccessorException
      */
-    public function set(string $path, $value): self
+    public function set(string $path, $value, bool $strict = true): self
     {
-        return $this->_set($this->source, explode($this->pathDelimiter, $path), $value);
+        return $this->_set($this->source, explode($this->pathDelimiter, $path), $value, $strict);
     }
 
     /**
@@ -168,9 +170,11 @@ class NestedAccessor implements NestedAccessorInterface
      * @param array|object $source source to save value to
      * @param array $path nested path
      * @param mixed $value value to save to source
+     * @param bool $strict when true throw exception if path not exist in source object
      * @return $this
+     * @throws NestedAccessorException
      */
-    protected function _set(&$source, array $path, $value): self
+    protected function _set(&$source, array $path, $value, bool $strict): self
     {
         $temp = &$source;
         // let's iterate every path part to go deeper into nesting
@@ -181,7 +185,10 @@ class NestedAccessor implements NestedAccessorInterface
             }
 
             // go to the next nested level
-            if(is_object($source)) {
+            if(is_object($temp)) {
+                if($strict && !property_exists($temp, $key)) {
+                    throw NestedAccessorException::createAsCannotSetValue($key);
+                }
                 $temp = &$temp->{$key};
             } else {
                 $temp = &$temp[$key];

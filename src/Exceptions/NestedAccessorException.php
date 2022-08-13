@@ -13,7 +13,8 @@ use Smoren\ExtendedExceptions\BaseException;
 class NestedAccessorException extends BaseException
 {
     const SOURCE_IS_SCALAR = 1;
-    const KEY_NOT_FOUND = 2;
+    const CANNOT_GET_VALUE = 2;
+    const CANNOT_SET_VALUE = 3;
 
     /**
      * Creates a new exception instance for "source is scalar" error
@@ -33,20 +34,37 @@ class NestedAccessorException extends BaseException
     }
 
     /**
-     * Creates a new exception instance for "not found key" error
+     * Creates a new exception instance for "cannot get value" error
      * @param string $key path key
      * @param int $count errors count
      * @return NestedAccessorException
      */
-    public static function createAsKeyNotFound(string $key, int $count): NestedAccessorException
+    public static function createAsCannotGetValue(string $key, int $count): NestedAccessorException
     {
         return new NestedAccessorException(
-            "key '{$key}' not found",
-            NestedAccessorException::KEY_NOT_FOUND,
+            "cannot get value by key '{$key}'",
+            NestedAccessorException::CANNOT_GET_VALUE,
             null,
             [
                 'key' => $key,
                 'count' => $count,
+            ]
+        );
+    }
+
+    /**
+     * Creates a new exception instance for "cannot set value" error
+     * @param string $key path key
+     * @return NestedAccessorException
+     */
+    public static function createAsCannotSetValue(string $key): NestedAccessorException
+    {
+        return new NestedAccessorException(
+            "cannot set value by key '{$key}'",
+            NestedAccessorException::CANNOT_SET_VALUE,
+            null,
+            [
+                'key' => $key,
             ]
         );
     }
