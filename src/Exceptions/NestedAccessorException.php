@@ -8,7 +8,7 @@ use Smoren\ExtendedExceptions\BaseException;
 
 /**
  * Class NestedAccessorException
- * @package Smoren\Schemator\Exceptions
+ * @author Smoren <ofigate@gmail.com>
  */
 class NestedAccessorException extends BaseException
 {
@@ -16,7 +16,8 @@ class NestedAccessorException extends BaseException
     const KEY_NOT_FOUND = 2;
 
     /**
-     * @param mixed $source
+     * Creates a new exception instance for "source is scalar" error
+     * @param mixed $source source
      * @return NestedAccessorException
      */
     public static function createAsSourceIsScalar($source): NestedAccessorException
@@ -32,8 +33,9 @@ class NestedAccessorException extends BaseException
     }
 
     /**
-     * @param string $key
-     * @param int $count
+     * Creates a new exception instance for "not found key" error
+     * @param string $key path key
+     * @param int $count errors count
      * @return NestedAccessorException
      */
     public static function createAsKeyNotFound(string $key, int $count): NestedAccessorException

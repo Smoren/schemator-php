@@ -8,12 +8,17 @@ use Smoren\Schemator\Components\NestedAccessor;
 use Smoren\Schemator\Exceptions\NestedAccessorException;
 use Smoren\Schemator\Interfaces\NestedAccessorFactoryInterface;
 
+/**
+ * Class NestedAccessorFactory
+ * @author Smoren <ofigate@gmail.com>
+ */
 class NestedAccessorFactory implements NestedAccessorFactoryInterface
 {
     /**
-     * @param array|null $source
-     * @param string $pathDelimiter
-     * @return NestedAccessor
+     * Creates NestedAccessor instance
+     * @param array|null $source source for accessing
+     * @param string $pathDelimiter nesting path separator
+     * @return NestedAccessor nested accessor instance
      * @throws NestedAccessorException
      */
     public static function create(?array &$source, string $pathDelimiter = '.'): NestedAccessor

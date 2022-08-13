@@ -9,7 +9,7 @@ use Smoren\Schemator\Exceptions\SchematorException;
 
 /**
  * Class for mass schematic data converting
- * @package Smoren\Schemator
+ * @author Smoren <ofigate@gmail.com>
  */
 class MassSchemator
 {

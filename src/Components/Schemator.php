@@ -122,7 +122,7 @@ class Schemator implements SchematorInterface
             return $fromAccessor->get($key, $strict);
         } catch(NestedAccessorException $e) {
             // TODO need testing
-            throw SchematorException::createAsUnknownKey($key, $source, $e);
+            throw SchematorException::createAsCannotGetValue($key, $source, $e);
         }
     }
 

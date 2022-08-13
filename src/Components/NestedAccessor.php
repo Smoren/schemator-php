@@ -10,7 +10,7 @@ use Smoren\Schemator\Interfaces\NestedAccessorInterface;
 
 /**
  * Accessor class for getting and setting to source array or object with nested keys
- * @package Smoren\Schemator\Components
+ * @author Smoren <ofigate@gmail.com>
  */
 class NestedAccessor implements NestedAccessorInterface
 {
