@@ -1,4 +1,5 @@
 vendor
 .idea
+tests/_output/coverage
 tests/_support/_generated
 composer.lock
