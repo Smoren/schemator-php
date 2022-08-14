@@ -2,6 +2,8 @@
 
 Schematic data converter
 
+[![Coverage Status](https://coveralls.io/repos/github/Smoren/schemator-php/badge.svg?branch=master)](https://coveralls.io/github/Smoren/schemator-php?branch=master)
+
 ### How to install to your project
 ```
 composer require smoren/schemator
