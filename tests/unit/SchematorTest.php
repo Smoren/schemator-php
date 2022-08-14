@@ -421,12 +421,6 @@ class SchematorTest extends \Codeception\Test\Unit
         $this->assertEquals('2022-04-28', $output['date']);
 
         $schema = [
-            'date' => ['date', ['date', 'Y-m-d H:i']]
-        ];
-        $output = $schemator->exec($input, $schema);
-        $this->assertEquals('2022-04-28 19:01', $output['date']);
-
-        $schema = [
             'date' => ['date', ['date', 'Y-m-d H:i', 3]]
         ];
         $output = $schemator->exec($input, $schema);
