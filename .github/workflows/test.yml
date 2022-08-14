@@ -67,7 +67,7 @@ jobs:
         run: |
           ./vendor/bin/codecept build
           ./vendor/bin/codecept run unit tests/unit --coverage-xml
-#      - name: Code Coverage (Coveralls)
-#        env:
-#          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        run: php vendor/bin/php-coveralls -v
+      - name: Code Coverage (Coveralls)
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: php vendor/bin/php-coveralls -v
