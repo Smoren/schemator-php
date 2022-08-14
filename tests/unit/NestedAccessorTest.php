@@ -296,6 +296,18 @@ class NestedAccessorTest extends \Codeception\Test\Unit
         $this->assertEquals(['Russia', 'Belarus'], $accessor->get('countries.name'));
         $this->assertEquals(['Moscow', 'Petersburg', 'Minsk'], $accessor->get('countries.cities.name'));
         $this->assertEquals([7495, 7499, 7812, 375017], $accessor->get('countries.cities.extra.codes.value'));
+
+        $input = (object)[
+            'a' => 1,
+            'b' => (object)[
+                'c' => 2,
+            ]
+        ];
+        $accessor = new NestedAccessor($input);
+        $this->assertEquals(1, $accessor->get('a'));
+        $this->assertEquals((object)['c' => 2], $accessor->get('b'));
+        $this->assertEquals(null, $accessor->get('c', false));
+        $this->assertEquals(null, $accessor->get('c.d.e', false));
     }
 
     /**

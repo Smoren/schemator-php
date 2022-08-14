@@ -45,13 +45,13 @@ class Schemator implements SchematorInterface
 
     /**
      * Converts input data with using schema
-     * @param array $source input data to convert
+     * @param array|object $source input data to convert
      * @param array $schema schema for converting
      * @param bool $strict throw exception if key not exist
      * @return array|mixed converted data
      * @throws SchematorException
      */
-    public function exec(array $source, array $schema, bool $strict = false)
+    public function exec($source, array $schema, bool $strict = false)
     {
         $toAccessor = $this->nestedAccessorFactory->create($result, $this->pathDelimiter);
 
@@ -60,7 +60,7 @@ class Schemator implements SchematorInterface
             if($keyTo === '') {
                 return $value;
             }
-            $toAccessor->set($keyTo, $value);
+            $toAccessor->set($keyTo, $value, $strict);
         }
 
         return $result;
@@ -68,20 +68,20 @@ class Schemator implements SchematorInterface
 
     /**
      * Returns value from source by schema item
-     * @param array|null $source source to extract data from
+     * @param array|object|null $source source to extract data from
      * @param string|array $key item of schema (string as path or array as filter config)
      * @param bool $strict throw exception if key not exist
      * @return mixed result value
      * @throws SchematorException
      */
-    public function getValue(?array $source, $key, bool $strict = false)
+    public function getValue($source, $key, bool $strict = false)
     {
-        if($key === '') {
+        if($key === '' || $key === null) {
             return $source;
         }
 
-        if($source === null) {
-            return $this->getValueOfNullSource($key, $strict);
+        if($source === null || (!is_array($source) && !is_object($source))) {
+            return $this->getValueFromUnsupportedSource($source, $key, $strict);
         }
 
         if(is_string($key)) {
@@ -92,8 +92,7 @@ class Schemator implements SchematorInterface
             return $this->getValueByFilters($source, $key, $strict);
         }
 
-        // TODO need testing, maybe exception?
-        return null;
+        return $this->getValueByUnsupportedKey($source, $key, $strict);
     }
 
     /**
@@ -121,8 +120,7 @@ class Schemator implements SchematorInterface
             $fromAccessor = $this->nestedAccessorFactory->create($source, $this->pathDelimiter);
             return $fromAccessor->get($key, $strict);
         } catch(NestedAccessorException $e) {
-            // TODO need testing
-            throw SchematorException::createAsCannotGetValue($key, $source, $e);
+            throw SchematorException::createAsCannotGetValue($source, $key, $e);
         }
     }
 
@@ -140,9 +138,11 @@ class Schemator implements SchematorInterface
             if(is_string($filterConfig)) {
                 $result = $this->getValue($result, $filterConfig, $strict);
             } elseif(is_array($filterConfig)) {
-                $result = $this->runFilter($filterConfig, $result, $source);
+                $result = $this->runFilter($filterConfig, $result, $source, $strict);
             } else {
-                // TODO need testing, maybe exception?
+                if($strict) {
+                    throw SchematorException::createAsUnsupportedFilterConfigType($filterConfig);
+                }
                 $result = null;
             }
         }
@@ -151,18 +151,33 @@ class Schemator implements SchematorInterface
     }
 
     /**
-     * @param $key
+     * @param mixed $source
+     * @param mixed $key
      * @param bool $strict
      * @return null
      * @throws SchematorException
      */
-    protected function getValueOfNullSource($key, bool $strict)
+    protected function getValueFromUnsupportedSource($source, $key, bool $strict)
     {
         if(!$strict) {
             return null;
         }
-        // TODO need testing
-        throw SchematorException::createAsNullSource($key);
+        throw SchematorException::createAsUnsupportedSourceType($source, $key);
+    }
+
+    /**
+     * @param mixed $source
+     * @param mixed $key
+     * @param bool $strict
+     * @return null
+     * @throws SchematorException
+     */
+    protected function getValueByUnsupportedKey($source, $key, bool $strict)
+    {
+        if(!$strict) {
+            return null;
+        }
+        throw SchematorException::createAsUnsupportedKeyType($source, $key);
     }
 
     /**
@@ -170,10 +185,11 @@ class Schemator implements SchematorInterface
      * @param array $filterConfig filter config [filterName, ...args]
      * @param mixed $source source to extract value from
      * @param array $rootSource root source
+     * @param bool $strict
      * @return mixed result value
      * @throws SchematorException
      */
-    protected function runFilter(array $filterConfig, $source, array $rootSource)
+    protected function runFilter(array $filterConfig, $source, array $rootSource, bool $strict)
     {
         $filterName = array_shift($filterConfig);
 
@@ -182,7 +198,11 @@ class Schemator implements SchematorInterface
         try {
             return $this->filters[$filterName]($this, $source, $rootSource, ...$filterConfig);
         } catch(Throwable $e) {
-            throw SchematorException::createAsFilterError($filterName, $filterConfig, $source, $e);
+            if($strict) {
+                throw SchematorException::createAsFilterError($filterName, $filterConfig, $source, $e);
+            }
+
+            return null;
         }
     }
 }

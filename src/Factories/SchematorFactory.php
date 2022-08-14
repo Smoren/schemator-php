@@ -214,6 +214,7 @@ class SchematorFactory
 
                 foreach($source as $item) {
                     $isReplaced = false;
+                    $elseValue = $item;
 
                     foreach($rules as $args) {
                         $value = array_shift($args);

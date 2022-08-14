@@ -16,6 +16,9 @@ class SchematorException extends BaseException
     const FILTER_NOT_FOUND = 1;
     const FILTER_ERROR = 2;
     const CANNOT_GET_VALUE = 3;
+    const UNSUPPORTED_SOURCE_TYPE = 4;
+    const UNSUPPORTED_KEY_TYPE = 5;
+    const UNSUPPORTED_FILTER_CONFIG_TYPE = 6;
 
     /**
      * Checks that filter exists in map
@@ -64,12 +67,12 @@ class SchematorException extends BaseException
 
     /**
      * Creates a new exception instance for "cannot get value" error
-     * @param string $key path key to get value by
      * @param mixed $source data to get value from
+     * @param string $key path key to get value by
      * @param Throwable|null $previous previous exception
      * @return SchematorException
      */
-    public static function createAsCannotGetValue(string $key, $source, ?Throwable $previous = null): SchematorException
+    public static function createAsCannotGetValue($source, string $key, ?Throwable $previous = null): SchematorException
     {
         return new SchematorException(
             "cannot get value by key '{$key}'",
@@ -83,20 +86,65 @@ class SchematorException extends BaseException
     }
 
     /**
-     * Creates a new exception instance for "source is null" error
+     * Creates a new exception instance for "unsupported source type" error
+     * @param mixed $source source
      * @param mixed $key path key to get value by
      * @param Throwable|null $previous previous exception
      * @return SchematorException
      */
-    public static function createAsNullSource($key, ?Throwable $previous = null): SchematorException
+    public static function createAsUnsupportedSourceType($source, $key, ?Throwable $previous = null): SchematorException
     {
+        $sourceType = gettype($source);
         return new SchematorException(
-            "cannot get value from null",
-            SchematorException::CANNOT_GET_VALUE,
+            "unsupported source type '{$sourceType}'",
+            SchematorException::UNSUPPORTED_SOURCE_TYPE,
             $previous,
             [
                 'key' => $key,
-                'source' => null,
+                'source' => $source,
+                'source_type' => $sourceType,
+            ]
+        );
+    }
+
+    /**
+     * Creates a new exception instance for "unsupported key type" error
+     * @param mixed $source source
+     * @param mixed $key path key to get value by
+     * @param Throwable|null $previous previous exception
+     * @return SchematorException
+     */
+    public static function createAsUnsupportedKeyType($source, $key, ?Throwable $previous = null): SchematorException
+    {
+        $keyType = gettype($key);
+        return new SchematorException(
+            "unsupported key type '{$keyType}'",
+            SchematorException::UNSUPPORTED_KEY_TYPE,
+            $previous,
+            [
+                'key' => $key,
+                'source' => $source,
+                'key_type' => $keyType,
+            ]
+        );
+    }
+
+    /**
+     * Creates a new exception instance for "unsupported filter config type" error
+     * @param mixed $filterConfig filter config
+     * @param Throwable|null $previous previous exception
+     * @return SchematorException
+     */
+    public static function createAsUnsupportedFilterConfigType($filterConfig, ?Throwable $previous = null): SchematorException
+    {
+        $filterConfigType = gettype($filterConfig);
+        return new SchematorException(
+            "unsupported filter config type '{$filterConfigType}'",
+            SchematorException::UNSUPPORTED_FILTER_CONFIG_TYPE,
+            $previous,
+            [
+                'filter_config' => $filterConfig,
+                'filter_config_type' => $filterConfigType,
             ]
         );
     }
