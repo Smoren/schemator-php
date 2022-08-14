@@ -69,7 +69,12 @@ jobs:
           ./vendor/bin/codecept run unit tests/unit --coverage-xml
           mkdir -p ./build/logs
           cp ./tests/_output/coverage.xml ./build/logs/clover.xml
-      - name: Code Coverage (Coveralls)
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        run: php vendor/bin/php-coveralls -v
+      - name: Publish to coveralls.io
+        uses: coverallsapp/github-action@v1.1.2
+        with:
+          github-token: ${{ github.token }}
+#      - name: Code Coverage (Coveralls)
+#        env:
+#          github-token: ${{ secrets.GITHUB_TOKEN }}
+#          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+#        run: php vendor/bin/php-coveralls -v
