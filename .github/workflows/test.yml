@@ -1,4 +1,4 @@
-name: Test and Static Analysis
+name: Test and code coverage
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   test:
-    name: Test and Static Analysis
+    name: Test
     runs-on: ubuntu-latest
     strategy:
       matrix:
