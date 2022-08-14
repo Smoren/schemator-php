@@ -1,10 +1,12 @@
 # schemator
 
-Schematic data converter
-
 ![Build and test](https://github.com/Smoren/schemator-php/actions/workflows/test.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/Smoren/schemator-php/badge.svg?branch=master)](https://coveralls.io/github/Smoren/schemator-php?branch=master)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+Schematic data converter — tool for converting nested data structures
+(associative, non-associative arrays and objects composition) with 
+conversion schema.
 
 ### How to install to your project
 ```
@@ -14,8 +16,8 @@ composer require smoren/schemator
 ### Unit testing
 ```
 composer install
-./vendor/bin/codecept build
-./vendor/bin/codecept run unit tests/unit
+composer test-init
+composer test
 ```
 
 ### Usage
@@ -23,7 +25,7 @@ composer install
 #### Simple usage
 
 ```php
-use Smoren\Schemator\SchematorFactory;
+use Smoren\Schemator\Factories\SchematorFactory;
 
 $schema = [
     'city_id' => 'id',
@@ -117,7 +119,7 @@ print_r($output);
 #### Using base filters
 
 ```php
-use Smoren\Schemator\SchematorFactory;
+use Smoren\Schemator\Factories\SchematorFactory;
 
 $schema = [
     'city_street_names.all' => ['streets.name', ['implode', ', ']],
@@ -200,7 +202,7 @@ Array
 #### Using smart filter and replace
 
 ```php
-use Smoren\Schemator\SchematorFactory;
+use Smoren\Schemator\Factories\SchematorFactory;
 
 $schemator = SchematorFactory::create();
 $input = [
@@ -297,8 +299,8 @@ Array
 #### Using custom filters
 
 ```php
-use Smoren\Schemator\SchematorFactory;
-use Smoren\Schemator\Schemator;
+use Smoren\Schemator\Factories\SchematorFactory;
+use Smoren\Schemator\Components\Schemator;
 
 $schemator = SchematorFactory::create(true, [
     'startsWith' => function(Schemator $schemator, array $source, array $rootSource, string $start) {
@@ -330,8 +332,8 @@ Array
 #### Mass usage
 
 ```php
-use Smoren\Schemator\Schemator;
-use Smoren\Schemator\MassSchemator;
+use Smoren\Schemator\Components\Schemator;
+use Smoren\Schemator\Components\MassSchemator;
 
 $massSchemator = new MassSchemator(new Schemator());
 

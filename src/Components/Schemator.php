@@ -105,10 +105,11 @@ class Schemator implements SchematorInterface
     }
 
     /**
-     * @param array $source
-     * @param string $key
-     * @param bool $strict
-     * @return array|mixed|null
+     * Returns value got by string key
+     * @param array $source source to get value from
+     * @param string $key nested path to get value by
+     * @param bool $strict when true throw exception if something goes wrong
+     * @return array|mixed|null value
      * @throws SchematorException
      */
     protected function getValueByKey(array $source, string $key, bool $strict)
@@ -122,9 +123,10 @@ class Schemator implements SchematorInterface
     }
 
     /**
-     * @param array $source
-     * @param array $filters
-     * @param bool $strict
+     * Returns value got by filters key
+     * @param array $source source to get value from
+     * @param array $filters filters config
+     * @param bool $strict when true throw exception if something goes wrong
      * @return array|mixed|null
      * @throws SchematorException
      */
@@ -148,10 +150,11 @@ class Schemator implements SchematorInterface
     }
 
     /**
-     * @param mixed $source
-     * @param mixed $key
-     * @param bool $strict
-     * @return null
+     * Returns value got from unsupported source
+     * @param mixed $source unsupported source
+     * @param mixed $key path to get value by
+     * @param bool $strict when true throw exception
+     * @return null the only value we can get from unsupported source
      * @throws SchematorException
      */
     protected function getValueFromUnsupportedSource($source, $key, bool $strict)
@@ -163,10 +166,11 @@ class Schemator implements SchematorInterface
     }
 
     /**
-     * @param mixed $source
-     * @param mixed $key
-     * @param bool $strict
-     * @return null
+     * Returns value got by unsupported key
+     * @param mixed $source source to get value from
+     * @param mixed $key unsupported key
+     * @param bool $strict when true throw exception
+     * @return null the only value we can get by unsupported key
      * @throws SchematorException
      */
     protected function getValueByUnsupportedKey($source, $key, bool $strict)
@@ -182,7 +186,7 @@ class Schemator implements SchematorInterface
      * @param array $filterConfig filter config [filterName, ...args]
      * @param mixed $source source to extract value from
      * @param array $rootSource root source
-     * @param bool $strict
+     * @param bool $strict when true throw exception if something goes wrong
      * @return mixed result value
      * @throws SchematorException
      */
@@ -198,7 +202,6 @@ class Schemator implements SchematorInterface
             if($strict) {
                 throw SchematorException::createAsFilterError($filterName, $filterConfig, $source, $e);
             }
-
             return null;
         }
     }
