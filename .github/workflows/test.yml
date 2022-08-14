@@ -1,0 +1,73 @@
+name: Test and Static Analysis
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  test-and-static-analysis:
+    name: Test and Static Analysis
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['7.4', '8.0', '8.1']
+
+    steps:
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: xdebug
+          tools: composer:v2
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: PHP Version Check
+        run: php -v
+
+      - name: Validate Composer JSON
+        run: composer validate
+
+      - name: Run Composer
+        run: composer install --no-interaction
+
+      - name: Unit tests
+        run: |
+          ./vendor/bin/codecept build
+          ./vendor/bin/codecept run unit tests/unit
+
+  code-coverage:
+    name: Code coverage
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['7.4']
+
+    steps:
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: xdebug
+          tools: composer:v2
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Run Composer
+        run: composer install --no-interaction
+
+      - name: Unit tests
+        run: |
+          ./vendor/bin/codecept build
+          ./vendor/bin/codecept run unit tests/unit --coverage-xml
+#      - name: Code Coverage (Coveralls)
+#        env:
+#          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: php vendor/bin/php-coveralls -v
