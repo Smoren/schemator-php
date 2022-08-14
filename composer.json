@@ -34,5 +34,11 @@
       "type": "composer",
       "url": "https://asset-packagist.org"
     }
-  ]
+  ],
+  "scripts": {
+    "test": ["./vendor/bin/codecept run unit tests/unit"],
+    "test-coverage": ["./vendor/bin/codecept run unit tests/unit --coverage"],
+    "test-coverage-html": ["./vendor/bin/codecept run unit tests/unit --coverage-html"],
+    "test-coverage-xml": ["./vendor/bin/codecept run unit tests/unit --coverage-xml"]
+  }
 }
