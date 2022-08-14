@@ -3,3 +3,4 @@ vendor
 tests/_output/coverage
 tests/_support/_generated
 composer.lock
+build
