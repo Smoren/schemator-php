@@ -2,7 +2,6 @@
 
 namespace Smoren\Schemator\Tests\Unit;
 
-
 use Smoren\Schemator\Components\Schemator;
 use Smoren\Schemator\Exceptions\SchematorException;
 use Smoren\Schemator\Factories\SchematorFactory;
@@ -96,23 +95,35 @@ class SchematorTest extends \Codeception\Test\Unit
             $this->assertEquals(SchematorException::FILTER_NOT_FOUND, $e->getCode());
         }
 
-        $schemator->addFilter('implode', function(Schemator $schemator, array $source, array $rootSource, string $delimiter) {
-            return implode($delimiter, $source);
-        });
+        $schemator->addFilter(
+            'implode',
+            function(Schemator $schemator, array $source, array $rootSource, string $delimiter) {
+                return implode($delimiter, $source);
+            }
+        );
 
-        $schemator->addFilter('explode', function(Schemator $schemator, string $source, array $rootSource, string $delimiter) {
-            return explode($delimiter, $source);
-        });
+        $schemator->addFilter(
+            'explode',
+            function(Schemator $schemator, string $source, array $rootSource, string $delimiter) {
+                return explode($delimiter, $source);
+            }
+        );
 
-        $schemator->addFilter('startsWith', function(Schemator $schemator, array $source, array $rootSource, string $start) {
-            return array_filter($source, function(string $candidate) use ($start) {
-                return strpos($candidate, $start) === 0;
-            });
-        });
+        $schemator->addFilter(
+            'startsWith',
+            function(Schemator $schemator, array $source, array $rootSource, string $start) {
+                return array_filter($source, function(string $candidate) use ($start) {
+                    return strpos($candidate, $start) === 0;
+                });
+            }
+        );
 
-        $schemator->addFilter('path', function(Schemator $schemator, string $source, array $rootSource) {
-            return $schemator->getValue($rootSource, $source);
-        });
+        $schemator->addFilter(
+            'path',
+            function(Schemator $schemator, string $source, array $rootSource) {
+                return $schemator->getValue($rootSource, $source);
+            }
+        );
 
         $data = $schemator->exec($input, [
             'city_street_names' => ['streets.name', ['implode', ', ']]
@@ -220,23 +231,35 @@ class SchematorTest extends \Codeception\Test\Unit
             $this->assertEquals(SchematorException::FILTER_NOT_FOUND, $e->getCode());
         }
 
-        $schemator->addFilter('implode', function(Schemator $schemator, array $source, array $rootSource, string $delimiter) {
-            return implode($delimiter, $source);
-        });
+        $schemator->addFilter(
+            'implode',
+            function(Schemator $schemator, array $source, array $rootSource, string $delimiter) {
+                return implode($delimiter, $source);
+            }
+        );
 
-        $schemator->addFilter('explode', function(Schemator $schemator, string $source, array $rootSource, string $delimiter) {
-            return explode($delimiter, $source);
-        });
+        $schemator->addFilter(
+            'explode',
+            function(Schemator $schemator, string $source, array $rootSource, string $delimiter) {
+                return explode($delimiter, $source);
+            }
+        );
 
-        $schemator->addFilter('startsWith', function(Schemator $schemator, array $source, array $rootSource, string $start) {
-            return array_filter($source, function(string $candidate) use ($start) {
-                return strpos($candidate, $start) === 0;
-            });
-        });
+        $schemator->addFilter(
+            'startsWith',
+            function(Schemator $schemator, array $source, array $rootSource, string $start) {
+                return array_filter($source, function(string $candidate) use ($start) {
+                    return strpos($candidate, $start) === 0;
+                });
+            }
+        );
 
-        $schemator->addFilter('path', function(Schemator $schemator, string $source, array $rootSource) {
-            return $schemator->getValue($rootSource, $source);
-        });
+        $schemator->addFilter(
+            'path',
+            function(Schemator $schemator, string $source, array $rootSource) {
+                return $schemator->getValue($rootSource, $source);
+            }
+        );
 
         $data = $schemator->exec($input, [
             'city_street_names' => ['streets/name', ['implode', ', ']]
@@ -517,12 +540,12 @@ class SchematorTest extends \Codeception\Test\Unit
                             ]
                         ],
                         [
-                        'name' => 'Novgorod',
-                        'streets' => [
-                            ['name' => 'Lenina'],
-                            ['name' => 'Komsomola'],
-                        ],
-                    ]
+                            'name' => 'Novgorod',
+                            'streets' => [
+                                ['name' => 'Lenina'],
+                                ['name' => 'Komsomola'],
+                            ],
+                        ]
                     ]
                 ],
                 [
@@ -551,7 +574,9 @@ class SchematorTest extends \Codeception\Test\Unit
 
         $this->assertEquals(['Russia', 'Belarus'], $result['country_names']);
         $this->assertEquals(['Moscow', 'Novgorod', 'Minsk'], $result['city_names']);
-        $this->assertEquals(['Tverskaya', 'Leninskiy', 'Lenina', 'Komsomola', 'Moskovskaya', 'Russkaya'], $result['street_names']);
+        $this->assertEquals([
+            'Tverskaya', 'Leninskiy', 'Lenina', 'Komsomola', 'Moskovskaya', 'Russkaya',
+        ], $result['street_names']);
     }
 
     public function testGetValue()

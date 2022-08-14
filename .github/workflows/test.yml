@@ -37,8 +37,11 @@ jobs:
 
       - name: Unit tests
         run: |
-          ./vendor/bin/codecept build
-          ./vendor/bin/codecept run unit tests/unit
+          composer test-init
+          composer test
+
+      - name: PHP Code Sniffer
+        run: composer codesniffer
 
   code-coverage:
     name: Code coverage
@@ -65,8 +68,8 @@ jobs:
 
       - name: Unit tests
         run: |
-          ./vendor/bin/codecept build
-          ./vendor/bin/codecept run unit tests/unit --coverage-xml
+          composer test-init
+          composer test-coverage-xml
           mkdir -p ./build/logs
           cp ./tests/_output/coverage.xml ./build/logs/clover.xml
       - name: Code Coverage (Coveralls)

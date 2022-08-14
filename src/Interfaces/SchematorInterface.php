@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Smoren\Schemator\Interfaces;
-
 
 use Smoren\Schemator\Exceptions\SchematorException;
 

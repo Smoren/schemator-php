@@ -17,7 +17,8 @@
   "require-dev": {
     "codeception/codeception": "^4.2.1",
     "codeception/module-asserts": "^2.0",
-    "php-coveralls/php-coveralls": "^2.0"
+    "php-coveralls/php-coveralls": "^2.0",
+    "squizlabs/php_codesniffer": "3.*"
   },
   "autoload": {
     "psr-4": {
@@ -37,9 +38,11 @@
     }
   ],
   "scripts": {
+    "test-init": ["./vendor/bin/codecept build"],
     "test": ["./vendor/bin/codecept run unit tests/unit"],
     "test-coverage": ["./vendor/bin/codecept run unit tests/unit --coverage"],
     "test-coverage-html": ["./vendor/bin/codecept run unit tests/unit --coverage-html"],
-    "test-coverage-xml": ["./vendor/bin/codecept run unit tests/unit --coverage-xml"]
+    "test-coverage-xml": ["./vendor/bin/codecept run unit tests/unit --coverage-xml"],
+    "codesniffer": ["./vendor/bin/phpcs --ignore=vendor,tests --standard=tests/coding_standard.xml -s ."]
   }
 }

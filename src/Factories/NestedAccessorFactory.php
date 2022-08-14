@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Smoren\Schemator\Factories;
-
 
 use Smoren\Schemator\Components\NestedAccessor;
 use Smoren\Schemator\Exceptions\NestedAccessorException;

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Smoren\Schemator\Components;
-
 
 use Smoren\Schemator\Exceptions\NestedAccessorException;
 use Smoren\Schemator\Exceptions\SchematorException;
@@ -37,8 +35,7 @@ class Schemator implements SchematorInterface
     public function __construct(
         string $pathDelimiter = '.',
         NestedAccessorFactoryInterface $nestedAccessorFactory = null
-    )
-    {
+    ) {
         $this->pathDelimiter = $pathDelimiter;
         $this->nestedAccessorFactory = $nestedAccessorFactory ?? new NestedAccessorFactory();
     }

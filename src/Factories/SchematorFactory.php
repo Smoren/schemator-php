@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Smoren\Schemator\Factories;
 
 use Smoren\Helpers\ArrHelper;
@@ -42,9 +41,9 @@ class SchematorFactory
      * @return MassSchemator
      */
     public static function createMass(
-        bool $withBaseFilters = true, array $extraFilters = []
-    ): MassSchemator
-    {
+        bool $withBaseFilters = true,
+        array $extraFilters = []
+    ): MassSchemator {
         return new MassSchemator(static::create($withBaseFilters, $extraFilters));
     }
 

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Smoren\Schemator\Components;
-
 
 use Smoren\Helpers\ArrHelper;
 use Smoren\Schemator\Exceptions\NestedAccessorException;

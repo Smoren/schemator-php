@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Smoren\Schemator\Exceptions;
-
 
 use Smoren\ExtendedExceptions\BaseException;
 
@@ -12,9 +10,9 @@ use Smoren\ExtendedExceptions\BaseException;
  */
 class NestedAccessorException extends BaseException
 {
-    const SOURCE_IS_SCALAR = 1;
-    const CANNOT_GET_VALUE = 2;
-    const CANNOT_SET_VALUE = 3;
+    public const SOURCE_IS_SCALAR = 1;
+    public const CANNOT_GET_VALUE = 2;
+    public const CANNOT_SET_VALUE = 3;
 
     /**
      * Creates a new exception instance for "source is scalar" error
