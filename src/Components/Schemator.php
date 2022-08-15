@@ -7,6 +7,7 @@ use Smoren\Schemator\Exceptions\SchematorException;
 use Smoren\Schemator\Factories\NestedAccessorFactory;
 use Smoren\Schemator\Interfaces\NestedAccessorFactoryInterface;
 use Smoren\Schemator\Interfaces\SchematorInterface;
+use Smoren\Schemator\Structs\FilterContext;
 use Throwable;
 
 /**
@@ -197,7 +198,10 @@ class Schemator implements SchematorInterface
         SchematorException::ensureFilterExists($this->filters, $filterName);
 
         try {
-            return $this->filters[$filterName]($this, $source, $rootSource, ...$filterConfig);
+            return $this->filters[$filterName](
+                new FilterContext($this, $source, $rootSource),
+                ...$filterConfig
+            );
         } catch(Throwable $e) {
             if($strict) {
                 throw SchematorException::createAsFilterError($filterName, $filterConfig, $source, $e);

@@ -5,6 +5,7 @@ namespace Smoren\Schemator\Tests\Unit;
 use Smoren\Schemator\Components\Schemator;
 use Smoren\Schemator\Exceptions\SchematorException;
 use Smoren\Schemator\Factories\SchematorFactory;
+use Smoren\Schemator\Interfaces\FilterContextInterface;
 
 class SchematorTest extends \Codeception\Test\Unit
 {
@@ -97,22 +98,22 @@ class SchematorTest extends \Codeception\Test\Unit
 
         $schemator->addFilter(
             'implode',
-            function(Schemator $schemator, array $source, array $rootSource, string $delimiter) {
-                return implode($delimiter, $source);
+            function(FilterContextInterface $context, string $delimiter) {
+                return implode($delimiter, $context->getSource());
             }
         );
 
         $schemator->addFilter(
             'explode',
-            function(Schemator $schemator, string $source, array $rootSource, string $delimiter) {
-                return explode($delimiter, $source);
+            function(FilterContextInterface $context, string $delimiter) {
+                return explode($delimiter, $context->getSource());
             }
         );
 
         $schemator->addFilter(
             'startsWith',
-            function(Schemator $schemator, array $source, array $rootSource, string $start) {
-                return array_filter($source, function(string $candidate) use ($start) {
+            function(FilterContextInterface $context, string $start) {
+                return array_filter($context->getSource(), function(string $candidate) use ($start) {
                     return strpos($candidate, $start) === 0;
                 });
             }
@@ -120,8 +121,8 @@ class SchematorTest extends \Codeception\Test\Unit
 
         $schemator->addFilter(
             'path',
-            function(Schemator $schemator, string $source, array $rootSource) {
-                return $schemator->getValue($rootSource, $source);
+            function(FilterContextInterface $context) {
+                return $context->getSchemator()->getValue($context->getRootSource(), $context->getSource());
             }
         );
 
@@ -233,22 +234,22 @@ class SchematorTest extends \Codeception\Test\Unit
 
         $schemator->addFilter(
             'implode',
-            function(Schemator $schemator, array $source, array $rootSource, string $delimiter) {
-                return implode($delimiter, $source);
+            function(FilterContextInterface $context, string $delimiter) {
+                return implode($delimiter, $context->getSource());
             }
         );
 
         $schemator->addFilter(
             'explode',
-            function(Schemator $schemator, string $source, array $rootSource, string $delimiter) {
-                return explode($delimiter, $source);
+            function(FilterContextInterface $context, string $delimiter) {
+                return explode($delimiter, $context->getSource());
             }
         );
 
         $schemator->addFilter(
             'startsWith',
-            function(Schemator $schemator, array $source, array $rootSource, string $start) {
-                return array_filter($source, function(string $candidate) use ($start) {
+            function(FilterContextInterface $context, string $start) {
+                return array_filter($context->getSource(), function(string $candidate) use ($start) {
                     return strpos($candidate, $start) === 0;
                 });
             }
@@ -256,8 +257,8 @@ class SchematorTest extends \Codeception\Test\Unit
 
         $schemator->addFilter(
             'path',
-            function(Schemator $schemator, string $source, array $rootSource) {
-                return $schemator->getValue($rootSource, $source);
+            function(FilterContextInterface $context) {
+                return $context->getSchemator()->getValue($context->getRootSource(), $context->getSource());
             }
         );
 
@@ -288,8 +289,8 @@ class SchematorTest extends \Codeception\Test\Unit
     public function testFactory()
     {
         $schemator = SchematorFactory::create(true, [
-            'startsWith' => function(Schemator $schemator, array $source, array $rootSource, string $start) {
-                return array_filter($source, function(string $candidate) use ($start) {
+            'startsWith' => function(FilterContextInterface $context, string $start) {
+                return array_filter($context->getSource(), function(string $candidate) use ($start) {
                     return strpos($candidate, $start) === 0;
                 });
             },

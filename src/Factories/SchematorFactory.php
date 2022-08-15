@@ -6,7 +6,7 @@ use Smoren\Helpers\ArrHelper;
 use Smoren\Helpers\RuleHelper;
 use Smoren\Schemator\Components\MassSchemator;
 use Smoren\Schemator\Components\Schemator;
-use Smoren\Schemator\Filters\BaseFilters;
+use Smoren\Schemator\Filters\BaseFiltersStorage;
 use Smoren\Schemator\Interfaces\SchematorFactoryInterface;
 
 /**
@@ -26,7 +26,7 @@ class SchematorFactory implements SchematorFactoryInterface
         $builder = static::createBuilder();
 
         if($withBaseFilters) {
-            $builder->withFilters(BaseFilters::get());
+            $builder->withFilters(new BaseFiltersStorage($builder->get()));
         }
 
         if(count($extraFilters)) {

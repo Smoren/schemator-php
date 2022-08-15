@@ -21,7 +21,7 @@ class SchematorBuilder implements SchematorBuilderInterface
         return $this;
     }
 
-    public function withFilters(array $filters): SchematorBuilderInterface
+    public function withFilters($filters): SchematorBuilderInterface
     {
         foreach($filters as $filterName => $filter) {
             $this->schemator->addFilter($filterName, $filter);

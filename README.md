@@ -302,11 +302,11 @@ Array
 
 ```php
 use Smoren\Schemator\Factories\SchematorFactory;
-use Smoren\Schemator\Components\Schemator;
+use Smoren\Schemator\Interfaces\FilterContextInterface;
 
 $schemator = SchematorFactory::create(true, [
-    'startsWith' => function(Schemator $schemator, array $source, array $rootSource, string $start) {
-        return array_filter($source, function(string $candidate) use ($start) {
+    'startsWith' => function(FilterContextInterface $context, string $start) {
+        return array_filter($context->getSource(), function(string $candidate) use ($start) {
             return strpos($candidate, $start) === 0;
         });
     },
