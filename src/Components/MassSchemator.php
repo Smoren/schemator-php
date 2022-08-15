@@ -2,6 +2,7 @@
 
 namespace Smoren\Schemator\Components;
 
+use Smoren\Schemator\Interfaces\SchematorInterface;
 use Smoren\Schemator\Interfaces\MassSchematorInterface;
 use Smoren\Schemator\Exceptions\SchematorException;
 use Generator;
@@ -13,15 +14,15 @@ use Generator;
 class MassSchemator implements MassSchematorInterface
 {
     /**
-     * @var Schemator Schemator instance
+     * @var SchematorInterface Schemator instance
      */
-    protected Schemator $schemator;
+    protected SchematorInterface $schemator;
 
     /**
      * MassSchemator constructor.
-     * @param Schemator $schemator Schemator instance
+     * @param SchematorInterface $schemator Schemator instance
      */
-    public function __construct(Schemator $schemator)
+    public function __construct(SchematorInterface $schemator)
     {
         $this->schemator = $schemator;
     }
