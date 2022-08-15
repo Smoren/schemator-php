@@ -2,6 +2,8 @@
 
 ![Build and test](https://github.com/Smoren/schemator-php/actions/workflows/test.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/Smoren/schemator-php/badge.svg?branch=master)](https://coveralls.io/github/Smoren/schemator-php?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Smoren/schemator-php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Smoren/schemator-php/?branch=master)
+[![Code Intelligence Status](https://scrutinizer-ci.com/g/Smoren/schemator-php/badges/code-intelligence.svg?b=master)](https://scrutinizer-ci.com/code-intelligence)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Schematic data converter — tool for converting nested data structures
