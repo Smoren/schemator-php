@@ -4,12 +4,13 @@ namespace Smoren\Schemator\Components;
 
 use Generator;
 use Smoren\Schemator\Exceptions\SchematorException;
+use Smoren\Schemator\Interfaces\MassSchematorInterface;
 
 /**
  * Class for mass schematic data converting
  * @author Smoren <ofigate@gmail.com>
  */
-class MassSchemator
+class MassSchemator implements MassSchematorInterface
 {
     /**
      * @var Schemator Schemator instance
