@@ -21,7 +21,7 @@ class SchematorFactory
      */
     public static function create(bool $withBaseFilters = true, array $extraFilters = []): Schemator
     {
-        $schemator = new Schemator();
+        $schemator = static::_create();
 
         if($withBaseFilters) {
             static::addBaseFilters($schemator);
@@ -246,5 +246,14 @@ class SchematorFactory
                 return $result;
             }
         );
+    }
+
+    /**
+     * Creates and returns schemator instance
+     * @return Schemator
+     */
+    protected static function _create(): Schemator
+    {
+        return new Schemator();
     }
 }
