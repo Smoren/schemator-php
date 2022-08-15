@@ -2,6 +2,10 @@
 
 namespace Smoren\Schemator\Interfaces;
 
+/**
+ * Interface SchematorFactoryInterface
+ * @author Smoren <ofigate@gmail.com>
+ */
 interface SchematorFactoryInterface
 {
     /**
