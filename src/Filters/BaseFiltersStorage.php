@@ -2,11 +2,11 @@
 
 namespace Smoren\Schemator\Filters;
 
-use ArrayIterator;
-use Smoren\Helpers\ArrHelper;
-use Smoren\Helpers\RuleHelper;
 use Smoren\Schemator\Interfaces\FilterContextInterface;
 use Smoren\Schemator\Interfaces\FiltersStorageInterface;
+use Smoren\Helpers\ArrHelper;
+use Smoren\Helpers\RuleHelper;
+use ArrayIterator;
 
 class BaseFiltersStorage implements FiltersStorageInterface
 {

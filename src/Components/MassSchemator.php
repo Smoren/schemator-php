@@ -2,9 +2,9 @@
 
 namespace Smoren\Schemator\Components;
 
-use Generator;
-use Smoren\Schemator\Exceptions\SchematorException;
 use Smoren\Schemator\Interfaces\MassSchematorInterface;
+use Smoren\Schemator\Exceptions\SchematorException;
+use Generator;
 
 /**
  * Class for mass schematic data converting

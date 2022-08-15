@@ -2,9 +2,9 @@
 
 namespace Smoren\Schemator\Factories;
 
-use Smoren\Schemator\Components\Schemator;
 use Smoren\Schemator\Interfaces\SchematorBuilderInterface;
 use Smoren\Schemator\Interfaces\SchematorInterface;
+use Smoren\Schemator\Components\Schemator;
 
 class SchematorBuilder implements SchematorBuilderInterface
 {

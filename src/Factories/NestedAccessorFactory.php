@@ -2,9 +2,9 @@
 
 namespace Smoren\Schemator\Factories;
 
+use Smoren\Schemator\Interfaces\NestedAccessorFactoryInterface;
 use Smoren\Schemator\Components\NestedAccessor;
 use Smoren\Schemator\Exceptions\NestedAccessorException;
-use Smoren\Schemator\Interfaces\NestedAccessorFactoryInterface;
 
 /**
  * Class NestedAccessorFactory

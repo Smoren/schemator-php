@@ -2,9 +2,9 @@
 
 namespace Smoren\Schemator\Components;
 
-use Smoren\Helpers\ArrHelper;
-use Smoren\Schemator\Exceptions\NestedAccessorException;
 use Smoren\Schemator\Interfaces\NestedAccessorInterface;
+use Smoren\Schemator\Exceptions\NestedAccessorException;
+use Smoren\Helpers\ArrHelper;
 
 /**
  * Accessor class for getting and setting to source array or object with nested keys
