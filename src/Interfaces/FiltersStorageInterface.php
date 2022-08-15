@@ -6,5 +6,4 @@ use IteratorAggregate;
 
 interface FiltersStorageInterface extends IteratorAggregate
 {
-
 }

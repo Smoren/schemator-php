@@ -10,26 +10,18 @@ use Smoren\Schemator\Interfaces\FiltersStorageInterface;
 
 class BaseFiltersStorage implements FiltersStorageInterface
 {
-    public static function const(
-        FilterContextInterface $context,
-        $constValue
-    ) {
+    public static function const(FilterContextInterface $context, $constValue)
+    {
         return $constValue;
     }
 
-    public static function format(
-        FilterContextInterface $context,
-        callable $formatter,
-        ...$args
-    ) {
+    public static function format(FilterContextInterface $context, callable $formatter, ...$args)
+    {
         return $formatter($context->getSource(), ...$args);
     }
 
-    public static function date(
-        FilterContextInterface $context,
-        string $format,
-        ?int $timezone = null
-    ) {
+    public static function date(FilterContextInterface $context, string $format, ?int $timezone = null)
+    {
         $source = $context->getSource();
         if($source === null) {
             return null;
@@ -40,10 +32,8 @@ class BaseFiltersStorage implements FiltersStorageInterface
         return gmdate($format, $source+3600*$timezone);
     }
 
-    public static function implode(
-        FilterContextInterface $context,
-        string $delimiter = ', '
-    ): ?string {
+    public static function implode(FilterContextInterface $context, string $delimiter = ', '): ?string
+    {
         $source = $context->getSource();
         if($source === null) {
             return null;
@@ -51,10 +41,8 @@ class BaseFiltersStorage implements FiltersStorageInterface
         return implode($delimiter, $source);
     }
 
-    public static function explode(
-        FilterContextInterface $context,
-        string $delimiter = ', '
-    ) {
+    public static function explode(FilterContextInterface $context, string $delimiter = ', ')
+    {
         $source = $context->getSource();
         if($source === null) {
             return null;
@@ -80,10 +68,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
         return array_sum($source)/count($source);
     }
 
-    public static function filter(
-        FilterContextInterface $context,
-        $filterConfig
-    ): ?array
+    public static function filter(FilterContextInterface $context, $filterConfig): ?array
     {
         $source = $context->getSource();
         if($source === null) {
@@ -110,10 +95,8 @@ class BaseFiltersStorage implements FiltersStorageInterface
         return $result;
     }
 
-    public static function sort(
-        FilterContextInterface $context,
-        ?callable $sortCallback = null
-    ): ?array {
+    public static function sort(FilterContextInterface $context, ?callable $sortCallback = null): ?array
+    {
         $source = $context->getSource();
         if($source === null) {
             return null;
