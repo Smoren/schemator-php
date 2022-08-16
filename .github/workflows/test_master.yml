@@ -1,7 +1,10 @@
-name: Build and test
+name: Tests and static analysis (Master)
 
 on:
   push:
+    branches:
+      - master
+  pull_request:
     branches:
       - master
 
