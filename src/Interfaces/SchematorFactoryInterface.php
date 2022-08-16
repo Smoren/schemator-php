@@ -11,22 +11,23 @@ interface SchematorFactoryInterface
     /**
      * Creates SchematorInterface instance
      * @param bool $withBaseFilters flag of using base filters
-     * @param array<string, callable>|FiltersStorageInterface $extraFilters extra filters map
+     * @param iterable<string, callable>|FiltersStorageInterface|null $extraFilters extra filters map
      * @return SchematorInterface
      */
     public static function create(
         bool $withBaseFilters = true,
-        iterable $extraFilters = []
+        ?iterable $extraFilters = null
     ): SchematorInterface;
 
     /**
      * Creates SchematorMassGenerator instance
      * @param bool $withBaseFilters flag of using base filters
-     * @param callable[] $extraFilters extra filters map ([filterName => filterCallback])
+     * @param iterable<string, callable>|FiltersStorageInterface|null $extraFilters extra filters map
+     * ([filterName => filterCallback])
      * @return MassSchematorInterface
      */
     public static function createMass(
         bool $withBaseFilters = true,
-        array $extraFilters = []
+        ?iterable $extraFilters = null
     ): MassSchematorInterface;
 }

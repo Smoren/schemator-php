@@ -16,7 +16,7 @@ class SchematorFactory implements SchematorFactoryInterface
     /**
      * @inheritDoc
      */
-    public static function create(bool $withBaseFilters = true, iterable $extraFilters = []): SchematorInterface
+    public static function create(bool $withBaseFilters = true, ?iterable $extraFilters = null): SchematorInterface
     {
         $builder = static::createBuilder();
 
@@ -24,7 +24,7 @@ class SchematorFactory implements SchematorFactoryInterface
             $builder->withFilters(new BaseFiltersStorage());
         }
 
-        if(count($extraFilters)) {
+        if($extraFilters !== null) {
             $builder->withFilters($extraFilters);
         }
 
@@ -37,7 +37,7 @@ class SchematorFactory implements SchematorFactoryInterface
      */
     public static function createMass(
         bool $withBaseFilters = true,
-        array $extraFilters = []
+        ?iterable $extraFilters = null
     ): MassSchemator {
         return new MassSchemator(static::create($withBaseFilters, $extraFilters));
     }
