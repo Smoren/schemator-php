@@ -11,12 +11,12 @@ interface SchematorFactoryInterface
     /**
      * Creates SchematorInterface instance
      * @param bool $withBaseFilters flag of using base filters
-     * @param callable[] $extraFilters extra filters map ([filterName => filterCallback])
+     * @param array<string, callable>|FiltersStorageInterface $extraFilters extra filters map
      * @return SchematorInterface
      */
     public static function create(
         bool $withBaseFilters = true,
-        array $extraFilters = []
+        iterable $extraFilters = []
     ): SchematorInterface;
 
     /**

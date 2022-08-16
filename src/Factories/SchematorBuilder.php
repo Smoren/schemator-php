@@ -2,6 +2,7 @@
 
 namespace Smoren\Schemator\Factories;
 
+use Smoren\Schemator\Interfaces\FiltersStorageInterface;
 use Smoren\Schemator\Interfaces\SchematorBuilderInterface;
 use Smoren\Schemator\Interfaces\SchematorInterface;
 use Smoren\Schemator\Components\Schemator;
@@ -37,7 +38,7 @@ class SchematorBuilder implements SchematorBuilderInterface
     /**
      * @inheritDoc
      */
-    public function withFilters($filters): SchematorBuilderInterface
+    public function withFilters(iterable $filters): SchematorBuilderInterface
     {
         foreach($filters as $filterName => $filter) {
             $this->schemator->addFilter($filterName, $filter);

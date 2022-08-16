@@ -16,7 +16,7 @@ interface SchematorBuilderInterface
 
     /**
      * Adds filters to SchematorInterface object
-     * @param callable[]|FiltersStorageInterface $filters
+     * @param array<string, callable>|FiltersStorageInterface $filters
      * @return SchematorBuilderInterface
      */
     public function withFilters(iterable $filters): SchematorBuilderInterface;

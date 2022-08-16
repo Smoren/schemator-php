@@ -23,7 +23,7 @@ class NestedAccessor implements NestedAccessorInterface
 
     /**
      * ArrayNestedAccessor constructor.
-     * @param array|object|null $source
+     * @param array|object|null|mixed $source
      * @param string $pathDelimiter
      * @throws NestedAccessorException
      */

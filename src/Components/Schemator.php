@@ -44,7 +44,7 @@ class Schemator implements SchematorInterface
     /**
      * Converts input data with using schema
      * @param array|object $source input data to convert
-     * @param array $schema schema for converting
+     * @param array<string, mixed> $schema schema for converting
      * @param bool $strict throw exception if key not exist
      * @return array|mixed converted data
      * @throws SchematorException
@@ -66,8 +66,8 @@ class Schemator implements SchematorInterface
 
     /**
      * Returns value from source by schema item
-     * @param array|object|null $source source to extract data from
-     * @param string|array $key item of schema (string as path or array as filter config)
+     * @param array|object|null|mixed $source source to extract data from
+     * @param string|array|mixed $key item of schema (string as path or array as filter config)
      * @param bool $strict throw exception if key not exist
      * @return mixed result value
      * @throws SchematorException

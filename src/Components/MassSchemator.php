@@ -30,7 +30,7 @@ class MassSchemator implements MassSchematorInterface
     /**
      * Makes a generator for converting every item in the source array by schemator
      * @param iterable $source iterable source of items to convert every one by schemator
-     * @param array $schema schema for converting
+     * @param array<string, mixed> $schema schema for converting
      * @return Generator
      * @throws SchematorException
      */
@@ -44,7 +44,7 @@ class MassSchemator implements MassSchematorInterface
     /**
      * Converts input data array with using schema
      * @param iterable $source iterable source of items to convert every one by schemator
-     * @param array $schema schema for converting
+     * @param array<string, mixed> $schema schema for converting
      * @return array array of converted items
      * @throws SchematorException
      */

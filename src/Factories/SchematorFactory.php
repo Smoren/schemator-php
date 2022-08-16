@@ -4,8 +4,8 @@ namespace Smoren\Schemator\Factories;
 
 use Smoren\Schemator\Interfaces\SchematorFactoryInterface;
 use Smoren\Schemator\Components\MassSchemator;
-use Smoren\Schemator\Components\Schemator;
 use Smoren\Schemator\Filters\BaseFiltersStorage;
+use Smoren\Schemator\Interfaces\SchematorInterface;
 
 /**
  * Factory class for creating Schemator instance
@@ -14,17 +14,14 @@ use Smoren\Schemator\Filters\BaseFiltersStorage;
 class SchematorFactory implements SchematorFactoryInterface
 {
     /**
-     * Creates Schemator instance
-     * @param bool $withBaseFilters flag of using base filters
-     * @param callable[] $extraFilters extra filters map ([filterName => filterCallback])
-     * @return Schemator
+     * @inheritDoc
      */
-    public static function create(bool $withBaseFilters = true, array $extraFilters = []): Schemator
+    public static function create(bool $withBaseFilters = true, iterable $extraFilters = []): SchematorInterface
     {
         $builder = static::createBuilder();
 
         if($withBaseFilters) {
-            $builder->withFilters(new BaseFiltersStorage($builder->get()));
+            $builder->withFilters(new BaseFiltersStorage());
         }
 
         if(count($extraFilters)) {
@@ -35,9 +32,7 @@ class SchematorFactory implements SchematorFactoryInterface
     }
 
     /**
-     * Creates SchematorMassGenerator instance
-     * @param bool $withBaseFilters flag of using base filters
-     * @param callable[] $extraFilters extra filters map ([filterName => filterCallback])
+     * @inheritDoc
      * @return MassSchemator
      */
     public static function createMass(
