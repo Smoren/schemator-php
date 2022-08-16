@@ -28,11 +28,7 @@ class MassSchemator implements MassSchematorInterface
     }
 
     /**
-     * Makes a generator for converting every item in the source array by schemator
-     * @param iterable $source iterable source of items to convert every one by schemator
-     * @param array<string, mixed> $schema schema for converting
-     * @return Generator
-     * @throws SchematorException
+     * @inheritDoc
      */
     public function generate(iterable $source, array $schema): Generator
     {
@@ -42,11 +38,24 @@ class MassSchemator implements MassSchematorInterface
     }
 
     /**
-     * Converts input data array with using schema
-     * @param iterable $source iterable source of items to convert every one by schemator
-     * @param array<string, mixed> $schema schema for converting
-     * @return array array of converted items
-     * @throws SchematorException
+     * @inheritDoc
+     */
+    public function convert(iterable $source, array $schema): array
+    {
+        $gen = $this->generate($source, $schema);
+        $result = [];
+
+        foreach($gen as $item) {
+            $result[] = $item;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @inheritDoc
+     * @deprecated please use convert() method
+     * @see MassSchematorInterface::convert()
      */
     public function exec(iterable $source, array $schema): array
     {

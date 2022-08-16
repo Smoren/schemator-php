@@ -42,14 +42,9 @@ class Schemator implements SchematorInterface
     }
 
     /**
-     * Converts input data with using schema
-     * @param array|object $source input data to convert
-     * @param array<string, mixed> $schema schema for converting
-     * @param bool $strict throw exception if key not exist
-     * @return array|mixed converted data
-     * @throws SchematorException
+     * @inheritDoc
      */
-    public function exec($source, array $schema, bool $strict = false)
+    public function convert($source, array $schema, bool $strict = false)
     {
         $toAccessor = $this->nestedAccessorFactory->create($result, $this->pathDelimiter);
 
@@ -65,12 +60,16 @@ class Schemator implements SchematorInterface
     }
 
     /**
-     * Returns value from source by schema item
-     * @param array|object|null|mixed $source source to extract data from
-     * @param string|array|mixed $key item of schema (string as path or array as filter config)
-     * @param bool $strict throw exception if key not exist
-     * @return mixed result value
-     * @throws SchematorException
+     * @inheritDoc
+     * @deprecated please use convert() method
+     */
+    public function exec($source, array $schema, bool $strict = false)
+    {
+        return $this->convert($source, $schema, $strict);
+    }
+
+    /**
+     * @inheritDoc
      */
     public function getValue($source, $key, bool $strict = false)
     {
@@ -94,10 +93,7 @@ class Schemator implements SchematorInterface
     }
 
     /**
-     * Adds new filter
-     * @param string $filterName filter name
-     * @param callable $callback filter callback
-     * @return $this
+     * @inheritDoc
      */
     public function addFilter(string $filterName, callable $callback): self
     {
