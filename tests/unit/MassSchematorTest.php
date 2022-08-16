@@ -106,7 +106,7 @@ class MassSchematorTest extends \Codeception\Test\Unit
         $massSchemator = SchematorFactory::createMass();
         $cities = $this->getCities();
 
-        $result = $massSchemator->exec($cities, [
+        $result = $massSchemator->convert($cities, [
             '' => 'name',
         ]);
 

@@ -377,7 +377,7 @@ class SchematorTest extends \Codeception\Test\Unit
             '<0', '>9', '1-8', '>9', '<0', '=0', '>9', '1-8', '1-8', 9, '=0',
         ], $data['number_types']);
 
-        $data = $schemator->exec($input, [
+        $data = $schemator->convert($input, [
             'number_types' => ['numbers', [
                 'replace',
                 [
