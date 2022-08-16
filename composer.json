@@ -40,6 +40,7 @@
   ],
   "scripts": {
     "test-init": ["./vendor/bin/codecept build"],
+    "test-all": ["composer test-coverage", "composer codesniffer", "composer stan"],
     "test": ["./vendor/bin/codecept run unit tests/unit"],
     "test-coverage": ["./vendor/bin/codecept run unit tests/unit --coverage"],
     "test-coverage-html": ["./vendor/bin/codecept run unit tests/unit --coverage-html"],
