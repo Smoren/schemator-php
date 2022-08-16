@@ -6,9 +6,9 @@
 ![Build and test](https://github.com/Smoren/schemator-php/actions/workflows/test_master.yml/badge.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Schematic data converter — tool for converting nested data structures
-(associative, non-associative arrays and objects compositions) by given 
-conversion schema.
+Schematic data converter is a tool for converting nested data structures
+(any compositions of associative arrays, non-associative arrays and objects)
+according to the given conversion schema.
 
 ### How to install to your project
 ```
