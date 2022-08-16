@@ -13,7 +13,8 @@ interface MassSchematorInterface
 {
     /**
      * Makes a generator for converting every item in the source array by schemator
-     * @param iterable<int, mixed> $source iterable source of items to convert every one by schemator
+     * @param iterable<int, array<string, mixed>|object> $source iterable source of items to convert
+     * every one by schemator
      * @param array<string, mixed> $schema schema for converting
      * @return Generator
      * @throws SchematorException
@@ -22,7 +23,8 @@ interface MassSchematorInterface
 
     /**
      * Converts input data array with using schema
-     * @param iterable<int, mixed> $source iterable source of items to convert every one by schemator
+     * @param iterable<int, array<string, mixed>|object> $source iterable source of items to convert
+     * every one by schemator
      * @param array<string, mixed> $schema schema for converting
      * @return array<int, mixed> array of converted items
      * @throws SchematorException
@@ -31,7 +33,8 @@ interface MassSchematorInterface
 
     /**
      * Converts input data array with using schema
-     * @param iterable<int, mixed> $source iterable source of items to convert every one by schemator
+     * @param iterable<int, array<string, mixed>|object> $source iterable source of items to convert
+     * every one by schemator
      * @param array<string, mixed> $schema schema for converting
      * @return array<int, mixed> array of converted items
      * @throws SchematorException

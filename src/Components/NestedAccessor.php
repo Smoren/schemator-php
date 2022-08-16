@@ -190,6 +190,8 @@ class NestedAccessor implements NestedAccessorInterface
                 }
                 $temp = &$temp->{$key};
             } else {
+                // TODO check PHPStan: "Cannot access offset string on mixed"
+                /** @var array<string, mixed> $temp */
                 $temp = &$temp[$key];
             }
         }

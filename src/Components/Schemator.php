@@ -122,9 +122,9 @@ class Schemator implements SchematorInterface
     /**
      * Returns value got by filters key
      * @param array<string, mixed>|object $source source to get value from
-     * @param array<int, mixed> $filters filters config
+     * @param array<int, string|array<int, mixed>> $filters filters config
      * @param bool $strict when true throw exception if something goes wrong
-     * @return array|mixed|null
+     * @return mixed|null
      * @throws SchematorException
      */
     protected function getValueByFilters($source, array $filters, bool $strict)
@@ -181,7 +181,7 @@ class Schemator implements SchematorInterface
     /**
      * Returns value from source by filter
      * @param array<int, mixed> $filterConfig filter config [filterName, ...args]
-     * @param array<string, mixed>|object $source source to extract value from
+     * @param array<string, mixed>|object|mixed $source source to extract value from
      * @param array<string, mixed>|object $rootSource root source
      * @param bool $strict when true throw exception if something goes wrong
      * @return mixed result value
@@ -189,7 +189,7 @@ class Schemator implements SchematorInterface
      */
     protected function runFilter(array $filterConfig, $source, $rootSource, bool $strict)
     {
-        $filterName = array_shift($filterConfig);
+        $filterName = strval(array_shift($filterConfig));
 
         SchematorException::ensureFilterExists($this->filters, $filterName);
 

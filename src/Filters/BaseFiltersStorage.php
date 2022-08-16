@@ -52,7 +52,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
             return null;
         }
         if($timezone === null) {
-            return date($format, $source);
+            return date($format, intval($source));
         }
         return gmdate($format, $source+3600*$timezone);
     }
@@ -66,7 +66,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
     public static function implode(FilterContextInterface $context, string $delimiter = ', '): ?string
     {
         $source = $context->getSource();
-        if($source === null) {
+        if($source === null || !is_array($source)) {
             return null;
         }
         return implode($delimiter, $source);
@@ -81,10 +81,10 @@ class BaseFiltersStorage implements FiltersStorageInterface
     public static function explode(FilterContextInterface $context, string $delimiter = ', ')
     {
         $source = $context->getSource();
-        if($source === null) {
+        if($source === null || !is_scalar($source)) {
             return null;
         }
-        return explode($delimiter, $source);
+        return explode($delimiter, (string)$source);
     }
 
     /**
@@ -95,7 +95,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
     public static function sum(FilterContextInterface $context)
     {
         $source = $context->getSource();
-        if($source === null) {
+        if($source === null || !is_array($source)) {
             return null;
         }
         return array_sum($source);
@@ -109,7 +109,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
     public static function average(FilterContextInterface $context)
     {
         $source = $context->getSource();
-        if($source === null) {
+        if($source === null || !is_array($source)) {
             return null;
         }
         return array_sum($source)/count($source);
@@ -118,13 +118,13 @@ class BaseFiltersStorage implements FiltersStorageInterface
     /**
      * Applies smart filter with rules
      * @param FilterContextInterface $context filter context
-     * @param array<int, mixed>|callable|null $filterConfig filter rules config or filter callback
+     * @param array<int, mixed>|callable $filterConfig filter rules config or filter callback
      * @return array<int, mixed>|null
      */
     public static function filter(FilterContextInterface $context, $filterConfig): ?array
     {
         $source = $context->getSource();
-        if($source === null) {
+        if($source === null || !is_array($source)) {
             return null;
         }
 
@@ -136,6 +136,11 @@ class BaseFiltersStorage implements FiltersStorageInterface
 
         foreach($source as $item) {
             foreach($filterConfig as $args) {
+                if(!is_array($args)) {
+                    // TODO exception?
+                    return null;
+                }
+
                 $rule = array_shift($args);
 
                 if(RuleHelper::check($item, $rule, $args)) {
@@ -157,7 +162,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
     public static function sort(FilterContextInterface $context, ?callable $sortCallback = null): ?array
     {
         $source = $context->getSource();
-        if($source === null) {
+        if($source === null || !is_array($source)) {
             return null;
         }
         if($sortCallback !== null) {
@@ -176,7 +181,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
     public static function rsort(FilterContextInterface $context): ?array
     {
         $source = $context->getSource();
-        if($source === null) {
+        if($source === null || !is_array($source)) {
             return null;
         }
 
@@ -207,7 +212,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
     public static function flatten(FilterContextInterface $context): ?array
     {
         $source = $context->getSource();
-        if($source === null) {
+        if($source === null || !is_array($source)) {
             return null;
         }
         return ArrHelper::flatten($source);
@@ -239,6 +244,11 @@ class BaseFiltersStorage implements FiltersStorageInterface
             $elseValue = $item;
 
             foreach($rules as $args) {
+                if(!is_array($args)) {
+                    // TODO exception?
+                    return null;
+                }
+
                 $value = array_shift($args);
                 $rule = array_shift($args);
 
