@@ -17,14 +17,14 @@ class NestedAccessor implements NestedAccessorInterface
      */
     protected $source;
     /**
-     * @var string path's separator of nesting
+     * @var non-empty-string path's separator of nesting
      */
     protected string $pathDelimiter;
 
     /**
      * ArrayNestedAccessor constructor.
      * @param array|object|null|mixed $source
-     * @param string $pathDelimiter
+     * @param non-empty-string $pathDelimiter
      * @throws NestedAccessorException
      */
     public function __construct(&$source, string $pathDelimiter = '.')

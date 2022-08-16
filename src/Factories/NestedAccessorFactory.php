@@ -15,7 +15,7 @@ class NestedAccessorFactory implements NestedAccessorFactoryInterface
     /**
      * Creates NestedAccessor instance
      * @param array|null $source source for accessing
-     * @param string $pathDelimiter nesting path separator
+     * @param non-empty-string $pathDelimiter nesting path separator
      * @return NestedAccessor nested accessor instance
      * @throws NestedAccessorException
      */

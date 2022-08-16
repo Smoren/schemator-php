@@ -75,7 +75,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
     /**
      * Explodes array with separator
      * @param FilterContextInterface $context filter context
-     * @param string $delimiter separator
+     * @param non-empty-string $delimiter separator
      * @return false|string[]|null
      */
     public static function explode(FilterContextInterface $context, string $delimiter = ', ')
