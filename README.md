@@ -7,7 +7,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Schematic data converter — tool for converting nested data structures
-(associative, non-associative arrays and objects composition) with 
+(associative, non-associative arrays and objects compositions) by given 
 conversion schema.
 
 ### How to install to your project
@@ -28,20 +28,6 @@ composer test
 
 ```php
 use Smoren\Schemator\Factories\SchematorFactory;
-
-$schema = [
-    'city_id' => 'id',
-    'city_name' => 'name',
-    'city_street_names' => 'streets.name',
-    'country_id' => 'country.id',
-    'country_name' => 'country.name',
-    'country_friends' => 'country.friends',
-    'country_friend' => 'country.friends',
-    'country_first_capital' => 'country.capitals.msk',
-    'country_second_capital' => 'country.capitals.spb',
-    'country_data.country_id' => 'country.id',
-    'country_data.country_name' => 'country.name',
-];
 
 $input = [
     'id' => 100,
@@ -73,6 +59,20 @@ $input = [
         ],
     ],
     'msk_path' => 'country.capitals.msk',
+];
+
+$schema = [
+    'city_id' => 'id',
+    'city_name' => 'name',
+    'city_street_names' => 'streets.name',
+    'country_id' => 'country.id',
+    'country_name' => 'country.name',
+    'country_friends' => 'country.friends',
+    'country_friend' => 'country.friends',
+    'country_first_capital' => 'country.capitals.msk',
+    'country_second_capital' => 'country.capitals.spb',
+    'country_data.country_id' => 'country.id',
+    'country_data.country_name' => 'country.name',
 ];
 
 $schemator = SchematorFactory::create();
@@ -123,16 +123,6 @@ print_r($output);
 ```php
 use Smoren\Schemator\Factories\SchematorFactory;
 
-$schema = [
-    'city_street_names.all' => ['streets.name', ['implode', ', ']],
-    'city_street_names.sorted' => ['streets.name', ['sort'], ['implode', ', ']],
-    'city_street_names.filtered' => ['streets.name', ['filter', function(string $candidate) {
-        return strpos($candidate, 'Len') !== false;
-    }]],
-    'msk' => ['msk_path', ['path']],
-    'city_street_houses' => ['streets.houses', ['flatten']],
-];
-
 $input = [
     'id' => 100,
     'name' => 'Novgorod',
@@ -163,6 +153,16 @@ $input = [
         ],
     ],
     'msk_path' => 'country.capitals.msk',
+];
+
+$schema = [
+    'city_street_names.all' => ['streets.name', ['implode', ', ']],
+    'city_street_names.sorted' => ['streets.name', ['sort'], ['implode', ', ']],
+    'city_street_names.filtered' => ['streets.name', ['filter', function(string $candidate) {
+        return strpos($candidate, 'Len') !== false;
+    }]],
+    'msk' => ['msk_path', ['path']],
+    'city_street_houses' => ['streets.houses', ['flatten']],
 ];
 
 $schemator = SchematorFactory::create();
