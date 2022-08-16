@@ -18,7 +18,8 @@
     "codeception/codeception": "^4.2.1",
     "codeception/module-asserts": "^2.0",
     "php-coveralls/php-coveralls": "^2.0",
-    "squizlabs/php_codesniffer": "3.*"
+    "squizlabs/php_codesniffer": "3.*",
+    "phpstan/phpstan": "^1.8"
   },
   "autoload": {
     "psr-4": {
@@ -43,6 +44,7 @@
     "test-coverage": ["./vendor/bin/codecept run unit tests/unit --coverage"],
     "test-coverage-html": ["./vendor/bin/codecept run unit tests/unit --coverage-html"],
     "test-coverage-xml": ["./vendor/bin/codecept run unit tests/unit --coverage-xml"],
-    "codesniffer": ["./vendor/bin/phpcs --ignore=vendor,tests --standard=tests/coding_standard.xml -s ."]
+    "codesniffer": ["./vendor/bin/phpcs --ignore=vendor,tests --standard=tests/coding_standard.xml -s ."],
+    "stan": ["./vendor/bin/phpstan analyse src"]
   }
 }

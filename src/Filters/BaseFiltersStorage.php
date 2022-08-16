@@ -188,6 +188,10 @@ class BaseFiltersStorage implements FiltersStorageInterface
         return $result;
     }
 
+    public function __construct()
+    {
+    }
+
     public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->_get());
