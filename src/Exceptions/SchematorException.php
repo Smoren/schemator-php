@@ -20,7 +20,7 @@ class SchematorException extends BaseException
 
     /**
      * Checks that filter exists in map
-     * @param array $filterMap filters mapped by name
+     * @param array<string, callable> $filterMap filters mapped by name
      * @param string $filterName name of filter
      * @throws SchematorException
      */

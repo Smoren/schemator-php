@@ -13,7 +13,7 @@ use Smoren\Helpers\ArrHelper;
 class NestedAccessor implements NestedAccessorInterface
 {
     /**
-     * @var array|object data source for accessing
+     * @var array<int|string, mixed>|object data source for accessing
      */
     protected $source;
     /**
@@ -23,7 +23,7 @@ class NestedAccessor implements NestedAccessorInterface
 
     /**
      * ArrayNestedAccessor constructor.
-     * @param array|object|null|mixed $source
+     * @param array<int|string, mixed>|object|mixed|null $source
      * @param non-empty-string $pathDelimiter
      * @throws NestedAccessorException
      */
@@ -37,7 +37,7 @@ class NestedAccessor implements NestedAccessorInterface
             throw NestedAccessorException::createAsSourceIsScalar($source);
         }
 
-        /** @var array $source */
+        /** @var array<int|string, mixed> $source */
         $this->source = &$source;
         $this->pathDelimiter = $pathDelimiter;
     }
@@ -93,11 +93,12 @@ class NestedAccessor implements NestedAccessorInterface
     /**
      * Internal recursive method to get value from source by path stack
      * @param mixed $source source to get value from
-     * @param array $path nested path stack
+     * @param array<string> $path nested path stack
      * @param array|mixed $result place for result
      * @param int $errorsCount errors counter
+     * @return void
      */
-    protected function _get($source, array $path, &$result, int &$errorsCount)
+    protected function _get($source, array $path, &$result, int &$errorsCount): void
     {
         // if path stack is empty — we reached target value of given path in source argument
         if(!count($path)) {
@@ -165,8 +166,8 @@ class NestedAccessor implements NestedAccessorInterface
 
     /**
      * Internal recursive method to save value to source by path stack
-     * @param array|object $source source to save value to
-     * @param array $path nested path
+     * @param array<int|string, mixed>|object $source source to save value to
+     * @param array<string> $path nested path
      * @param mixed $value value to save to source
      * @param bool $strict when true throw exception if path not exist in source object
      * @return $this

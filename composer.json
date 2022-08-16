@@ -46,6 +46,6 @@
     "test-coverage-html": ["./vendor/bin/codecept run unit tests/unit --coverage-html"],
     "test-coverage-xml": ["./vendor/bin/codecept run unit tests/unit --coverage-xml"],
     "codesniffer": ["./vendor/bin/phpcs --ignore=vendor,tests --standard=tests/coding_standard.xml -s ."],
-    "stan": ["./vendor/bin/phpstan analyse -l 5 src"]
+    "stan": ["./vendor/bin/phpstan analyse -l 6 src"]
   }
 }

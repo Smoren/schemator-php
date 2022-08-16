@@ -118,8 +118,8 @@ class BaseFiltersStorage implements FiltersStorageInterface
     /**
      * Applies smart filter with rules
      * @param FilterContextInterface $context filter context
-     * @param array|callable|null $filterConfig filter rules config or filter callback
-     * @return array|null
+     * @param array<int, mixed>|callable|null $filterConfig filter rules config or filter callback
+     * @return array<int, mixed>|null
      */
     public static function filter(FilterContextInterface $context, $filterConfig): ?array
     {
@@ -152,7 +152,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
      * Returns sorted array
      * @param FilterContextInterface $context filter context
      * @param callable|null $sortCallback sort callback
-     * @return array|null
+     * @return array<int, mixed>|null
      */
     public static function sort(FilterContextInterface $context, ?callable $sortCallback = null): ?array
     {
@@ -171,7 +171,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
     /**
      * Returns reverse-sorted array
      * @param FilterContextInterface $context filter context
-     * @return array|null
+     * @return array<int, mixed>|null
      */
     public static function rsort(FilterContextInterface $context): ?array
     {
@@ -202,7 +202,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
     /**
      * Returns flattened array
      * @param FilterContextInterface $context filter context
-     * @return array|null
+     * @return array<int, mixed>|null
      */
     public static function flatten(FilterContextInterface $context): ?array
     {
@@ -216,8 +216,8 @@ class BaseFiltersStorage implements FiltersStorageInterface
     /**
      * Applies smart filter replacements to source
      * @param FilterContextInterface $context filter context
-     * @param array $rules smart filter replacements
-     * @return array|mixed|null
+     * @param array<int, mixed> $rules smart filter replacements
+     * @return array<int, mixed>|mixed|null
      */
     public static function replace(FilterContextInterface $context, array $rules)
     {
@@ -278,7 +278,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
 
     /**
      * @inheritDoc
-     * @return ArrayIterator
+     * @return ArrayIterator<string, callable>
      */
     public function getIterator(): ArrayIterator
     {

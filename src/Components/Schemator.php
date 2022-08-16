@@ -17,11 +17,11 @@ use Throwable;
 class Schemator implements SchematorInterface
 {
     /**
-     * @var callable[] filters map
+     * @var array<string, callable> filters map
      */
     protected array $filters = [];
     /**
-     * @var string delimiter for multilevel paths
+     * @var non-empty-string delimiter for multilevel paths
      */
     protected string $pathDelimiter;
     /**
@@ -31,7 +31,7 @@ class Schemator implements SchematorInterface
 
     /**
      * Schemator constructor.
-     * @param string $pathDelimiter delimiter for multilevel paths
+     * @param non-empty-string $pathDelimiter delimiter for multilevel paths
      */
     public function __construct(
         string $pathDelimiter = '.',
@@ -103,13 +103,13 @@ class Schemator implements SchematorInterface
 
     /**
      * Returns value got by string key
-     * @param array $source source to get value from
+     * @param array<string, mixed>|object $source source to get value from
      * @param string $key nested path to get value by
      * @param bool $strict when true throw exception if something goes wrong
      * @return array|mixed|null value
      * @throws SchematorException
      */
-    protected function getValueByKey(array $source, string $key, bool $strict)
+    protected function getValueByKey($source, string $key, bool $strict)
     {
         try {
             $fromAccessor = $this->nestedAccessorFactory->create($source, $this->pathDelimiter);
@@ -121,13 +121,13 @@ class Schemator implements SchematorInterface
 
     /**
      * Returns value got by filters key
-     * @param array $source source to get value from
-     * @param array $filters filters config
+     * @param array<string, mixed>|object $source source to get value from
+     * @param array<int, mixed> $filters filters config
      * @param bool $strict when true throw exception if something goes wrong
      * @return array|mixed|null
      * @throws SchematorException
      */
-    protected function getValueByFilters(array $source, array $filters, bool $strict)
+    protected function getValueByFilters($source, array $filters, bool $strict)
     {
         $result = $source;
         foreach($filters as $filterConfig) {
@@ -164,7 +164,7 @@ class Schemator implements SchematorInterface
 
     /**
      * Returns value got by unsupported key
-     * @param mixed $source source to get value from
+     * @param array<string, mixed>|object $source source to get value from
      * @param mixed $key unsupported key
      * @param bool $strict when true throw exception
      * @return null the only value we can get by unsupported key
@@ -180,14 +180,14 @@ class Schemator implements SchematorInterface
 
     /**
      * Returns value from source by filter
-     * @param array $filterConfig filter config [filterName, ...args]
-     * @param mixed $source source to extract value from
-     * @param array $rootSource root source
+     * @param array<int, mixed> $filterConfig filter config [filterName, ...args]
+     * @param array<string, mixed>|object $source source to extract value from
+     * @param array<string, mixed>|object $rootSource root source
      * @param bool $strict when true throw exception if something goes wrong
      * @return mixed result value
      * @throws SchematorException
      */
-    protected function runFilter(array $filterConfig, $source, array $rootSource, bool $strict)
+    protected function runFilter(array $filterConfig, $source, $rootSource, bool $strict)
     {
         $filterName = array_shift($filterConfig);
 

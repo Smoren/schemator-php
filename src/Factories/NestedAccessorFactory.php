@@ -13,13 +13,10 @@ use Smoren\Schemator\Exceptions\NestedAccessorException;
 class NestedAccessorFactory implements NestedAccessorFactoryInterface
 {
     /**
-     * Creates NestedAccessor instance
-     * @param array|null $source source for accessing
-     * @param non-empty-string $pathDelimiter nesting path separator
-     * @return NestedAccessor nested accessor instance
+     * @inheritDoc
      * @throws NestedAccessorException
      */
-    public static function create(?array &$source, string $pathDelimiter = '.'): NestedAccessor
+    public static function create(&$source, string $pathDelimiter = '.'): NestedAccessor
     {
         return new NestedAccessor($source, $pathDelimiter);
     }
