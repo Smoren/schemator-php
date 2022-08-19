@@ -56,7 +56,7 @@ class NestedAccessorTest extends \Codeception\Test\Unit
 
         try {
             $accessor->get('name1', true);
-            $this->assertTrue(false);
+            $this->expectError();
         } catch(NestedAccessorException $e) {
             $this->assertEquals(NestedAccessorException::CANNOT_GET_VALUE, $e->getCode());
             $this->assertEquals('name1', $e->getData()['key']);
@@ -65,7 +65,7 @@ class NestedAccessorTest extends \Codeception\Test\Unit
 
         try {
             $accessor->get('name1');
-            $this->assertTrue(false);
+            $this->expectError();
         } catch(NestedAccessorException $e) {
             $this->assertEquals(NestedAccessorException::CANNOT_GET_VALUE, $e->getCode());
             $this->assertEquals('name1', $e->getData()['key']);
@@ -74,7 +74,7 @@ class NestedAccessorTest extends \Codeception\Test\Unit
 
         try {
             $accessor->get('name1', true);
-            $this->assertTrue(false);
+            $this->expectError();
         } catch(NestedAccessorException $e) {
             $this->assertEquals(NestedAccessorException::CANNOT_GET_VALUE, $e->getCode());
             $this->assertEquals('name1', $e->getData()['key']);
@@ -89,7 +89,7 @@ class NestedAccessorTest extends \Codeception\Test\Unit
         $this->assertEquals(null, $accessor->get('country.capitals.msk1', false));
         try {
             $accessor->get('country.capitals.msk1');
-            $this->assertTrue(false);
+            $this->expectError();
         } catch(NestedAccessorException $e) {
             $this->assertEquals(NestedAccessorException::CANNOT_GET_VALUE, $e->getCode());
             $this->assertEquals('country.capitals.msk1', $e->getData()['key']);
@@ -238,7 +238,7 @@ class NestedAccessorTest extends \Codeception\Test\Unit
 
         try {
             $accessor->get('countries.cities.extra.codes.value');
-            $this->assertTrue(false);
+            $this->expectError();
         } catch(NestedAccessorException $e) {
             $this->assertEquals(NestedAccessorException::CANNOT_GET_VALUE, $e->getCode());
             $this->assertEquals('countries.cities.extra.codes.value', $e->getData()['key']);
@@ -334,7 +334,7 @@ class NestedAccessorTest extends \Codeception\Test\Unit
         $this->assertEquals((object)['d' => 'e'], $accessor->get('test.b.c', false));
         try {
             $accessor->set('test.b.c.f', 123);
-            $this->assertTrue(false);
+            $this->expectError();
         } catch(NestedAccessorException $e) {
             $this->assertEquals(NestedAccessorException::CANNOT_SET_VALUE, $e->getCode());
             $this->assertEquals('f', $e->getData()['key']);
@@ -360,7 +360,7 @@ class NestedAccessorTest extends \Codeception\Test\Unit
         $input = 123;
         try {
             new NestedAccessor($input);
-            $this->assertTrue(false);
+            $this->expectError();
         } catch(NestedAccessorException $e) {
             $this->assertEquals(NestedAccessorException::SOURCE_IS_SCALAR, $e->getCode());
             $this->assertEquals('integer', $e->getData()['source_type']);
@@ -369,7 +369,7 @@ class NestedAccessorTest extends \Codeception\Test\Unit
         $input = 123.5;
         try {
             new NestedAccessor($input);
-            $this->assertTrue(false);
+            $this->expectError();
         } catch(NestedAccessorException $e) {
             $this->assertEquals(NestedAccessorException::SOURCE_IS_SCALAR, $e->getCode());
             $this->assertEquals('double', $e->getData()['source_type']);
@@ -378,7 +378,7 @@ class NestedAccessorTest extends \Codeception\Test\Unit
         $input = 'str';
         try {
             new NestedAccessor($input);
-            $this->assertTrue(false);
+            $this->expectError();
         } catch(NestedAccessorException $e) {
             $this->assertEquals(NestedAccessorException::SOURCE_IS_SCALAR, $e->getCode());
             $this->assertEquals('string', $e->getData()['source_type']);
@@ -387,7 +387,7 @@ class NestedAccessorTest extends \Codeception\Test\Unit
         $input = true;
         try {
             new NestedAccessor($input);
-            $this->assertTrue(false);
+            $this->expectError();
         } catch(NestedAccessorException $e) {
             $this->assertEquals(NestedAccessorException::SOURCE_IS_SCALAR, $e->getCode());
             $this->assertEquals('boolean', $e->getData()['source_type']);

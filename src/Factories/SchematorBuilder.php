@@ -2,7 +2,6 @@
 
 namespace Smoren\Schemator\Factories;
 
-use Smoren\Schemator\Interfaces\FiltersStorageInterface;
 use Smoren\Schemator\Interfaces\SchematorBuilderInterface;
 use Smoren\Schemator\Interfaces\SchematorInterface;
 use Smoren\Schemator\Components\Schemator;
@@ -32,6 +31,24 @@ class SchematorBuilder implements SchematorBuilderInterface
     public function create(): SchematorBuilderInterface
     {
         $this->schemator = new Schemator();
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function withPathDelimiter(string $pathDelimiter): SchematorBuilderInterface
+    {
+        $this->schemator->setPathDelimiter($pathDelimiter);
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function withErrorsLevelMask(int $errorsLevelMask): SchematorBuilderInterface
+    {
+        $this->schemator->setErrorsLevelMask($errorsLevelMask);
         return $this;
     }
 

@@ -50,7 +50,7 @@ class SchematorTest extends \Codeception\Test\Unit
             'msk_path' => 'country.capitals.msk',
         ];
 
-        $data = $schemator->exec($input, [
+        $data = $schemator->convert($input, [
             'city_id' => 'id',
             'city_name' => 'name',
             'city_street_names' => 'streets.name',
@@ -88,10 +88,10 @@ class SchematorTest extends \Codeception\Test\Unit
         ], $data['country_data']);
 
         try {
-            $schemator->exec($input, [
+            $schemator->convert($input, [
                 'city_street_names' => ['streets.name', ['join', ', ']]
             ]);
-            $this->assertTrue(false);
+            $this->expectError();
         } catch(SchematorException $e) {
             $this->assertEquals(SchematorException::FILTER_NOT_FOUND, $e->getCode());
         }
@@ -126,22 +126,22 @@ class SchematorTest extends \Codeception\Test\Unit
             }
         );
 
-        $data = $schemator->exec($input, [
+        $data = $schemator->convert($input, [
             'city_street_names' => ['streets.name', ['implode', ', ']]
         ]);
         $this->assertEquals('Tverskaya, Leninskiy, Tarusskaya', $data['city_street_names']);
 
-        $data = $schemator->exec($input, [
+        $data = $schemator->convert($input, [
             'city_street_names' => ['streets.name', ['implode', ', '], ['explode', ', ']]
         ]);
         $this->assertEquals(['Tverskaya', 'Leninskiy', 'Tarusskaya'], $data['city_street_names']);
 
-        $data = $schemator->exec($input, [
+        $data = $schemator->convert($input, [
             'city_street_names' => ['streets.name', ['startsWith', 'T'], ['implode', ', ']]
         ]);
         $this->assertEquals('Tverskaya, Tarusskaya', $data['city_street_names']);
 
-        $data = $schemator->exec($input, [
+        $data = $schemator->convert($input, [
             'msk' => ['msk_path', ['path']]
         ]);
         $this->assertEquals('Moscow', $data['msk']);
@@ -186,7 +186,7 @@ class SchematorTest extends \Codeception\Test\Unit
             'msk_path' => 'country/capitals/msk',
         ];
 
-        $data = $schemator->exec($input, [
+        $data = $schemator->convert($input, [
             'city_id' => 'id',
             'city_name' => 'name',
             'city_street_names' => 'streets/name',
@@ -224,10 +224,10 @@ class SchematorTest extends \Codeception\Test\Unit
         ], $data['country_data']);
 
         try {
-            $schemator->exec($input, [
+            $schemator->convert($input, [
                 'city_street_names' => ['streets/name', ['join', ', ']]
             ]);
-            $this->assertTrue(false);
+            $this->expectError();
         } catch(SchematorException $e) {
             $this->assertEquals(SchematorException::FILTER_NOT_FOUND, $e->getCode());
         }
@@ -262,22 +262,22 @@ class SchematorTest extends \Codeception\Test\Unit
             }
         );
 
-        $data = $schemator->exec($input, [
+        $data = $schemator->convert($input, [
             'city_street_names' => ['streets/name', ['implode', ', ']]
         ]);
         $this->assertEquals('Tverskaya, Leninskiy, Tarusskaya', $data['city_street_names']);
 
-        $data = $schemator->exec($input, [
+        $data = $schemator->convert($input, [
             'city_street_names' => ['streets/name', ['implode', ', '], ['explode', ', ']]
         ]);
         $this->assertEquals(['Tverskaya', 'Leninskiy', 'Tarusskaya'], $data['city_street_names']);
 
-        $data = $schemator->exec($input, [
+        $data = $schemator->convert($input, [
             'city_street_names' => ['streets/name', ['startsWith', 'T'], ['implode', ', ']]
         ]);
         $this->assertEquals('Tverskaya, Tarusskaya', $data['city_street_names']);
 
-        $data = $schemator->exec($input, [
+        $data = $schemator->convert($input, [
             'msk' => ['msk_path', ['path']]
         ]);
         $this->assertEquals('Moscow', $data['msk']);
@@ -288,7 +288,7 @@ class SchematorTest extends \Codeception\Test\Unit
      */
     public function testFactory()
     {
-        $schemator = SchematorFactory::create(true, [
+        $schemator = SchematorFactory::create(Schemator::ERRORS_LEVEL_DEFAULT, true, [
             'startsWith' => function(FilterContextInterface $context, string $start) {
                 return array_filter($context->getSource(), function(string $candidate) use ($start) {
                     return strpos($candidate, $start) === 0;
@@ -328,7 +328,7 @@ class SchematorTest extends \Codeception\Test\Unit
             'msk_path' => 'country.capitals.msk',
         ];
 
-        $data = $schemator->exec($input, [
+        $data = $schemator->convert($input, [
             'city_street_names.first' => ['streets.name', ['implode', ', ']],
             'city_street_names.second' => ['streets.name', ['implode', ', '], ['explode', ', ']],
             'city_street_names.third' => ['streets.name', ['startsWith', 'T'], ['implode', ', ']],
@@ -361,7 +361,7 @@ class SchematorTest extends \Codeception\Test\Unit
 
         $schemator = SchematorFactory::create();
 
-        $data = $schemator->exec($input, [
+        $data = $schemator->convert($input, [
             'number_types' => ['numbers', [
                 'replace',
                 [
@@ -394,7 +394,7 @@ class SchematorTest extends \Codeception\Test\Unit
             '<0', '>9', '1-8', '>9', '<0', '=0', '>9', '1-8', '1-8', 'another', '=0',
         ], $data['number_types']);
 
-        $data = $schemator->exec($input, [
+        $data = $schemator->convert($input, [
             'positive' => [
                 'numbers',
                 ['filter', [['>', 0]]],
@@ -435,33 +435,38 @@ class SchematorTest extends \Codeception\Test\Unit
             }, 'Y-m-d']]
         ];
 
-        $output = $schemator->exec($input, $schema);
+        $output = $schemator->convert($input, $schema);
         $this->assertEquals('2022-04-28', $output['date']);
 
         $schema = [
             'date' => ['date', ['date', 'Y-m-d']]
         ];
-        $output = $schemator->exec($input, $schema);
+        $output = $schemator->convert($input, $schema);
         $this->assertEquals('2022-04-28', $output['date']);
 
         $schema = [
             'date' => ['date', ['date', 'Y-m-d H:i', 3]]
         ];
-        $output = $schemator->exec($input, $schema);
+        $output = $schemator->convert($input, $schema);
         $this->assertEquals('2022-04-28 19:01', $output['date']);
 
         $schema = [
             'date' => ['date', ['date', 'Y-m-d H:i', 0]]
         ];
-        $output = $schemator->exec($input, $schema);
+        $output = $schemator->convert($input, $schema);
         $this->assertEquals('2022-04-28 16:01', $output['date']);
 
         $schema = [
             'date' => ['date', ['date', ['Y-m-d H:i'], 0]]
         ];
+        $schemator = SchematorFactory::create(
+            Schemator::createErrorsLevelMask([
+                SchematorException::FILTER_ERROR,
+            ])
+        );
         try {
-            $schemator->exec($input, $schema, true);
-            $this->assertTrue(false);
+            $schemator->convert($input, $schema);
+            $this->expectError();
         } catch(SchematorException $e) {
             $this->assertEquals(SchematorException::FILTER_ERROR, $e->getCode());
             $this->assertEquals('date', $e->getData()['filter_name']);
@@ -483,13 +488,13 @@ class SchematorTest extends \Codeception\Test\Unit
         $schema = [
             'result' => ['numbers', ['sum']],
         ];
-        $output = $schemator->exec($input, $schema);
+        $output = $schemator->convert($input, $schema);
         $this->assertEquals(85, $output['result']);
 
         $schema = [
             'result' => ['numbers', ['average']],
         ];
-        $output = $schemator->exec($input, $schema);
+        $output = $schemator->convert($input, $schema);
         $this->assertEquals(7.73, round($output['result'], 2));
 
         $input = [
@@ -518,7 +523,7 @@ class SchematorTest extends \Codeception\Test\Unit
                 ['average'],
             ],
         ];
-        $output = $schemator->exec($input, $schema);
+        $output = $schemator->convert($input, $schema);
         $this->assertEquals(['value' => 875], $output);
     }
 
@@ -571,7 +576,7 @@ class SchematorTest extends \Codeception\Test\Unit
         ];
 
         $schemator = SchematorFactory::create();
-        $result = $schemator->exec($data, $schema);
+        $result = $schemator->convert($data, $schema);
 
         $this->assertEquals(['Russia', 'Belarus'], $result['country_names']);
         $this->assertEquals(['Moscow', 'Novgorod', 'Minsk'], $result['city_names']);
@@ -595,44 +600,56 @@ class SchematorTest extends \Codeception\Test\Unit
         $this->assertEquals(['c' => 1], $schemator->getValue($input, 'a.b'));
 
         $this->assertEquals(null, $schemator->getValue($input, 'a.b.c.d'));
+
+        $schemator = new Schemator('.', 0);
+
+        // unsupported key type
+        $this->assertEquals(null, $schemator->getValue($input, (object)[]));
+        // unsupported source type
+        $this->assertEquals(null, $schemator->getValue(null, 'a.b.c'));
+        $this->assertEquals(null, $schemator->getValue('my string', 'a.b.c'));
+        // unsupported filter config type
+        $this->assertEquals(null, $schemator->getValue($input, ['a', (object)[]]));
+
+        $schemator = new Schemator('.', Schemator::createErrorsLevelMask([
+            SchematorException::CANNOT_GET_VALUE,
+            SchematorException::UNSUPPORTED_SOURCE_TYPE,
+            SchematorException::UNSUPPORTED_KEY_TYPE,
+            SchematorException::UNSUPPORTED_FILTER_CONFIG_TYPE,
+        ]));
         try {
-            $this->assertEquals(null, $schemator->getValue($input, 'a.b.c.d', true));
-            $this->assertTrue(false);
+            $this->assertEquals(null, $schemator->getValue($input, 'a.b.c.d'));
+            $this->expectError();
         } catch(SchematorException $e) {
             $this->assertEquals(SchematorException::CANNOT_GET_VALUE, $e->getCode());
             $this->assertEquals('a.b.c.d', $e->getData()['key']);
         }
-
-        $this->assertEquals(null, $schemator->getValue(null, 'a.b.c'));
-        $this->assertEquals(null, $schemator->getValue('my string', 'a.b.c'));
         try {
-            $schemator->getValue(null, 'a.b.c', true);
-            $this->assertTrue(false);
+            $schemator->getValue(null, 'a.b.c');
+            $this->expectError();
         } catch(SchematorException $e) {
             $this->assertEquals(SchematorException::UNSUPPORTED_SOURCE_TYPE, $e->getCode());
             $this->assertEquals('NULL', $e->getData()['source_type']);
         }
         try {
-            $schemator->getValue('my string', 'a.b.c', true);
-            $this->assertTrue(false);
+            $schemator->getValue('my string', 'a.b.c');
+            $this->expectError();
         } catch(SchematorException $e) {
             $this->assertEquals(SchematorException::UNSUPPORTED_SOURCE_TYPE, $e->getCode());
             $this->assertEquals('string', $e->getData()['source_type']);
         }
 
-        $this->assertEquals(null, $schemator->getValue($input, (object)[]));
         try {
-            $schemator->getValue($input, (object)[], true);
-            $this->assertTrue(false);
+            $schemator->getValue($input, (object)[]);
+            $this->expectError();
         } catch(SchematorException $e) {
             $this->assertEquals(SchematorException::UNSUPPORTED_KEY_TYPE, $e->getCode());
             $this->assertEquals('object', $e->getData()['key_type']);
         }
 
-        $this->assertEquals(null, $schemator->getValue($input, ['a', (object)[]]));
         try {
-            $schemator->getValue($input, ['a', (object)[]], true);
-            $this->assertTrue(false);
+            $schemator->getValue($input, ['a', (object)[]]);
+            $this->expectError();
         } catch(SchematorException $e) {
             $this->assertEquals(SchematorException::UNSUPPORTED_FILTER_CONFIG_TYPE, $e->getCode());
             $this->assertEquals('object', $e->getData()['filter_config_type']);

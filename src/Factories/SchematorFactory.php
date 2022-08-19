@@ -2,6 +2,7 @@
 
 namespace Smoren\Schemator\Factories;
 
+use Smoren\Schemator\Components\Schemator;
 use Smoren\Schemator\Interfaces\SchematorFactoryInterface;
 use Smoren\Schemator\Components\MassSchemator;
 use Smoren\Schemator\Filters\BaseFiltersStorage;
@@ -16,9 +17,14 @@ class SchematorFactory implements SchematorFactoryInterface
     /**
      * @inheritDoc
      */
-    public static function create(bool $withBaseFilters = true, ?iterable $extraFilters = null): SchematorInterface
-    {
+    public static function create(
+        int $errorsLevelMask = Schemator::ERRORS_LEVEL_DEFAULT,
+        bool $withBaseFilters = true,
+        ?iterable $extraFilters = null
+    ): SchematorInterface {
         $builder = static::createBuilder();
+
+        $builder->withErrorsLevelMask($errorsLevelMask);
 
         if($withBaseFilters) {
             $builder->withFilters(new BaseFiltersStorage());
@@ -36,10 +42,11 @@ class SchematorFactory implements SchematorFactoryInterface
      * @return MassSchemator
      */
     public static function createMass(
+        int $errorsLevelMask = Schemator::ERRORS_LEVEL_DEFAULT,
         bool $withBaseFilters = true,
         ?iterable $extraFilters = null
     ): MassSchemator {
-        return new MassSchemator(static::create($withBaseFilters, $extraFilters));
+        return new MassSchemator(static::create($errorsLevelMask, $withBaseFilters, $extraFilters));
     }
 
     /**

@@ -50,7 +50,7 @@ class MassSchematorTest extends \Codeception\Test\Unit
             $this->assertEquals($expectedResult[$i++], $item);
         }
 
-        $this->assertEquals($expectedResult, $massSchemator->exec($cities, $schema));
+        $this->assertEquals($expectedResult, $massSchemator->convert($cities, $schema));
     }
 
     /**

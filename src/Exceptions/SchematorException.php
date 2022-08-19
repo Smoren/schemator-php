@@ -19,23 +19,19 @@ class SchematorException extends BaseException
     public const UNSUPPORTED_FILTER_CONFIG_TYPE = 6;
 
     /**
-     * Checks that filter exists in map
-     * @param array<string, callable> $filterMap filters mapped by name
+     * Creates a new exception instance for filter not found error
      * @param string $filterName name of filter
-     * @throws SchematorException
      */
-    public static function ensureFilterExists(array $filterMap, string $filterName): void
+    public static function createAsFilterNotFound(string $filterName): SchematorException
     {
-        if(!isset($filterMap[$filterName])) {
-            throw new SchematorException(
-                "filter '{$filterName}' not found",
-                SchematorException::FILTER_NOT_FOUND,
-                null,
-                [
-                    'filter_name' => $filterName,
-                ]
-            );
-        }
+        return new SchematorException(
+            "filter '{$filterName}' not found",
+            SchematorException::FILTER_NOT_FOUND,
+            null,
+            [
+                'filter_name' => $filterName,
+            ]
+        );
     }
 
     /**

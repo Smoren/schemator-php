@@ -33,7 +33,7 @@ class MassSchemator implements MassSchematorInterface
     public function generate(iterable $source, array $schema): Generator
     {
         foreach($source as $item) {
-            yield $this->schemator->exec($item, $schema);
+            yield $this->schemator->convert($item, $schema);
         }
     }
 
@@ -41,23 +41,6 @@ class MassSchemator implements MassSchematorInterface
      * @inheritDoc
      */
     public function convert(iterable $source, array $schema): array
-    {
-        $gen = $this->generate($source, $schema);
-        $result = [];
-
-        foreach($gen as $item) {
-            $result[] = $item;
-        }
-
-        return $result;
-    }
-
-    /**
-     * @inheritDoc
-     * @deprecated please use convert() method
-     * @see MassSchematorInterface::convert()
-     */
-    public function exec(iterable $source, array $schema): array
     {
         $gen = $this->generate($source, $schema);
         $result = [];

@@ -30,16 +30,4 @@ interface MassSchematorInterface
      * @throws SchematorException
      */
     public function convert(iterable $source, array $schema): array;
-
-    /**
-     * Converts input data array with using schema
-     * @param iterable<int, array<string, mixed>|object> $source iterable source of items to convert
-     * every one by schemator
-     * @param array<string, mixed> $schema schema for converting
-     * @return array<int, mixed> array of converted items
-     * @throws SchematorException
-     * @deprecated please use convert() method
-     * @see MassSchematorInterface::convert()
-     */
-    public function exec(iterable $source, array $schema): array;
 }

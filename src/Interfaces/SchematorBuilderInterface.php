@@ -15,6 +15,20 @@ interface SchematorBuilderInterface
     public function create(): SchematorBuilderInterface;
 
     /**
+     * Sets path delimiter
+     * @param non-empty-string $pathDelimiter path delimiter
+     * @return SchematorBuilderInterface
+     */
+    public function withPathDelimiter(string $pathDelimiter): SchematorBuilderInterface;
+
+    /**
+     * Sets errors level mask
+     * @param int $errorsLevelMask errors level mask
+     * @return SchematorBuilderInterface
+     */
+    public function withErrorsLevelMask(int $errorsLevelMask): SchematorBuilderInterface;
+
+    /**
      * Adds filters to SchematorInterface object
      * @param array<string, callable>|FiltersStorageInterface $filters
      * @return SchematorBuilderInterface
