@@ -850,6 +850,41 @@ class SchematorTest extends \Codeception\Test\Unit
             $schema = ['my_key' => 'key'];
             $this->assertSuccess($schemator, $input, $schema, ['my_key' => 1]);
         }
+
+        {
+            $schemator->setErrorsLevelMask(Schemator::createErrorsLevelMask([
+                SchematorException::FILTER_NOT_FOUND,
+                SchematorException::FILTER_ERROR,
+                SchematorException::CANNOT_GET_VALUE,
+                SchematorException::UNSUPPORTED_SOURCE_TYPE,
+                SchematorException::UNSUPPORTED_KEY_TYPE,
+                SchematorException::UNSUPPORTED_FILTER_CONFIG_TYPE,
+            ]));
+
+            $input = ['date' => 1651161688];
+            $schema = ['date' => ['date', ['unknown_filter']]];
+            $this->assertFailure($schemator, $input, $schema, SchematorException::FILTER_NOT_FOUND);
+
+            $input = ['date' => 1651161688];
+            $schema = ['date' => ['date', ['date', ['Y-m-d H:i'], 0]]];
+            $this->assertFailure($schemator, $input, $schema, SchematorException::FILTER_ERROR);
+
+            $input = ['key' => 1];
+            $schema = ['my_key' => 'unknown_key'];
+            $this->assertFailure($schemator, $input, $schema, SchematorException::CANNOT_GET_VALUE);
+
+            $input = null;
+            $schema = ['my_key' => 'key'];
+            $this->assertFailure($schemator, $input, $schema, SchematorException::UNSUPPORTED_SOURCE_TYPE);
+
+            $input = ['key' => 1];
+            $schema = ['my_key' => (object)[]];
+            $this->assertFailure($schemator, $input, $schema, SchematorException::UNSUPPORTED_KEY_TYPE);
+
+            $input = ['key' => 1];
+            $schema = ['my_key' => ['key', (object)[]]];
+            $this->assertFailure($schemator, $input, $schema, SchematorException::UNSUPPORTED_FILTER_CONFIG_TYPE);
+        }
     }
 
     protected function assertSuccess(Schemator $schemator, $input, $schema, $value)
