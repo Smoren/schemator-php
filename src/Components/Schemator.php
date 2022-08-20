@@ -139,9 +139,10 @@ class Schemator implements SchematorInterface
     {
         try {
             $fromAccessor = $this->nestedAccessorFactory->create($source, $this->pathDelimiter);
+
             return $fromAccessor->get(
                 $key,
-                BitmapHelper::intersects($this->errorsLevelMask, [SchematorException::CANNOT_GET_VALUE])
+                $this->needToThrow(SchematorException::CANNOT_GET_VALUE)
             );
         } catch(NestedAccessorException $e) {
             throw SchematorException::createAsCannotGetValue($source, $key, $e);
@@ -164,12 +165,7 @@ class Schemator implements SchematorInterface
             } elseif(is_array($filterConfig)) {
                 $result = $this->runFilter($filterConfig, $result, $source);
             } else {
-                if(
-                    BitmapHelper::intersects(
-                        $this->errorsLevelMask,
-                        [SchematorException::UNSUPPORTED_FILTER_CONFIG_TYPE]
-                    )
-                ) {
+                if($this->needToThrow(SchematorException::UNSUPPORTED_FILTER_CONFIG_TYPE)) {
                     throw SchematorException::createAsUnsupportedFilterConfigType($filterConfig);
                 }
                 $result = null;
@@ -188,7 +184,7 @@ class Schemator implements SchematorInterface
      */
     protected function getValueFromUnsupportedSource($source, $key)
     {
-        if(BitmapHelper::intersects($this->errorsLevelMask, [SchematorException::UNSUPPORTED_SOURCE_TYPE])) {
+        if($this->needToThrow(SchematorException::UNSUPPORTED_SOURCE_TYPE)) {
             throw SchematorException::createAsUnsupportedSourceType($source, $key);
         }
         return null;
@@ -203,7 +199,7 @@ class Schemator implements SchematorInterface
      */
     protected function getValueByUnsupportedKey($source, $key)
     {
-        if(BitmapHelper::intersects($this->errorsLevelMask, [SchematorException::UNSUPPORTED_KEY_TYPE])) {
+        if($this->needToThrow(SchematorException::UNSUPPORTED_KEY_TYPE)) {
             throw SchematorException::createAsUnsupportedKeyType($source, $key);
         }
         return null;
@@ -223,7 +219,7 @@ class Schemator implements SchematorInterface
 
         if(
             !isset($this->filterMap[$filterName])
-            && BitmapHelper::intersects($this->errorsLevelMask, [SchematorException::FILTER_NOT_FOUND])
+            && $this->needToThrow(SchematorException::FILTER_NOT_FOUND)
         ) {
             throw SchematorException::createAsFilterNotFound($filterName);
         }
@@ -234,12 +230,12 @@ class Schemator implements SchematorInterface
                 ...$filterConfig
             );
         } catch(SchematorException $e) {
-            if(BitmapHelper::intersects($this->errorsLevelMask, [$e->getCode()])) {
+            if($this->needToThrow($e->getCode())) {
                 throw $e;
             }
             return null;
         } catch(Throwable $e) {
-            if(BitmapHelper::intersects($this->errorsLevelMask, [SchematorException::FILTER_ERROR])) {
+            if($this->needToThrow(SchematorException::FILTER_ERROR)) {
                 throw SchematorException::createAsFilterError($filterName, $filterConfig, $source, $e);
             }
             return null;
