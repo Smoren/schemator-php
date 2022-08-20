@@ -725,7 +725,6 @@ class SchematorTest extends \Codeception\Test\Unit
 
         $this->assertEquals(123, $schemator->getValue($input, ['mypath', ['path']]));
         $this->assertEquals(null, $schemator->getValue($input, ['mynull', ['path']]));
-        $this->assertEquals(null, $schemator->getValue($input, ['mylist', ['path']]));
 
         $this->assertEquals([123], $schemator->getValue($input, ['mysource', ['flatten']]));
         $this->assertEquals(null, $schemator->getValue($input, ['mynull', ['flatten']]));
@@ -788,6 +787,14 @@ class SchematorTest extends \Codeception\Test\Unit
             $schema = ['my_key' => 'unknown_key'];
             $this->assertFailure($schemator, $input, $schema, SchematorException::CANNOT_GET_VALUE);
 
+            $input = ['path_key' => 'unknown.path'];
+            $schema = ['path_value' => ['path_key', ['path']]];
+            $this->assertFailure($schemator, $input, $schema, SchematorException::CANNOT_GET_VALUE);
+
+            $input = ['path_key' => 'known.path', 'known' => ['path' => 1]];
+            $schema = ['path_value' => ['path_key', ['path']]];
+            $this->assertSuccess($schemator, $input, $schema, ['path_value' => 1]);
+
             $input = ['key' => 1];
             $schema = ['my_key' => 'key'];
             $this->assertSuccess($schemator, $input, $schema, ['my_key' => 1]);
@@ -849,6 +856,14 @@ class SchematorTest extends \Codeception\Test\Unit
             $input = ['key' => 1];
             $schema = ['my_key' => 'key'];
             $this->assertSuccess($schemator, $input, $schema, ['my_key' => 1]);
+        }
+
+        {
+
+//            $input = ['path_key' => 'unknown.path'];
+//            $schema = [['path_key', ['path']]];
+//            $this->assertEquals(null, $schemator->getValue($input, ));
+
         }
 
         {

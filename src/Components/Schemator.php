@@ -233,6 +233,11 @@ class Schemator implements SchematorInterface
                 new FilterContext($this, $source, $rootSource),
                 ...$filterConfig
             );
+        } catch(SchematorException $e) {
+            if(BitmapHelper::intersects($this->errorsLevelMask, [$e->getCode()])) {
+                throw $e;
+            }
+            return null;
         } catch(Throwable $e) {
             if(BitmapHelper::intersects($this->errorsLevelMask, [SchematorException::FILTER_ERROR])) {
                 throw SchematorException::createAsFilterError($filterName, $filterConfig, $source, $e);
