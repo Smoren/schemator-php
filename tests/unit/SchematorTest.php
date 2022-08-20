@@ -4,7 +4,8 @@ namespace Smoren\Schemator\Tests\Unit;
 
 use Smoren\Schemator\Components\Schemator;
 use Smoren\Schemator\Exceptions\SchematorException;
-use Smoren\Schemator\Factories\SchematorFactory;
+use Smoren\Schemator\Factories\SchematorBuilder;
+use Smoren\Schemator\Filters\BaseFiltersStorage;
 use Smoren\Schemator\Interfaces\FilterContextInterface;
 
 class SchematorTest extends \Codeception\Test\Unit
@@ -286,15 +287,19 @@ class SchematorTest extends \Codeception\Test\Unit
     /**
      * @throws SchematorException
      */
-    public function testFactory()
+    public function testBuilder()
     {
-        $schemator = SchematorFactory::create(Schemator::ERRORS_LEVEL_DEFAULT, true, [
-            'startsWith' => function(FilterContextInterface $context, string $start) {
-                return array_filter($context->getSource(), function(string $candidate) use ($start) {
-                    return strpos($candidate, $start) === 0;
-                });
-            },
-        ]);
+        $schemator = (new SchematorBuilder())
+            ->withErrorsLevelMask(Schemator::ERRORS_LEVEL_DEFAULT)
+            ->withFilters(new BaseFiltersStorage())
+            ->withFilters([
+                'startsWith' => function(FilterContextInterface $context, string $start) {
+                    return array_filter($context->getSource(), function(string $candidate) use ($start) {
+                        return strpos($candidate, $start) === 0;
+                    });
+                },
+            ])
+            ->get();
 
         $input = [
             'id' => 100,
@@ -359,7 +364,9 @@ class SchematorTest extends \Codeception\Test\Unit
             'numbers' => [-1, 10, 5, 22, -10, 0, 35, 7, 8, 9, 0],
         ];
 
-        $schemator = SchematorFactory::create();
+        $schemator = (new SchematorBuilder())
+            ->withFilters(new BaseFiltersStorage())
+            ->get();
 
         $data = $schemator->convert($input, [
             'number_types' => ['numbers', [
@@ -423,7 +430,9 @@ class SchematorTest extends \Codeception\Test\Unit
      */
     public function testFormat()
     {
-        $schemator = SchematorFactory::create();
+        $schemator = (new SchematorBuilder())
+            ->withFilters(new BaseFiltersStorage())
+            ->get();
 
         $input = [
             'date' => 1651161688,
@@ -459,11 +468,16 @@ class SchematorTest extends \Codeception\Test\Unit
         $schema = [
             'date' => ['date', ['date', ['Y-m-d H:i'], 0]]
         ];
-        $schemator = SchematorFactory::create(
-            Schemator::createErrorsLevelMask([
-                SchematorException::FILTER_ERROR,
-            ])
-        );
+
+        $schemator = (new SchematorBuilder())
+            ->withErrorsLevelMask(
+                Schemator::createErrorsLevelMask([
+                    SchematorException::FILTER_ERROR,
+                ])
+            )
+            ->withFilters(new BaseFiltersStorage())
+            ->get();
+
         try {
             $schemator->convert($input, $schema);
             $this->expectError();
@@ -483,7 +497,9 @@ class SchematorTest extends \Codeception\Test\Unit
             'numbers' => [-1, 10, 5, 22, -10, 0, 35, 7, 8, 9, 0],
         ];
 
-        $schemator = SchematorFactory::create();
+        $schemator = (new SchematorBuilder())
+            ->withFilters(new BaseFiltersStorage())
+            ->get();
 
         $schema = [
             'result' => ['numbers', ['sum']],
@@ -575,7 +591,10 @@ class SchematorTest extends \Codeception\Test\Unit
             'street_names' => 'countries.cities.streets.name',
         ];
 
-        $schemator = SchematorFactory::create();
+        $schemator = (new SchematorBuilder())
+            ->withFilters(new BaseFiltersStorage())
+            ->get();
+
         $result = $schemator->convert($data, $schema);
 
         $this->assertEquals(['Russia', 'Belarus'], $result['country_names']);
@@ -611,12 +630,17 @@ class SchematorTest extends \Codeception\Test\Unit
         // unsupported filter config type
         $this->assertEquals(null, $schemator->getValue($input, ['a', (object)[]]));
 
-        $schemator = new Schemator('.', Schemator::createErrorsLevelMask([
-            SchematorException::CANNOT_GET_VALUE,
-            SchematorException::UNSUPPORTED_SOURCE_TYPE,
-            SchematorException::UNSUPPORTED_KEY_TYPE,
-            SchematorException::UNSUPPORTED_FILTER_CONFIG_TYPE,
-        ]));
+        $schemator = (new SchematorBuilder())
+            ->withErrorsLevelMask(
+                Schemator::createErrorsLevelMask([
+                    SchematorException::CANNOT_GET_VALUE,
+                    SchematorException::UNSUPPORTED_SOURCE_TYPE,
+                    SchematorException::UNSUPPORTED_KEY_TYPE,
+                    SchematorException::UNSUPPORTED_FILTER_CONFIG_TYPE,
+                ])
+            )
+            ->get();
+
         try {
             $this->assertEquals(null, $schemator->getValue($input, 'a.b.c.d'));
             $this->expectError();
@@ -668,7 +692,10 @@ class SchematorTest extends \Codeception\Test\Unit
             ],
             'mypath' => 'mysource.key',
         ];
-        $schemator = SchematorFactory::create();
+        $schemator = (new SchematorBuilder())
+            ->withFilters(new BaseFiltersStorage())
+            ->get();
+
         $this->assertEquals('2022-08-10', $schemator->getValue($input, ['mydate', ['date', 'Y-m-d', 0]]));
         $this->assertEquals(null, $schemator->getValue($input, ['mynull', ['date', 'Y-m-d', 0]]));
 

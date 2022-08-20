@@ -5,7 +5,6 @@ namespace Smoren\Schemator\Tests\Unit;
 use Smoren\Schemator\Components\MassSchemator;
 use Smoren\Schemator\Components\Schemator;
 use Smoren\Schemator\Exceptions\SchematorException;
-use Smoren\Schemator\Factories\SchematorFactory;
 
 class MassSchematorTest extends \Codeception\Test\Unit
 {
@@ -103,7 +102,7 @@ class MassSchematorTest extends \Codeception\Test\Unit
 
     public function testExtra()
     {
-        $massSchemator = SchematorFactory::createMass();
+        $massSchemator = new MassSchemator(new Schemator());
         $cities = $this->getCities();
 
         $result = $massSchemator->convert($cities, [

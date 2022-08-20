@@ -27,7 +27,7 @@ composer test
 #### Simple usage
 
 ```php
-use Smoren\Schemator\Factories\SchematorFactory;
+use Smoren\Schemator\Factories\SchematorBuilder;
 
 $input = [
     'id' => 100,
@@ -75,7 +75,7 @@ $schema = [
     'country_data.country_name' => 'country.name',
 ];
 
-$schemator = SchematorFactory::create();
+$schemator = (new SchematorBuilder())->get();
 $output = $schemator->exec($input, $schema);
 
 print_r($output);
@@ -121,7 +121,8 @@ print_r($output);
 #### Using base filters
 
 ```php
-use Smoren\Schemator\Factories\SchematorFactory;
+use Smoren\Schemator\Factories\SchematorBuilder;
+use Smoren\Schemator\Filters\BaseFiltersStorage;
 
 $input = [
     'id' => 100,
@@ -165,7 +166,9 @@ $schema = [
     'city_street_houses' => ['streets.houses', ['flatten']],
 ];
 
-$schemator = SchematorFactory::create();
+$schemator = (new SchematorBuilder())
+    ->withFilters(new BaseFiltersStorage())
+    ->get();
 $output = $schemator->exec($input, $schema);
 
 print_r($output);
@@ -204,9 +207,12 @@ Array
 #### Using smart filter and replace
 
 ```php
-use Smoren\Schemator\Factories\SchematorFactory;
+use Smoren\Schemator\Factories\SchematorBuilder;
+use Smoren\Schemator\Filters\BaseFiltersStorage;
 
-$schemator = SchematorFactory::create();
+$schemator = (new SchematorBuilder())
+    ->withFilters(BaseFiltersStorage())
+    ->get();
 $input = [
     'numbers' => [-1, 10, 5, 22, -10, 0, 35, 7, 8, 9, 0],
 ];
@@ -301,16 +307,16 @@ Array
 #### Using custom filters
 
 ```php
-use Smoren\Schemator\Factories\SchematorFactory;
+use Smoren\Schemator\Factories\SchematorBuilder;
 use Smoren\Schemator\Interfaces\FilterContextInterface;
 
-$schemator = SchematorFactory::create(true, [
+$schemator = (new SchematorBuilder())->withFilters([
     'startsWith' => function(FilterContextInterface $context, string $start) {
         return array_filter($context->getSource(), function(string $candidate) use ($start) {
             return strpos($candidate, $start) === 0;
         });
     },
-]);
+])->get();
 
 $input = [
     'streets' => ['Tverskaya', 'Leninskiy', 'Tarusskaya'],
