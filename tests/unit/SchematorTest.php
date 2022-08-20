@@ -736,4 +736,138 @@ class SchematorTest extends \Codeception\Test\Unit
         $this->assertEquals(123, $schemator->getValue($input, ['mysource.key', ['replace', [[0, '<=', 122]]]]));
         $this->assertEquals(null, $schemator->getValue($input, ['mynull', ['replace', [[0, '<=', 122]]]]));
     }
+
+    public function testErrorsLevel()
+    {
+        $schemator = (new SchematorBuilder())
+            ->withFilters(new BaseFiltersStorage())
+            ->get();
+
+        {
+            $schemator->setErrorsLevelMask(Schemator::createErrorsLevelMask([
+                SchematorException::FILTER_NOT_FOUND,
+            ]));
+
+            $input = ['date' => 1651161688];
+            $schema = ['date' => ['date', ['unknown_filter']]];
+            $this->assertFailure($schemator, $input, $schema, SchematorException::FILTER_NOT_FOUND);
+
+            $input = ['date' => 1651161688];
+            $schema = ['date' => ['date', ['date', 'Y-m-d H:i', 0]]];
+            $this->assertSuccess($schemator, $input, $schema, ['date' => '2022-04-28 16:01']);
+
+            $input = ['date' => 1651161688];
+            $schema = ['date' => 'unknown_key'];
+            $this->assertSuccess($schemator, $input, $schema, ['date' => null]);
+        }
+
+        {
+            $schemator->setErrorsLevelMask(Schemator::createErrorsLevelMask([
+                SchematorException::FILTER_ERROR,
+            ]));
+
+            $input = ['date' => 1651161688];
+            $schema = ['date' => ['date', ['date', ['Y-m-d H:i'], 0]]];
+            $this->assertFailure($schemator, $input, $schema, SchematorException::FILTER_ERROR);
+
+            $input = ['date' => 1651161688];
+            $schema = ['date' => ['date', ['date', 'Y-m-d H:i', 0]]];
+            $this->assertSuccess($schemator, $input, $schema, ['date' => '2022-04-28 16:01']);
+
+            $input = ['date' => 1651161688];
+            $schema = ['date' => 'unknown_key'];
+            $this->assertSuccess($schemator, $input, $schema, ['date' => null]);
+        }
+
+        {
+            $schemator->setErrorsLevelMask(Schemator::createErrorsLevelMask([
+                SchematorException::CANNOT_GET_VALUE,
+            ]));
+
+            $input = ['key' => 1];
+            $schema = ['my_key' => 'unknown_key'];
+            $this->assertFailure($schemator, $input, $schema, SchematorException::CANNOT_GET_VALUE);
+
+            $input = ['key' => 1];
+            $schema = ['my_key' => 'key'];
+            $this->assertSuccess($schemator, $input, $schema, ['my_key' => 1]);
+
+            $input = ['date' => 1651161688];
+            $schema = ['date' => ['date', ['date', ['Y-m-d H:i'], 0]]];
+            $this->assertSuccess($schemator, $input, $schema, ['date' => null]);
+
+            $input = ['date' => 1651161688];
+            $schema = ['date' => ['date', ['date', 'Y-m-d H:i', 0]]];
+            $this->assertSuccess($schemator, $input, $schema, ['date' => '2022-04-28 16:01']);
+        }
+
+        {
+            $schemator->setErrorsLevelMask(Schemator::createErrorsLevelMask([
+                SchematorException::UNSUPPORTED_SOURCE_TYPE,
+            ]));
+
+            $input = null;
+            $schema = ['my_key' => 'key'];
+            $this->assertFailure($schemator, $input, $schema, SchematorException::UNSUPPORTED_SOURCE_TYPE);
+
+            $input = ['key' => 1];
+            $schema = ['my_key' => 'key'];
+            $this->assertSuccess($schemator, $input, $schema, ['my_key' => 1]);
+        }
+
+        {
+            $schemator->setErrorsLevelMask(Schemator::createErrorsLevelMask([
+                SchematorException::UNSUPPORTED_KEY_TYPE,
+            ]));
+
+            $input = ['key' => 1];
+            $schema = ['my_key' => (object)[]];
+            $this->assertFailure($schemator, $input, $schema, SchematorException::UNSUPPORTED_KEY_TYPE);
+
+            $input = null;
+            $schema = ['my_key' => 'key', 'another' => 'key1'];
+            $this->assertSuccess($schemator, $input, $schema, ['my_key' => null, 'another' => null]);
+
+            $input = ['key' => 1];
+            $schema = ['my_key' => 'key'];
+            $this->assertSuccess($schemator, $input, $schema, ['my_key' => 1]);
+        }
+
+        {
+            $schemator->setErrorsLevelMask(Schemator::createErrorsLevelMask([
+                SchematorException::UNSUPPORTED_FILTER_CONFIG_TYPE,
+            ]));
+
+            $input = ['key' => 1];
+            $schema = ['my_key' => ['key', (object)[]]];
+            $this->assertFailure($schemator, $input, $schema, SchematorException::UNSUPPORTED_FILTER_CONFIG_TYPE);
+
+            $input = null;
+            $schema = ['my_key' => 'key', 'another' => 'key1'];
+            $this->assertSuccess($schemator, $input, $schema, ['my_key' => null, 'another' => null]);
+
+            $input = ['key' => 1];
+            $schema = ['my_key' => 'key'];
+            $this->assertSuccess($schemator, $input, $schema, ['my_key' => 1]);
+        }
+    }
+
+    protected function assertSuccess(Schemator $schemator, $input, $schema, $value)
+    {
+        try {
+            $this->assertEquals($value, $schemator->convert($input, $schema));
+        } catch(SchematorException $e) {
+            $this->expectError();
+        }
+    }
+
+    protected function assertFailure(Schemator $schemator, $input, $schema, int $errorCode)
+    {
+        try {
+            $schemator->convert($input, $schema);
+            $this->expectError();
+        } catch(SchematorException $e) {
+            $this->assertEquals($errorCode, $e->getCode());
+        }
+    }
 }
