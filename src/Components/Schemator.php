@@ -245,4 +245,14 @@ class Schemator implements SchematorInterface
             return null;
         }
     }
+
+    /**
+     * Returns true if there is given error code in errors level mask
+     * @param int $errorCode
+     * @return bool
+     */
+    protected function needToThrow(int $errorCode): bool
+    {
+        return BitmapHelper::intersects($this->errorsLevelMask, [$errorCode]);
+    }
 }
