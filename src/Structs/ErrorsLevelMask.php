@@ -2,7 +2,6 @@
 
 namespace Smoren\Schemator\Structs;
 
-use Smoren\BitmapTools\Interfaces\BitmapInterface;
 use Smoren\BitmapTools\Models\Bitmap;
 use Smoren\Schemator\Exceptions\SchematorException;
 
@@ -13,12 +12,23 @@ use Smoren\Schemator\Exceptions\SchematorException;
 class ErrorsLevelMask extends Bitmap
 {
     /**
-     * Creates bitmap of all errors
-     * @return BitmapInterface
+     * @param $value
+     * @return ErrorsLevelMask
      */
-    public static function all(): BitmapInterface
+    public static function create($value): ErrorsLevelMask
     {
-        return new static(static::create([
+        /** @var ErrorsLevelMask $result */
+        $result = parent::create($value);
+        return $result;
+    }
+
+    /**
+     * Creates bitmap of all errors
+     * @return ErrorsLevelMask
+     */
+    public static function all(): ErrorsLevelMask
+    {
+        return static::create([
             SchematorException::FILTER_NOT_FOUND,
             SchematorException::FILTER_ERROR,
             SchematorException::CANNOT_GET_VALUE,
@@ -27,14 +37,14 @@ class ErrorsLevelMask extends Bitmap
             SchematorException::UNSUPPORTED_FILTER_CONFIG_TYPE,
             SchematorException::BAD_FILTER_CONFIG,
             SchematorException::BAD_FILTER_SOURCE,
-        ])->getValue());
+        ]);
     }
 
     /**
      * Creates bitmap of default errors
-     * @return BitmapInterface
+     * @return ErrorsLevelMask
      */
-    public static function default(): BitmapInterface
+    public static function default(): ErrorsLevelMask
     {
         return static::create([
             SchematorException::FILTER_NOT_FOUND,
@@ -47,9 +57,9 @@ class ErrorsLevelMask extends Bitmap
 
     /**
      * Creates bitmap of no errors
-     * @return BitmapInterface
+     * @return ErrorsLevelMask
      */
-    public static function nothing(): BitmapInterface
+    public static function nothing(): ErrorsLevelMask
     {
         return static::create([]);
     }

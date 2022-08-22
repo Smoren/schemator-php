@@ -82,7 +82,7 @@ class Schemator implements SchematorInterface
             return $source;
         }
 
-        if($source === null || (!is_array($source) && !is_object($source))) {
+        if(!is_array($source) && !is_object($source)) {
             return $this->getValueFromUnsupportedSource($source, $key);
         }
 

@@ -30,7 +30,7 @@ class FilterContext implements FilterContextInterface
     /**
      * @var string filter name
      */
-    protected $filterName;
+    protected string $filterName;
 
     /**
      * FilterContext constructor.

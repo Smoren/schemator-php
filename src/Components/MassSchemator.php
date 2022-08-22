@@ -4,7 +4,6 @@ namespace Smoren\Schemator\Components;
 
 use Smoren\Schemator\Interfaces\SchematorInterface;
 use Smoren\Schemator\Interfaces\MassSchematorInterface;
-use Smoren\Schemator\Exceptions\SchematorException;
 use Generator;
 
 /**

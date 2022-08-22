@@ -14,7 +14,7 @@ use Smoren\Schemator\Components\Schemator;
 class SchematorBuilder implements SchematorBuilderInterface
 {
     /**
-     * @var SchematorInterface Schemator object
+     * @var Schemator Schemator object
      */
     protected SchematorInterface $schemator;
 
@@ -29,7 +29,7 @@ class SchematorBuilder implements SchematorBuilderInterface
     /**
      * @inheritDoc
      */
-    public function create(): SchematorBuilderInterface
+    public function create(): SchematorBuilder
     {
         $this->schemator = new Schemator();
         return $this;
@@ -38,7 +38,7 @@ class SchematorBuilder implements SchematorBuilderInterface
     /**
      * @inheritDoc
      */
-    public function withPathDelimiter(string $pathDelimiter): SchematorBuilderInterface
+    public function withPathDelimiter(string $pathDelimiter): SchematorBuilder
     {
         $this->schemator->setPathDelimiter($pathDelimiter);
         return $this;
@@ -47,7 +47,7 @@ class SchematorBuilder implements SchematorBuilderInterface
     /**
      * @inheritDoc
      */
-    public function withErrorsLevelMask(BitmapInterface $errorsLevelMask): SchematorBuilderInterface
+    public function withErrorsLevelMask(BitmapInterface $errorsLevelMask): SchematorBuilder
     {
         $this->schemator->setErrorsLevelMask($errorsLevelMask);
         return $this;
@@ -56,7 +56,7 @@ class SchematorBuilder implements SchematorBuilderInterface
     /**
      * @inheritDoc
      */
-    public function withFilters(iterable $filters): SchematorBuilderInterface
+    public function withFilters(iterable $filters): SchematorBuilder
     {
         foreach($filters as $filterName => $filter) {
             $this->schemator->addFilter($filterName, $filter);
@@ -67,7 +67,7 @@ class SchematorBuilder implements SchematorBuilderInterface
     /**
      * @inheritDoc
      */
-    public function get(): SchematorInterface
+    public function get(): Schemator
     {
         return $this->schemator;
     }
