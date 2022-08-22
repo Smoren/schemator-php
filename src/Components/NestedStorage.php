@@ -25,7 +25,7 @@ class NestedStorage implements NestedAccessorInterface
      * @param array<scalar, mixed>|null $storage
      * @param NestedAccessorFactory|null $factory
      */
-    public function __construct(?array $storage, ?NestedAccessorFactory $factory = null)
+    public function __construct(?array $storage = null, ?NestedAccessorFactory $factory = null)
     {
         $this->storage = $storage ?? [];
         $this->nestedAccessor = ($factory ?? new NestedAccessorFactory())->create($this->storage);
