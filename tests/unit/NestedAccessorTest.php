@@ -3,6 +3,7 @@
 namespace Smoren\Schemator\Tests\Unit;
 
 use Smoren\Schemator\Components\NestedAccessor;
+use Smoren\Schemator\Components\NestedStorage;
 use Smoren\Schemator\Exceptions\NestedAccessorException;
 
 class NestedAccessorTest extends \Codeception\Test\Unit
@@ -394,5 +395,20 @@ class NestedAccessorTest extends \Codeception\Test\Unit
             $this->assertEquals(NestedAccessorException::SOURCE_IS_SCALAR, $e->getCode());
             $this->assertEquals('boolean', $e->getData()['source_type']);
         }
+    }
+
+    /**
+     * @return void
+     * @throws NestedAccessorException
+     */
+    public function testNestedStorage()
+    {
+        $ns = new NestedStorage([
+            'a' => ['b' => [['c' => 1], ['c' => 2]]],
+        ]);
+        $this->assertEquals([1, 2], $ns->get(['a', 'b', 'c']));
+        $ns->set(['a', 'd'], 22);
+        $this->assertEquals([1, 2], $ns->get(['a', 'b', 'c']));
+        $this->assertEquals(22, $ns->get(['a', 'd']));
     }
 }
