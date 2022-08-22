@@ -12,6 +12,7 @@ use Smoren\Schemator\Structs\FilterContext;
 use Smoren\Schemator\Exceptions\NestedAccessorException;
 use Smoren\Schemator\Exceptions\SchematorException;
 use Throwable;
+use TypeError;
 
 /**
  * Class for schematic data converting
@@ -226,6 +227,11 @@ class Schemator implements SchematorInterface
         } catch(SchematorException $e) {
             if($this->needToThrow($e->getCode())) {
                 throw $e;
+            }
+            return null;
+        } catch(TypeError $e) {
+            if($this->needToThrow(SchematorException::BAD_FILTER_CONFIG)) {
+                throw SchematorException::createAsBadFilterConfig($filterContext, $e);
             }
             return null;
         } catch(Throwable $e) {

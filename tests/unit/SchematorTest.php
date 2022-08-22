@@ -2,6 +2,8 @@
 
 namespace Smoren\Schemator\Tests\Unit;
 
+use Codeception\Test\Unit;
+use Exception;
 use Smoren\Schemator\Components\Schemator;
 use Smoren\Schemator\Exceptions\SchematorException;
 use Smoren\Schemator\Factories\SchematorBuilder;
@@ -9,7 +11,7 @@ use Smoren\Schemator\Filters\BaseFiltersStorage;
 use Smoren\Schemator\Interfaces\FilterContextInterface;
 use Smoren\Schemator\Structs\ErrorsLevelMask;
 
-class SchematorTest extends \Codeception\Test\Unit
+class SchematorTest extends Unit
 {
     /**
      * @throws SchematorException
@@ -467,13 +469,13 @@ class SchematorTest extends \Codeception\Test\Unit
         $this->assertEquals('2022-04-28 16:01', $output['date']);
 
         $schema = [
-            'date' => ['date', ['date', ['Y-m-d H:i'], 0]]
+            'date' => ['date', ['date', ['error: in array'], 0]]
         ];
 
         $schemator = (new SchematorBuilder())
             ->withErrorsLevelMask(
                 ErrorsLevelMask::create([
-                    SchematorException::FILTER_ERROR,
+                    SchematorException::BAD_FILTER_CONFIG,
                 ])
             )
             ->withFilters(new BaseFiltersStorage())
@@ -483,7 +485,7 @@ class SchematorTest extends \Codeception\Test\Unit
             $schemator->convert($input, $schema);
             $this->expectError();
         } catch(SchematorException $e) {
-            $this->assertEquals(SchematorException::FILTER_ERROR, $e->getCode());
+            $this->assertEquals(SchematorException::BAD_FILTER_CONFIG, $e->getCode());
             $this->assertEquals('date', $e->getData()['filter_name']);
             $this->assertEquals($input['date'], $e->getData()['source']);
         }
@@ -598,6 +600,18 @@ class SchematorTest extends \Codeception\Test\Unit
             $schemator->convert($input, [
                 'number_types' => ['numbers', [
                     'replace',
+                    'not array',
+                ]]
+            ]);
+        } catch(SchematorException $e) {
+            $this->assertEquals(SchematorException::BAD_FILTER_CONFIG, $e->getCode());
+        }
+
+        $input = ['numbers' => [1, 2, 3, 4, 5]];
+        try {
+            $schemator->convert($input, [
+                'number_types' => ['numbers', [
+                    'replace',
                     [
                         'not array',
                     ]
@@ -605,6 +619,17 @@ class SchematorTest extends \Codeception\Test\Unit
             ]);
         } catch(SchematorException $e) {
             $this->assertEquals(SchematorException::BAD_FILTER_CONFIG, $e->getCode());
+        }
+
+        $schemator->addFilter('myfilter', function(FilterContextInterface $context) {
+            throw new Exception();
+        });
+        try {
+            $schemator->convert($input, [
+                'number_types' => ['numbers', ['myfilter']]
+            ]);
+        } catch(SchematorException $e) {
+            $this->assertEquals(SchematorException::FILTER_ERROR, $e->getCode());
         }
     }
 
@@ -827,12 +852,12 @@ class SchematorTest extends \Codeception\Test\Unit
 
         {
             $schemator->setErrorsLevelMask(ErrorsLevelMask::create([
-                SchematorException::FILTER_ERROR,
+                SchematorException::BAD_FILTER_CONFIG,
             ]));
 
             $input = ['date' => 1651161688];
-            $schema = ['date' => ['date', ['date', ['Y-m-d H:i'], 0]]];
-            $this->assertFailure($schemator, $input, $schema, SchematorException::FILTER_ERROR);
+            $schema = ['date' => ['date', ['date', ['error: in array'], 0]]];
+            $this->assertFailure($schemator, $input, $schema, SchematorException::BAD_FILTER_CONFIG);
 
             $input = ['date' => 1651161688];
             $schema = ['date' => ['date', ['date', 'Y-m-d H:i', 0]]];
@@ -865,7 +890,7 @@ class SchematorTest extends \Codeception\Test\Unit
             $this->assertSuccess($schemator, $input, $schema, ['my_key' => 1]);
 
             $input = ['date' => 1651161688];
-            $schema = ['date' => ['date', ['date', ['Y-m-d H:i'], 0]]];
+            $schema = ['date' => ['date', ['date', ['error: in array'], 0]]];
             $this->assertSuccess($schemator, $input, $schema, ['date' => null]);
 
             $input = ['date' => 1651161688];
@@ -931,8 +956,8 @@ class SchematorTest extends \Codeception\Test\Unit
             $this->assertFailure($schemator, $input, $schema, SchematorException::FILTER_NOT_FOUND);
 
             $input = ['date' => 1651161688];
-            $schema = ['date' => ['date', ['date', ['Y-m-d H:i'], 0]]];
-            $this->assertFailure($schemator, $input, $schema, SchematorException::FILTER_ERROR);
+            $schema = ['date' => ['date', ['date', ['error: in array'], 0]]];
+            $this->assertFailure($schemator, $input, $schema, SchematorException::BAD_FILTER_CONFIG);
 
             $input = ['key' => 1];
             $schema = ['my_key' => 'unknown_key'];
@@ -962,8 +987,8 @@ class SchematorTest extends \Codeception\Test\Unit
             $this->assertFailure($schemator, $input, $schema, SchematorException::FILTER_NOT_FOUND);
 
             $input = ['date' => 1651161688];
-            $schema = ['date' => ['date', ['date', ['Y-m-d H:i'], 0]]];
-            $this->assertSuccess($schemator, $input, $schema, ['date' => null]);
+            $schema = ['date' => ['date', ['date', ['error: in array'], 0]]];
+            $this->assertFailure($schemator, $input, $schema, SchematorException::BAD_FILTER_CONFIG);
 
             $input = ['key' => 1];
             $schema = ['my_key' => 'unknown_key'];
@@ -986,7 +1011,11 @@ class SchematorTest extends \Codeception\Test\Unit
             $schemator->setErrorsLevelMask(
                 ErrorsLevelMask::default()
                     ->add([SchematorException::CANNOT_GET_VALUE])
-                    ->sub([SchematorException::FILTER_NOT_FOUND, SchematorException::UNSUPPORTED_SOURCE_TYPE])
+                    ->sub([
+                        SchematorException::FILTER_NOT_FOUND,
+                        SchematorException::UNSUPPORTED_SOURCE_TYPE,
+                        SchematorException::BAD_FILTER_CONFIG,
+                    ])
             );
 
             $input = ['date' => 1651161688];
@@ -994,7 +1023,7 @@ class SchematorTest extends \Codeception\Test\Unit
             $this->assertSuccess($schemator, $input, $schema, ['date' => null]);
 
             $input = ['date' => 1651161688];
-            $schema = ['date' => ['date', ['date', ['Y-m-d H:i'], 0]]];
+            $schema = ['date' => ['date', ['date', ['error: in array'], 0]]];
             $this->assertSuccess($schemator, $input, $schema, ['date' => null]);
 
             $input = ['key' => 1];
