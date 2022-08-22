@@ -3,6 +3,7 @@
 namespace Smoren\Schemator\Exceptions;
 
 use Smoren\ExtendedExceptions\BaseException;
+use Smoren\Schemator\Interfaces\FilterContextInterface;
 use Throwable;
 
 /**
@@ -11,12 +12,14 @@ use Throwable;
  */
 class SchematorException extends BaseException
 {
-    public const FILTER_NOT_FOUND = 1;
-    public const FILTER_ERROR = 2;
-    public const CANNOT_GET_VALUE = 3;
-    public const UNSUPPORTED_SOURCE_TYPE = 4;
-    public const UNSUPPORTED_KEY_TYPE = 5;
-    public const UNSUPPORTED_FILTER_CONFIG_TYPE = 6;
+    public const UNSUPPORTED_SOURCE_TYPE = 1;
+    public const UNSUPPORTED_KEY_TYPE = 2;
+    public const UNSUPPORTED_FILTER_CONFIG_TYPE = 3;
+    public const FILTER_NOT_FOUND = 4;
+    public const FILTER_ERROR = 5;
+    public const CANNOT_GET_VALUE = 6;
+    public const BAD_FILTER_CONFIG = 7;
+    public const BAD_FILTER_SOURCE = 8;
 
     /**
      * Creates a new exception instance for filter not found error
@@ -30,33 +33,6 @@ class SchematorException extends BaseException
             null,
             [
                 'filter_name' => $filterName,
-            ]
-        );
-    }
-
-    /**
-     * Creates a new exception instance for filter execution error
-     * @param string $filterName name of the filter
-     * @param mixed $filterConfig arguments for filter
-     * @param mixed $source source for filtering
-     * @param ?Throwable $previous exception thrown in the filter body
-     * @return SchematorException
-     */
-    public static function createAsFilterError(
-        string $filterName,
-        $filterConfig,
-        $source,
-        ?Throwable $previous = null
-    ): SchematorException {
-        return new SchematorException(
-            "filter error: '{$filterName}'",
-            SchematorException::FILTER_ERROR,
-            $previous,
-            [
-                'error' => $previous ? $previous->getMessage() : "filter error: '{$filterName}'",
-                'filter_name' => $filterName,
-                'config' => $filterConfig,
-                'source' => $source,
             ]
         );
     }
@@ -152,6 +128,73 @@ class SchematorException extends BaseException
             [
                 'filter_config' => $filterConfig,
                 'filter_config_type' => $filterConfigType,
+            ]
+        );
+    }
+
+    /**
+     * Creates a new exception instance for filter execution error
+     * @param FilterContextInterface $filterContext name of the filter
+     * @param ?Throwable $previous exception thrown in the filter body
+     * @return SchematorException
+     */
+    public static function createAsFilterError(
+        FilterContextInterface $filterContext,
+        ?Throwable $previous = null
+    ): SchematorException {
+        return new SchematorException(
+            "filter error: '{$filterContext->getFilterName()}'",
+            SchematorException::FILTER_ERROR,
+            $previous,
+            [
+                'error' => $previous ? $previous->getMessage() : "filter error: '{$filterContext->getFilterName()}'",
+                'filter_name' => $filterContext->getFilterName(),
+                'config' => $filterContext->getConfig(),
+                'source' => $filterContext->getSource(),
+            ]
+        );
+    }
+
+    /**
+     * Creates a new exception instance for filter config error
+     * @param FilterContextInterface $filterContext name of the filter
+     * @param ?Throwable $previous exception thrown in the filter body
+     * @return SchematorException
+     */
+    public static function createAsBadFilterConfig(
+        FilterContextInterface $filterContext,
+        ?Throwable $previous = null
+    ): SchematorException {
+        return new SchematorException(
+            "bad config for filter '{$filterContext->getFilterName()}'",
+            SchematorException::BAD_FILTER_CONFIG,
+            $previous,
+            [
+                'filter_name' => $filterContext->getFilterName(),
+                'config' => $filterContext->getConfig(),
+                'source' => $filterContext->getSource(),
+            ]
+        );
+    }
+
+    /**
+     * Creates a new exception instance for filter source error
+     * @param FilterContextInterface $filterContext name of the filter
+     * @param ?Throwable $previous exception thrown in the filter body
+     * @return SchematorException
+     */
+    public static function createAsBadFilterSource(
+        FilterContextInterface $filterContext,
+        ?Throwable $previous = null
+    ): SchematorException {
+        return new SchematorException(
+            "bad source for filter '{$filterContext->getFilterName()}'",
+            SchematorException::BAD_FILTER_SOURCE,
+            $previous,
+            [
+                'filter_name' => $filterContext->getFilterName(),
+                'config' => $filterContext->getConfig(),
+                'source' => $filterContext->getSource(),
             ]
         );
     }

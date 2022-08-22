@@ -544,6 +544,70 @@ class SchematorTest extends \Codeception\Test\Unit
         $this->assertEquals(['value' => 875], $output);
     }
 
+    public function testFilterErrors()
+    {
+        $schemator = (new SchematorBuilder())
+            ->withErrorsLevelMask(ErrorsLevelMask::all())
+            ->withFilters(new BaseFiltersStorage())
+            ->get();
+
+        $input = ['numbers' => [1, 2, 3, 4, 5]];
+        try {
+            $schemator->convert($input, [
+                'bad' => [
+                    'numbers',
+                    ['filter', ['not array']],
+                    ['sort'],
+                ],
+            ]);
+            $this->expectError();
+        } catch(SchematorException $e) {
+            $this->assertEquals(SchematorException::BAD_FILTER_CONFIG, $e->getCode());
+        }
+
+        $input = ['numbers' => [1, 2, 3, 4, 5]];
+        try {
+            $schemator->convert($input, [
+                'bad' => [
+                    'numbers',
+                    ['filter', 'not array'],
+                    ['sort'],
+                ],
+            ]);
+            $this->expectError();
+        } catch(SchematorException $e) {
+            $this->assertEquals(SchematorException::BAD_FILTER_CONFIG, $e->getCode());
+        }
+
+        $input = ['numbers' => 123];
+        try {
+            $schemator->convert($input, [
+                'bad' => [
+                    'numbers',
+                    ['filter', [['not array']]],
+                    ['sort'],
+                ],
+            ]);
+            $this->expectError();
+        } catch(SchematorException $e) {
+            $this->assertEquals(SchematorException::BAD_FILTER_SOURCE, $e->getCode());
+        }
+
+        $input = ['numbers' => [1, 2, 3, 4, 5]];
+        try {
+            $schemator->convert($input, [
+                'number_types' => ['numbers', [
+                    'replace',
+                    [
+                        'not array',
+                    ]
+                ]]
+            ]);
+        } catch(SchematorException $e) {
+            $this->assertEquals(SchematorException::BAD_FILTER_CONFIG, $e->getCode());
+        }
+    }
+
     /**
      * @throws SchematorException
      */

@@ -27,6 +27,10 @@ class FilterContext implements FilterContextInterface
      * @var mixed filter config
      */
     protected $config;
+    /**
+     * @var string filter name
+     */
+    protected $filterName;
 
     /**
      * FilterContext constructor.
@@ -34,13 +38,15 @@ class FilterContext implements FilterContextInterface
      * @param mixed $source source data to apply filter to
      * @param mixed $rootSource root source of Schemator conversion
      * @param mixed $config filter config
+     * @param string $filterName filter name
      */
-    public function __construct(SchematorInterface $schemator, $source, $rootSource, $config)
+    public function __construct(SchematorInterface $schemator, $source, $rootSource, $config, string $filterName)
     {
         $this->schemator = $schemator;
         $this->source = $source;
         $this->rootSource = $rootSource;
         $this->config = $config;
+        $this->filterName = $filterName;
     }
 
     /**
@@ -77,5 +83,14 @@ class FilterContext implements FilterContextInterface
     public function getConfig()
     {
         return $this->config;
+    }
+
+    /**
+     * Filter name getter
+     * @return string
+     */
+    public function getFilterName(): string
+    {
+        return $this->filterName;
     }
 }

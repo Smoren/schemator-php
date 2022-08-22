@@ -2,6 +2,7 @@
 
 namespace Smoren\Schemator\Components;
 
+use _PHPStan_9a6ded56a\Nette\Neon\Exception;
 use Smoren\BitmapTools\Interfaces\BitmapInterface;
 use Smoren\BitmapTools\Models\Bitmap;
 use Smoren\Schemator\Interfaces\NestedAccessorFactoryInterface;
@@ -217,9 +218,10 @@ class Schemator implements SchematorInterface
             throw SchematorException::createAsFilterNotFound($filterName);
         }
 
+        $filterContext = new FilterContext($this, $source, $rootSource, $filterConfig, $filterName);
         try {
             return $this->filterMap[$filterName](
-                new FilterContext($this, $source, $rootSource, $filterConfig),
+                $filterContext,
                 ...$filterConfig
             );
         } catch(SchematorException $e) {
@@ -229,7 +231,7 @@ class Schemator implements SchematorInterface
             return null;
         } catch(Throwable $e) {
             if($this->needToThrow(SchematorException::FILTER_ERROR)) {
-                throw SchematorException::createAsFilterError($filterName, $filterConfig, $source, $e);
+                throw SchematorException::createAsFilterError($filterContext);
             }
             return null;
         }

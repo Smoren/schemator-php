@@ -14,7 +14,7 @@ interface FilterContextInterface
      */
     public function getSource();
 
-    /**
+    /**, $source
      * Return the root source data of schemator conversion
      * @return mixed
      */
@@ -31,4 +31,10 @@ interface FilterContextInterface
      * @return mixed
      */
     public function getConfig();
+
+    /**
+     * Returns filter name
+     * @return string
+     */
+    public function getFilterName(): string;
 }

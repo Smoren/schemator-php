@@ -25,6 +25,8 @@ class ErrorsLevelMask extends Bitmap
             SchematorException::UNSUPPORTED_SOURCE_TYPE,
             SchematorException::UNSUPPORTED_KEY_TYPE,
             SchematorException::UNSUPPORTED_FILTER_CONFIG_TYPE,
+            SchematorException::BAD_FILTER_CONFIG,
+            SchematorException::BAD_FILTER_SOURCE,
         ])->getValue());
     }
 
@@ -39,6 +41,7 @@ class ErrorsLevelMask extends Bitmap
             SchematorException::UNSUPPORTED_SOURCE_TYPE,
             SchematorException::UNSUPPORTED_KEY_TYPE,
             SchematorException::UNSUPPORTED_FILTER_CONFIG_TYPE,
+            SchematorException::BAD_FILTER_CONFIG,
         ]);
     }
 
