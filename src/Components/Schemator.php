@@ -2,7 +2,6 @@
 
 namespace Smoren\Schemator\Components;
 
-use _PHPStan_9a6ded56a\Nette\Neon\Exception;
 use Smoren\BitmapTools\Interfaces\BitmapInterface;
 use Smoren\BitmapTools\Models\Bitmap;
 use Smoren\Schemator\Interfaces\NestedAccessorFactoryInterface;
