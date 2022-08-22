@@ -44,17 +44,21 @@ class NestedAccessor implements NestedAccessorInterface
 
     /**
      * Getter of source part specified by nested path
-     * @param string|null $path nested path
+     * @param string|array<string>|null $path nested path
      * @param bool $strict if true: throw exception when path is not found in source
      * @return mixed value from source got by nested path
      * @throws NestedAccessorException if strict mode on and path is not found in source
      */
-    public function get(?string $path = null, bool $strict = true)
+    public function get($path = null, bool $strict = true)
     {
         // when path is not specified
         if($path === null || $path === '') {
             // let's return the full source
             return $this->source;
+        }
+
+        if(!is_array($path)) {
+            $path = explode($this->pathDelimiter, $path);
         }
 
         // let result be null and there are no errors by default
@@ -64,14 +68,17 @@ class NestedAccessor implements NestedAccessorInterface
         // getting result with internal recursive method
         $this->_get(
             $this->source,
-            array_reverse(explode($this->pathDelimiter, $path)), // path stack
+            array_reverse($path), // path stack
             $result,
             $errorsCount
         );
 
         // when strict mode is on and we got errors
         if($strict && $errorsCount) {
-            throw NestedAccessorException::createAsCannotGetValue($path, $errorsCount);
+            throw NestedAccessorException::createAsCannotGetValue(
+                implode($this->pathDelimiter, $path),
+                $errorsCount
+            );
         }
 
         return $result;
@@ -79,15 +86,18 @@ class NestedAccessor implements NestedAccessorInterface
 
     /**
      * Setter of source part specified by nested path
-     * @param string $path nested path
+     * @param string|array<string> $path nested path
      * @param mixed $value value to save by path
      * @param bool $strict when true throw exception if path not exist in source object
      * @return $this
      * @throws NestedAccessorException
      */
-    public function set(string $path, $value, bool $strict = true): self
+    public function set($path, $value, bool $strict = true): self
     {
-        return $this->_set($this->source, explode($this->pathDelimiter, $path), $value, $strict);
+        if(!is_array($path)) {
+            $path = explode($this->pathDelimiter, $path);
+        }
+        return $this->_set($this->source, $path, $value, $strict);
     }
 
     /**

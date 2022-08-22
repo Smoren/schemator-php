@@ -49,6 +49,7 @@ class NestedAccessorTest extends \Codeception\Test\Unit
         $accessor = new NestedAccessor($input);
 
         $this->assertEquals('Novgorod', $accessor->get('name'));
+        $this->assertEquals('Novgorod', $accessor->get(['name']));
         $this->assertEquals('Novgorod', $accessor->get('name', true));
         $this->assertEquals('Novgorod', $accessor->get('name', false));
 
@@ -86,6 +87,7 @@ class NestedAccessorTest extends \Codeception\Test\Unit
         $this->assertEquals(null, $accessor->get('status', false));
 
         $this->assertEquals('Moscow', $accessor->get('country.capitals.msk'));
+        $this->assertEquals('Moscow', $accessor->get(['country', 'capitals', 'msk']));
         $this->assertEquals(null, $accessor->get('country.capitals.msk1', false));
         try {
             $accessor->get('country.capitals.msk1');
