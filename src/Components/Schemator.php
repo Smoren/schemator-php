@@ -7,6 +7,7 @@ use Smoren\BitmapTools\Models\Bitmap;
 use Smoren\Schemator\Interfaces\NestedAccessorFactoryInterface;
 use Smoren\Schemator\Interfaces\SchematorInterface;
 use Smoren\Schemator\Factories\NestedAccessorFactory;
+use Smoren\Schemator\Structs\ErrorsLevelMask;
 use Smoren\Schemator\Structs\FilterContext;
 use Smoren\Schemator\Exceptions\NestedAccessorException;
 use Smoren\Schemator\Exceptions\SchematorException;
@@ -18,8 +19,6 @@ use Throwable;
  */
 class Schemator implements SchematorInterface
 {
-    public const ERRORS_LEVEL_DEFAULT = 114;
-
     /**
      * @var array<string, callable> filters map
      */
@@ -38,33 +37,24 @@ class Schemator implements SchematorInterface
     protected NestedAccessorFactoryInterface $nestedAccessorFactory;
 
     /**
-     * Creates bitmap errors level mask
-     * @param array<int> $errorCodes
-     * @return int
-     */
-    public static function createErrorsLevelMask(array $errorCodes): int
-    {
-        return Bitmap::create($errorCodes)->getValue();
-    }
-
-    /**
      * Schemator constructor.
      * @param non-empty-string $pathDelimiter delimiter for multilevel paths
-     * @param int $errorsLevelMask bitmap errors level mask
+     * @param BitmapInterface|null $errorsLevelMask bitmap errors level mask
+     * @param NestedAccessorFactoryInterface|null $nestedAccessorFactory nested accessor factory
      */
     public function __construct(
         string $pathDelimiter = '.',
-        int $errorsLevelMask = self::ERRORS_LEVEL_DEFAULT,
+        ?BitmapInterface $errorsLevelMask = null,
         NestedAccessorFactoryInterface $nestedAccessorFactory = null
     ) {
         $this->pathDelimiter = $pathDelimiter;
-        $this->setErrorsLevelMask($errorsLevelMask);
+        $this->errorsLevelMask = $errorsLevelMask ?? ErrorsLevelMask::default();
         $this->nestedAccessorFactory = $nestedAccessorFactory ?? new NestedAccessorFactory();
     }
 
     /**
      * @inheritDoc
-     * @throws NestedAccessorException
+     * @throws SchematorException
      */
     public function convert($source, array $schema)
     {
@@ -83,6 +73,7 @@ class Schemator implements SchematorInterface
 
     /**
      * @inheritDoc
+     * @throws SchematorException
      */
     public function getValue($source, $key)
     {
@@ -116,9 +107,9 @@ class Schemator implements SchematorInterface
     /**
      * @inheritDoc
      */
-    public function setErrorsLevelMask(int $value): void
+    public function setErrorsLevelMask(BitmapInterface $value): void
     {
-        $this->errorsLevelMask = Bitmap::create($value);
+        $this->errorsLevelMask = $value;
     }
 
     /**
@@ -228,7 +219,7 @@ class Schemator implements SchematorInterface
 
         try {
             return $this->filterMap[$filterName](
-                new FilterContext($this, $source, $rootSource),
+                new FilterContext($this, $source, $rootSource, $filterConfig),
                 ...$filterConfig
             );
         } catch(SchematorException $e) {

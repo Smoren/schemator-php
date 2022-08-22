@@ -2,6 +2,7 @@
 
 namespace Smoren\Schemator\Interfaces;
 
+use Smoren\BitmapTools\Interfaces\BitmapInterface;
 use Smoren\Schemator\Exceptions\SchematorException;
 
 /**
@@ -37,10 +38,10 @@ interface SchematorInterface
 
     /**
      * Setter for errorsLevelMask property
-     * @param int $value new value
+     * @param BitmapInterface $value new value
      * @return void
      */
-    public function setErrorsLevelMask(int $value): void;
+    public function setErrorsLevelMask(BitmapInterface $value): void;
 
     /**
      * Adds new filter

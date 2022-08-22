@@ -2,6 +2,8 @@
 
 namespace Smoren\Schemator\Interfaces;
 
+use Smoren\BitmapTools\Interfaces\BitmapInterface;
+
 /**
  * Interface SchematorBuilderInterface
  * @author Smoren <ofigate@gmail.com>
@@ -23,10 +25,10 @@ interface SchematorBuilderInterface
 
     /**
      * Sets errors level mask
-     * @param int $errorsLevelMask errors level mask
+     * @param BitmapInterface $errorsLevelMask errors level mask
      * @return SchematorBuilderInterface
      */
-    public function withErrorsLevelMask(int $errorsLevelMask): SchematorBuilderInterface;
+    public function withErrorsLevelMask(BitmapInterface $errorsLevelMask): SchematorBuilderInterface;
 
     /**
      * Adds filters to SchematorInterface object

@@ -44,12 +44,13 @@ class BaseFiltersStorage implements FiltersStorageInterface
      * @param string $format php date format
      * @param int|null $timezone timezone offset
      * @return false|string|null
+     * @throws SchematorException
      */
     public static function date(FilterContextInterface $context, string $format, ?int $timezone = null)
     {
         $source = $context->getSource();
         if($source === null) {
-            return null;
+            throw SchematorException::createAsFilterError('date', $context->getConfig(), $source);
         }
         if($timezone === null) {
             return date($format, intval($source));
@@ -62,12 +63,13 @@ class BaseFiltersStorage implements FiltersStorageInterface
      * @param FilterContextInterface $context filter context
      * @param string $delimiter separator
      * @return string|null
+     * @throws SchematorException
      */
     public static function implode(FilterContextInterface $context, string $delimiter = ', '): ?string
     {
         $source = $context->getSource();
         if($source === null || !is_array($source)) {
-            return null;
+            throw SchematorException::createAsFilterError('implode', $context->getConfig(), $source);
         }
         return implode($delimiter, $source);
     }
@@ -77,12 +79,13 @@ class BaseFiltersStorage implements FiltersStorageInterface
      * @param FilterContextInterface $context filter context
      * @param non-empty-string $delimiter separator
      * @return false|string[]|null
+     * @throws SchematorException
      */
     public static function explode(FilterContextInterface $context, string $delimiter = ', ')
     {
         $source = $context->getSource();
         if($source === null || !is_scalar($source)) {
-            return null;
+            throw SchematorException::createAsFilterError('explode', $context->getConfig(), $source);
         }
         return explode($delimiter, (string)$source);
     }
@@ -91,12 +94,13 @@ class BaseFiltersStorage implements FiltersStorageInterface
      * Returns the sum of array items
      * @param FilterContextInterface $context filter context
      * @return float|int|null
+     * @throws SchematorException
      */
     public static function sum(FilterContextInterface $context)
     {
         $source = $context->getSource();
         if($source === null || !is_array($source)) {
-            return null;
+            throw SchematorException::createAsFilterError('sum', $context->getConfig(), $source);
         }
         return array_sum($source);
     }
@@ -105,12 +109,13 @@ class BaseFiltersStorage implements FiltersStorageInterface
      * Returns the average value of array items
      * @param FilterContextInterface $context filter context
      * @return float|int|null
+     * @throws SchematorException
      */
     public static function average(FilterContextInterface $context)
     {
         $source = $context->getSource();
         if($source === null || !is_array($source)) {
-            return null;
+            throw SchematorException::createAsFilterError('average', $context->getConfig(), $source);
         }
         return array_sum($source)/count($source);
     }
@@ -120,12 +125,13 @@ class BaseFiltersStorage implements FiltersStorageInterface
      * @param FilterContextInterface $context filter context
      * @param array<int, mixed>|callable $filterConfig filter rules config or filter callback
      * @return array<int, mixed>|null
+     * @throws SchematorException
      */
     public static function filter(FilterContextInterface $context, $filterConfig): ?array
     {
         $source = $context->getSource();
         if($source === null || !is_array($source)) {
-            return null;
+            throw SchematorException::createAsFilterError('filter', $context->getConfig(), $source);
         }
 
         if(is_callable($filterConfig)) {
@@ -137,8 +143,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
         foreach($source as $item) {
             foreach($filterConfig as $args) {
                 if(!is_array($args)) {
-                    // TODO exception?
-                    return null;
+                    throw SchematorException::createAsFilterError('filter', $context->getConfig(), $source);
                 }
 
                 $rule = array_shift($args);
@@ -158,12 +163,13 @@ class BaseFiltersStorage implements FiltersStorageInterface
      * @param FilterContextInterface $context filter context
      * @param callable|null $sortCallback sort callback
      * @return array<int, mixed>|null
+     * @throws SchematorException
      */
     public static function sort(FilterContextInterface $context, ?callable $sortCallback = null): ?array
     {
         $source = $context->getSource();
         if($source === null || !is_array($source)) {
-            return null;
+            throw SchematorException::createAsFilterError('sort', $context->getConfig(), $source);
         }
         if($sortCallback !== null) {
             usort($source, $sortCallback);
@@ -182,7 +188,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
     {
         $source = $context->getSource();
         if($source === null || !is_array($source)) {
-            return null;
+            throw SchematorException::createAsFilterError('rsort', $context->getConfig(), $source);
         }
 
         rsort($source);
@@ -199,7 +205,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
     {
         $source = $context->getSource();
         if($source === null) {
-            return null;
+            throw SchematorException::createAsFilterError('path', $context->getConfig(), $source);
         }
         return $context->getSchemator()->getValue($context->getRootSource(), $source);
     }
@@ -208,12 +214,13 @@ class BaseFiltersStorage implements FiltersStorageInterface
      * Returns flattened array
      * @param FilterContextInterface $context filter context
      * @return array<int, mixed>|null
+     * @throws SchematorException
      */
     public static function flatten(FilterContextInterface $context): ?array
     {
         $source = $context->getSource();
         if($source === null || !is_array($source)) {
-            return null;
+            throw SchematorException::createAsFilterError('flatten', $context->getConfig(), $source);
         }
         return ArrHelper::flatten($source);
     }
@@ -223,12 +230,13 @@ class BaseFiltersStorage implements FiltersStorageInterface
      * @param FilterContextInterface $context filter context
      * @param array<int, mixed> $rules smart filter replacements
      * @return array<int, mixed>|mixed|null
+     * @throws SchematorException
      */
     public static function replace(FilterContextInterface $context, array $rules)
     {
         $source = $context->getSource();
         if($source === null) {
-            return null;
+            throw SchematorException::createAsFilterError('replace', $context->getConfig(), $source);
         }
 
         $isArray = is_array($source);
@@ -245,8 +253,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
 
             foreach($rules as $args) {
                 if(!is_array($args)) {
-                    // TODO exception?
-                    return null;
+                    throw SchematorException::createAsFilterError('replace', $context->getConfig(), $source);
                 }
 
                 $value = array_shift($args);

@@ -39,21 +39,21 @@ class SchematorException extends BaseException
      * @param string $filterName name of the filter
      * @param mixed $filterConfig arguments for filter
      * @param mixed $source source for filtering
-     * @param Throwable $previous exception thrown in the filter body
+     * @param ?Throwable $previous exception thrown in the filter body
      * @return SchematorException
      */
     public static function createAsFilterError(
         string $filterName,
         $filterConfig,
         $source,
-        Throwable $previous
+        ?Throwable $previous = null
     ): SchematorException {
         return new SchematorException(
             "filter error: '{$filterName}'",
             SchematorException::FILTER_ERROR,
             $previous,
             [
-                'error' => $previous->getMessage(),
+                'error' => $previous ? $previous->getMessage() : "filter error: '{$filterName}'",
                 'filter_name' => $filterName,
                 'config' => $filterConfig,
                 'source' => $source,

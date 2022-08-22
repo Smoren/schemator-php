@@ -76,7 +76,7 @@ $schema = [
 ];
 
 $schemator = (new SchematorBuilder())->get();
-$output = $schemator->exec($input, $schema);
+$output = $schemator->convert($input, $schema);
 
 print_r($output);
 /* Array
@@ -116,6 +116,35 @@ print_r($output);
 
 )
 */
+```
+
+#### Setting errors level
+
+```php
+use Smoren\Schemator\Factories\SchematorBuilder;
+use Smoren\Schemator\Structs\ErrorsLevelMask;
+use Smoren\Schemator\Exceptions\SchematorException;
+
+$input = [
+    'some_key' => null,
+];
+$schema = [
+    'my_value' => ['some_key', ['date', 'Y-m-d']],
+];
+
+$schemator = (new SchematorBuilder())
+    ->withErrorsLevelMask(
+        ErrorsLevelMask::nothing()
+            ->add([SchematorException::FILTER_ERROR, SchematorException::CANNOT_GET_VALUE])
+    )
+    ->get();
+
+try {
+    $schemator->convert($input, $schema);
+} catch(SchematorException $e) {
+    echo $e->getMessage(); // filter error: 'date'
+}
+
 ```
 
 #### Using base filters
@@ -169,7 +198,7 @@ $schema = [
 $schemator = (new SchematorBuilder())
     ->withFilters(new BaseFiltersStorage())
     ->get();
-$output = $schemator->exec($input, $schema);
+$output = $schemator->convert($input, $schema);
 
 print_r($output);
 /*
@@ -211,13 +240,13 @@ use Smoren\Schemator\Factories\SchematorBuilder;
 use Smoren\Schemator\Filters\BaseFiltersStorage;
 
 $schemator = (new SchematorBuilder())
-    ->withFilters(BaseFiltersStorage())
+    ->withFilters(new BaseFiltersStorage())
     ->get();
 $input = [
     'numbers' => [-1, 10, 5, 22, -10, 0, 35, 7, 8, 9, 0],
 ];
 
-$output = $schemator->exec($input, [
+$output = $schemator->convert($input, [
     'positive' => [
         'numbers',
         ['filter', [['>', 0]]],
@@ -269,7 +298,7 @@ Array
 )
 */
 
-$output = $schemator->exec($input, [
+$output = $schemator->convert($input, [
     'number_types' => ['numbers', [
         'replace',
         [
@@ -326,7 +355,7 @@ $schema = [
     'street_names' => ['streets', ['startsWith', 'T'], ['implode', ', ']],
 ];
 
-$output = $schemator->exec($input, $schema);
+$output = $schemator->convert($input, $schema);
 
 print_r($output);
 /*
@@ -340,10 +369,10 @@ Array
 #### Mass usage
 
 ```php
-use Smoren\Schemator\Components\Schemator;
+use Smoren\Schemator\Factories\SchematorBuilder;
 use Smoren\Schemator\Components\MassSchemator;
 
-$massSchemator = new MassSchemator(new Schemator());
+$massSchemator = new MassSchemator((new SchematorBuilder())->get());
 
 $cities = [
     [

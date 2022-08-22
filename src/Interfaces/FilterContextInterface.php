@@ -25,4 +25,10 @@ interface FilterContextInterface
      * @return SchematorInterface
      */
     public function getSchemator(): SchematorInterface;
+
+    /**
+     * Returns filter config
+     * @return mixed
+     */
+    public function getConfig();
 }

@@ -2,6 +2,7 @@
 
 namespace Smoren\Schemator\Factories;
 
+use Smoren\BitmapTools\Interfaces\BitmapInterface;
 use Smoren\Schemator\Interfaces\SchematorBuilderInterface;
 use Smoren\Schemator\Interfaces\SchematorInterface;
 use Smoren\Schemator\Components\Schemator;
@@ -46,7 +47,7 @@ class SchematorBuilder implements SchematorBuilderInterface
     /**
      * @inheritDoc
      */
-    public function withErrorsLevelMask(int $errorsLevelMask): SchematorBuilderInterface
+    public function withErrorsLevelMask(BitmapInterface $errorsLevelMask): SchematorBuilderInterface
     {
         $this->schemator->setErrorsLevelMask($errorsLevelMask);
         return $this;
