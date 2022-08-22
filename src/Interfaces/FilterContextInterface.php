@@ -14,7 +14,7 @@ interface FilterContextInterface
      */
     public function getSource();
 
-    /**, $source
+    /**
      * Return the root source data of schemator conversion
      * @return mixed
      */
