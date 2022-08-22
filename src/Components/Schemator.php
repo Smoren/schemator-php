@@ -2,7 +2,8 @@
 
 namespace Smoren\Schemator\Components;
 
-use Smoren\BitmapTools\Helpers\BitmapHelper;
+use Smoren\BitmapTools\Interfaces\BitmapInterface;
+use Smoren\BitmapTools\Models\Bitmap;
 use Smoren\Schemator\Interfaces\NestedAccessorFactoryInterface;
 use Smoren\Schemator\Interfaces\SchematorInterface;
 use Smoren\Schemator\Factories\NestedAccessorFactory;
@@ -28,9 +29,9 @@ class Schemator implements SchematorInterface
      */
     protected string $pathDelimiter;
     /**
-     * @var int bitmap errors level mask
+     * @var BitmapInterface bitmap errors level mask
      */
-    protected int $errorsLevelMask;
+    protected BitmapInterface $errorsLevelMask;
     /**
      * @var NestedAccessorFactoryInterface nested accessor factory
      */
@@ -43,7 +44,7 @@ class Schemator implements SchematorInterface
      */
     public static function createErrorsLevelMask(array $errorCodes): int
     {
-        return BitmapHelper::create($errorCodes);
+        return Bitmap::create($errorCodes)->getValue();
     }
 
     /**
@@ -57,12 +58,13 @@ class Schemator implements SchematorInterface
         NestedAccessorFactoryInterface $nestedAccessorFactory = null
     ) {
         $this->pathDelimiter = $pathDelimiter;
-        $this->errorsLevelMask = $errorsLevelMask;
+        $this->setErrorsLevelMask($errorsLevelMask);
         $this->nestedAccessorFactory = $nestedAccessorFactory ?? new NestedAccessorFactory();
     }
 
     /**
      * @inheritDoc
+     * @throws NestedAccessorException
      */
     public function convert($source, array $schema)
     {
@@ -116,7 +118,7 @@ class Schemator implements SchematorInterface
      */
     public function setErrorsLevelMask(int $value): void
     {
-        $this->errorsLevelMask = $value;
+        $this->errorsLevelMask = Bitmap::create($value);
     }
 
     /**
@@ -249,6 +251,6 @@ class Schemator implements SchematorInterface
      */
     protected function needToThrow(int $errorCode): bool
     {
-        return BitmapHelper::intersects($this->errorsLevelMask, [$errorCode]);
+        return $this->errorsLevelMask->intersectsWith(Bitmap::create([$errorCode]));
     }
 }
