@@ -4,12 +4,12 @@ namespace Smoren\Schemator\Components;
 
 use Smoren\BitmapTools\Interfaces\BitmapInterface;
 use Smoren\BitmapTools\Models\Bitmap;
-use Smoren\Schemator\Interfaces\NestedAccessorFactoryInterface;
+use Smoren\NestedAccessor\Interfaces\NestedAccessorFactoryInterface;
+use Smoren\NestedAccessor\Factories\NestedAccessorFactory;
+use Smoren\NestedAccessor\Exceptions\NestedAccessorException;
 use Smoren\Schemator\Interfaces\SchematorInterface;
-use Smoren\Schemator\Factories\NestedAccessorFactory;
 use Smoren\Schemator\Structs\ErrorsLevelMask;
 use Smoren\Schemator\Structs\FilterContext;
-use Smoren\Schemator\Exceptions\NestedAccessorException;
 use Smoren\Schemator\Exceptions\SchematorException;
 use Throwable;
 use TypeError;

@@ -2,8 +2,8 @@
 
 namespace Smoren\Schemator\Interfaces;
 
-use Smoren\Schemator\Exceptions\SchematorException;
 use Generator;
+use Smoren\Schemator\Exceptions\SchematorException;
 
 /**
  * Interface MassSchematorInterface
