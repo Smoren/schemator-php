@@ -224,14 +224,14 @@ class Schemator implements SchematorInterface
                 $filterContext,
                 ...$filterConfig
             );
-        } catch(SchematorException $e) {
-            if($this->needToThrow($e->getCode())) {
-                throw $e;
-            }
-            return null;
         } catch(TypeError $e) {
             if($this->needToThrow(SchematorException::BAD_FILTER_CONFIG)) {
                 throw SchematorException::createAsBadFilterConfig($filterContext, $e);
+            }
+            return null;
+        } catch(SchematorException $e) {
+            if($this->needToThrow($e->getCode())) {
+                throw $e;
             }
             return null;
         } catch(Throwable $e) {
