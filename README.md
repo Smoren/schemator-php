@@ -1,4 +1,4 @@
-# schemator
+# Schematic data mapper
 
 ![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/smoren/schemator)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Smoren/schemator-php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Smoren/schemator-php/?branch=master)
