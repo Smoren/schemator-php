@@ -8,7 +8,7 @@
 
 ![Schemator logo](docs/images/schemator-logo.png)
 
-Schematic data converter is a tool for converting nested data structures
+Schematic data mapper is a tool for converting nested data structures
 (any compositions of associative arrays, non-associative arrays and objects)
 according to the given conversion schema.
 
