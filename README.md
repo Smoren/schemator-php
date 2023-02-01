@@ -12,21 +12,14 @@ Schematic data mapper is a tool for converting nested data structures
 (any compositions of associative arrays, non-associative arrays and objects)
 according to the given conversion schema.
 
-### How to install to your project
+## How to install to your project
 ```
 composer require smoren/schemator
 ```
 
-### Unit testing
-```
-composer install
-composer test-init
-composer test
-```
+## Usage
 
-### Usage
-
-#### Simple usage
+### Simple usage
 
 ```php
 use Smoren\Schemator\Factories\SchematorFactory;
@@ -120,7 +113,7 @@ print_r($output);
 */
 ```
 
-#### Setting errors level
+### Setting errors level
 
 ```php
 use Smoren\Schemator\Factories\SchematorFactory;
@@ -149,7 +142,7 @@ try {
 
 ```
 
-#### Using base filters
+### Using base filters
 
 ```php
 use Smoren\Schemator\Factories\SchematorFactory;
@@ -233,7 +226,7 @@ Array
 */
 ```
 
-#### Using smart filter and replace
+### Using smart filter and replace
 
 ```php
 use Smoren\Schemator\Factories\SchematorFactory;
@@ -331,7 +324,7 @@ Array
 */
 ```
 
-#### Using custom filters
+### Using custom filters
 
 ```php
 use Smoren\Schemator\Factories\SchematorFactory;
@@ -366,7 +359,7 @@ Array
 */
 ```
 
-#### Mass usage
+### Mass usage
 
 ```php
 use Smoren\Schemator\Factories\SchematorFactory;
@@ -460,3 +453,322 @@ Array
 )
 */
 ```
+
+## Filters
+
+### const
+Sets the value from const param.
+
+Schema:
+```php
+["value" => [["const", "My const value"]]]
+```
+
+Result:
+```php
+["value" => "My const value"]
+```
+
+### sum
+Returns the sum of given array.
+
+Given:
+```php
+["numbers" => [1, 2, 3, 4, 5]]
+```
+
+Schema:
+```php
+["value" => ["numbers", ["sum"]]]
+```
+
+Result:
+```php
+["value" => 15]
+```
+
+### average
+Returns the average of given array.
+
+Given:
+```php
+["numbers" => [1, 2, 3, 4, 5]]
+```
+
+Schema:
+```php
+["value" => ["numbers", ["average"]]]
+```
+
+Result:
+```php
+["value" => 3]
+```
+
+### date
+Returns formatted date from the Unix timestamp given value.
+
+Params:
+1. Date format
+    * required
+    * data type — string
+    * example: `d.m.Y H:i:s`
+    * [more about formats](https://www.php.net/manual/ru/datetime.format.php)
+2. Time zone offset from GMT
+    * optional
+    * data type — integer
+    * default — 0
+
+Given:
+```php
+["some_date" => 1651481881]
+```
+
+Schema:
+```php
+["value" => ["some_date", ["date", "d.m.Y H:i:s", 3]]]
+```
+
+Result:
+```php
+["value" => "02.05.2022 11:58:01"]
+```
+
+### implode
+Returns string of imploded items of given array with separator from args list.
+
+params:
+1. Separator
+    * required
+    * data type — string
+    * example: `; `
+
+Given:
+```php
+["numbers" => [1, 2, 3, 4, 5]]
+```
+
+Schema:
+```php
+["value" => ["numbers", ["implode", "; "]]]
+```
+
+Result:
+```php
+["value" => "1; 2; 3; 4; 5"]
+```
+
+### explode
+Returns array of exploded strings from given string with separator from args list
+
+params:
+1. Separator
+    * required
+    * data type — string
+    * example: `; `
+
+Given:
+```php
+["numbers" => "1; 2; 3; 4; 5"]
+```
+
+Schema:
+```php
+["value" => ["numbers", ["explode", "; "]]]
+```
+
+Result:
+```php
+["value" => ["1", "2", "3", "4", "5"]]
+```
+
+### flatten
+Returns flat array contains all the dead end leaves of tree array.
+
+Given:
+```php
+[
+   "numbers" => [
+      [
+         [1, 2, 3],
+         [4, 5, 6]
+      ],
+      [7, 8, 9]
+   ],
+]
+```
+
+Schema:
+```php
+["value" => ["numbers", ["flatten"]]]
+```
+
+Result:
+```php
+["value" => [1, 2, 3, 4, 5, 6, 7, 8, 9]]
+```
+
+### sort
+Sorts and returns given array.
+
+Given:
+```php
+["numbers" => [3, 5, 4, 1, 2]]
+```
+
+Schema:
+```php
+["value" => ["numbers", ["sort"]]]
+```
+
+Result:
+```php
+["value" => [1, 2, 3, 4, 5]]
+```
+
+### rsort
+Sorts reversely and returns given array.
+
+Given:
+```php
+["numbers" => [3, 5, 4, 1, 2]]
+```
+
+Schema:
+```php
+["value" => ["numbers", ["sort"]]]
+```
+
+Result:
+```php
+["value" => [5, 4, 3, 2, 1]]
+```
+
+### filter
+Returns array contains elements from given array, that match the predicates from params list.
+
+Rules:
+* Every predicate has such format `["predicate name", ...parans]`.
+* Predicates in one filter apply according the "OR" logic.
+* To apply "AND" logic use [chain of filters](#Chain-of-filters).
+* Available predicates:
+    * `["=", 10]` means `value = 10`
+    * `[">", 10]` means `value > 10`
+    * `[">=", 10]` means `value >= 10`
+    * `["<", 10]` means `value < 10`
+    * `["<=", 10]` means `value <= 10`
+    * `["in", [1, 2]]` means `value = 1 OR value = 2`
+    * `["not in", [1, 2]]` means `value != 1 AND value != 2`
+    * `["between", 1, 5]` means `1 <= value <= 5`
+    * `["between strict", 1, 5]` means `1 < value < 5`
+
+Given:
+```php
+["numbers" => [-5, -3, -1, 1, 3, 5]]
+```
+
+Schema:
+```php
+[
+   "value" => [
+      "numbers",
+      [
+         "filter",
+         [[">", 1], ["<", -1]] // value > 1 OR value < -1
+      ],
+   ],
+]
+```
+
+Result:
+```php
+["value" => [-5, -3, 3, 5]]
+```
+
+### replace
+Returns array of elements from given array with replaces by rules from params list.
+
+Rules:
+* Every rule has such format `["value to replace", "rule name", ...params]`.
+* Rules in one filter apply according the "OR" logic.
+* To apply "AND" logic use [chain of filters](#Chain-of-filters).
+* Available rules:
+    * `["=", 10]` means `value = 10`
+    * `[">", 10]` means `value > 10`
+    * `[">=", 10]` means `value >= 10`
+    * `["<", 10]` means `value < 10`
+    * `["<=", 10]` means `value <= 10`
+    * `["in", [1, 2]]` means `value = 1 или value = 2`
+    * `["not in", [1, 2]]` means `value != 1 и value != 2`
+    * `["between", 1, 5]` means `1 <= value <= 5`
+    * `["between strict", 1, 5]` means `1 < value < 5`
+    * `["else"]` — no rules matched for value
+      _(If rule `else` did not use, by default such values are replaced with `null`)_
+
+Given:
+```php
+["numbers" => [-5, -3, -1, 1, 3, 5]]
+```
+
+Schema:
+```php
+[
+   "value" => [
+      "numbers",
+      [
+         "replace",
+         [
+            ["positive", ">", 0],
+            ["negative", "<", 0],
+            ["zero", "else"]
+         ],
+      ],
+   ],
+]
+```
+
+Result:
+```php
+["value" => ["negative", "negative", "negative", "zero", "positive", "positive", "positive"]]
+```
+
+### Chain of filters
+
+Given:
+```php
+["numbers" => [-5, -3, -1, 1, 3, 5]]
+```
+
+Schema:
+```php
+[
+   "value" => [
+      "numbers",
+      [
+         "filter",
+         [[">", 1], ["<", -1]] // (value > 1 OR value < -1)
+      ],
+      // AND
+      [
+         "filter",
+         [[">=", -3]] // value >= -3
+      ],
+   ],
+]
+```
+
+Result:
+```php
+["value" => [-3, 3, 5]]
+```
+
+## Unit testing
+```
+composer install
+composer test-init
+composer test
+```
+
+## License
+
+Schemator Data Mapper is licensed under the MIT License.
