@@ -10,8 +10,7 @@
     }
   ],
   "require": {
-    "php": ">=7.4.0",
-    "smoren/extended-exceptions": "^1.0.0",
+    "php": ">=7.4",
     "smoren/nested-accessor": "^0.1.0",
     "smoren/bitmap-tools": "^0.3.0"
   },

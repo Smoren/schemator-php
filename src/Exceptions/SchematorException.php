@@ -2,15 +2,13 @@
 
 namespace Smoren\Schemator\Exceptions;
 
-use Smoren\ExtendedExceptions\BaseException;
 use Smoren\Schemator\Interfaces\FilterContextInterface;
 use Throwable;
 
 /**
- * Class SchematorException
- * @author Smoren <ofigate@gmail.com>
+ * Class SchematorException.
  */
-class SchematorException extends BaseException
+class SchematorException extends \Exception
 {
     public const UNSUPPORTED_SOURCE_TYPE = 1;
     public const UNSUPPORTED_KEY_TYPE = 2;
@@ -22,8 +20,38 @@ class SchematorException extends BaseException
     public const BAD_FILTER_SOURCE = 8;
 
     /**
-     * Creates a new exception instance for filter not found error
-     * @param string $filterName name of filter
+     * @var array<mixed>|null
+     */
+    protected ?array $data;
+
+    /**
+     * @param string $message
+     * @param int $code
+     * @param Throwable|null $previous
+     * @param array<mixed>|null $data
+     */
+    public function __construct(
+        string $message,
+        int $code,
+        Throwable $previous = null,
+        ?array $data = null
+    ) {
+        parent::__construct($message, $code, $previous);
+        $this->data = $data;
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getData(): array
+    {
+        return $this->data ?? [];
+    }
+
+    /**
+     * Creates a new exception instance for filter not found error.
+     *
+     * @param string $filterName name of filter.
      */
     public static function createAsFilterNotFound(string $filterName): SchematorException
     {
