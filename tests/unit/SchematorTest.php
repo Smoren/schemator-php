@@ -795,6 +795,11 @@ class SchematorTest extends Unit
         $this->assertEquals([1, 2], $schemator->getValue($input, ['mylist', ['filter', [['<', 3]]]]));
         $this->assertEquals(null, $schemator->getValue($input, ['mynull', ['filter', [['<', 3]]]]));
 
+        $this->assertEquals([1, 3], $schemator->getValue($input, ['mylist', ['filter', [['!=', 2]]]]));
+        $this->assertEquals([2], $schemator->getValue($input, ['mylist', ['filter', [['between strict', 1, 3]]]]));
+        $this->assertEquals([1, 3], $schemator->getValue($input, ['mylist', ['filter', [['in', [1, 3]]]]]));
+        $this->assertEquals([2], $schemator->getValue($input, ['mylist', ['filter', [['not in', [1, 3]]]]]));
+
         $this->assertEquals([1, 2, 3], $schemator->getValue($input, ['mylist', ['sort']]));
         $this->assertEquals(null, $schemator->getValue($input, ['mynull', ['sort']]));
         $this->assertEquals([3, 2, 1], $schemator->getValue($input, ['mylist', ['sort', function($lhs, $rhs) {

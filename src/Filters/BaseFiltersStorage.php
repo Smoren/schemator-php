@@ -3,8 +3,8 @@
 namespace Smoren\Schemator\Filters;
 
 use ArrayIterator;
-use Smoren\Helpers\ArrHelper;
-use Smoren\Helpers\RuleHelper;
+use Smoren\Schemator\Util\ArrayHelper;
+use Smoren\Schemator\Util\RuleHelper;
 use Smoren\Schemator\Exceptions\SchematorException;
 use Smoren\Schemator\Interfaces\FilterContextInterface;
 use Smoren\Schemator\Interfaces\FiltersStorageInterface;
@@ -152,7 +152,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
 
                 $rule = array_shift($args);
 
-                if(RuleHelper::check($item, $rule, $args)) {
+                if(RuleHelper::evaluate($item, $rule, $args)) {
                     $result[] = $item;
                     break;
                 }
@@ -227,7 +227,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
         if($source === null || !is_array($source)) {
             throw SchematorException::createAsBadFilterSource($context);
         }
-        return ArrHelper::flatten($source);
+        return ArrayHelper::flatten($source);
     }
 
     /**
@@ -270,7 +270,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
 
                 $replace = null;
 
-                if(RuleHelper::check($item, $rule, $args)) {
+                if(RuleHelper::evaluate($item, $rule, $args)) {
                     $replace = $value;
                     $isReplaced = true;
 
