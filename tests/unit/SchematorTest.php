@@ -7,6 +7,7 @@ use Exception;
 use Smoren\Schemator\Components\Schemator;
 use Smoren\Schemator\Exceptions\SchematorException;
 use Smoren\Schemator\Factories\SchematorBuilder;
+use Smoren\Schemator\Factories\SchematorFactory;
 use Smoren\Schemator\Filters\BaseFiltersStorage;
 use Smoren\Schemator\Interfaces\FilterContextInterface;
 use Smoren\Schemator\Structs\ErrorsLevelMask;
@@ -16,9 +17,9 @@ class SchematorTest extends Unit
     /**
      * @throws SchematorException
      */
-    public function testDefaultDelimiter()
+    public function testDefaultDelimiter(): void
     {
-        $schemator = new Schemator();
+        $schemator = SchematorFactory::create();
 
         $input = [
             'id' => 100,
@@ -154,9 +155,9 @@ class SchematorTest extends Unit
     /**
      * @throws SchematorException
      */
-    public function testSpecificDelimiter()
+    public function testSpecificDelimiter(): void
     {
-        $schemator = (new SchematorBuilder())->withPathDelimiter('/')->get();
+        $schemator = SchematorFactory::createBuilder()->withPathDelimiter('/')->get();
 
         $input = [
             'id' => 100,
@@ -290,9 +291,9 @@ class SchematorTest extends Unit
     /**
      * @throws SchematorException
      */
-    public function testBuilder()
+    public function testBuilder(): void
     {
-        $schemator = (new SchematorBuilder())
+        $schemator = SchematorFactory::createBuilder()
             ->withErrorsLevelMask(ErrorsLevelMask::default())
             ->withFilters(new BaseFiltersStorage())
             ->withFilters([
@@ -367,9 +368,7 @@ class SchematorTest extends Unit
             'numbers' => [-1, 10, 5, 22, -10, 0, 35, 7, 8, 9, 0],
         ];
 
-        $schemator = (new SchematorBuilder())
-            ->withFilters(new BaseFiltersStorage())
-            ->get();
+        $schemator = SchematorFactory::create();
 
         $data = $schemator->convert($input, [
             'number_types' => ['numbers', [
@@ -433,9 +432,7 @@ class SchematorTest extends Unit
      */
     public function testFormat()
     {
-        $schemator = (new SchematorBuilder())
-            ->withFilters(new BaseFiltersStorage())
-            ->get();
+        $schemator = SchematorFactory::create();
 
         $input = [
             'date' => 1651161688,
@@ -500,9 +497,7 @@ class SchematorTest extends Unit
             'numbers' => [-1, 10, 5, 22, -10, 0, 35, 7, 8, 9, 0],
         ];
 
-        $schemator = (new SchematorBuilder())
-            ->withFilters(new BaseFiltersStorage())
-            ->get();
+        $schemator = SchematorFactory::create();
 
         $schema = [
             'result' => ['numbers', ['sum']],
@@ -548,7 +543,7 @@ class SchematorTest extends Unit
 
     public function testFilterErrors()
     {
-        $schemator = (new SchematorBuilder())
+        $schemator = SchematorFactory::createBuilder()
             ->withErrorsLevelMask(ErrorsLevelMask::all())
             ->withFilters(new BaseFiltersStorage())
             ->get();
@@ -681,9 +676,7 @@ class SchematorTest extends Unit
             'street_names' => 'countries.cities.streets.name',
         ];
 
-        $schemator = (new SchematorBuilder())
-            ->withFilters(new BaseFiltersStorage())
-            ->get();
+        $schemator = SchematorFactory::create();
 
         $result = $schemator->convert($data, $schema);
 
@@ -703,7 +696,7 @@ class SchematorTest extends Unit
                 ]
             ]
         ];
-        $schemator = new Schemator();
+        $schemator = SchematorFactory::create();
         $this->assertEquals($input, $schemator->getValue($input, null));
         $this->assertEquals(1, $schemator->getValue($input, 'a.b.c'));
         $this->assertEquals(['c' => 1], $schemator->getValue($input, 'a.b'));
@@ -720,7 +713,7 @@ class SchematorTest extends Unit
         // unsupported filter config type
         $this->assertEquals(null, $schemator->getValue($input, ['a', (object)[]]));
 
-        $schemator = (new SchematorBuilder())
+        $schemator = SchematorFactory::createBuilder()
             ->withErrorsLevelMask(
                 ErrorsLevelMask::create([
                     SchematorException::CANNOT_GET_VALUE,
@@ -782,9 +775,7 @@ class SchematorTest extends Unit
             ],
             'mypath' => 'mysource.key',
         ];
-        $schemator = (new SchematorBuilder())
-            ->withFilters(new BaseFiltersStorage())
-            ->get();
+        $schemator = SchematorFactory::create();
 
         $this->assertEquals('2022-08-10', $schemator->getValue($input, ['mydate', ['date', 'Y-m-d', 0]]));
         $this->assertEquals(null, $schemator->getValue($input, ['mynull', ['date', 'Y-m-d', 0]]));
@@ -828,9 +819,7 @@ class SchematorTest extends Unit
 
     public function testErrorsLevel()
     {
-        $schemator = (new SchematorBuilder())
-            ->withFilters(new BaseFiltersStorage())
-            ->get();
+        $schemator = SchematorFactory::create();
 
         {
             $schemator->setErrorsLevelMask(ErrorsLevelMask::create([
