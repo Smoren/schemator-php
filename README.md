@@ -824,7 +824,7 @@ composer test
 
 ## Standards
 
-IterTools PHP conforms to the following standards:
+Schemator conforms to the following standards:
 
 * PSR-1 — [Basic coding standard](https://www.php-fig.org/psr/psr-1/)
 * PSR-4 — [Autoloader](https://www.php-fig.org/psr/psr-4/)
@@ -832,4 +832,4 @@ IterTools PHP conforms to the following standards:
 
 ## License
 
-Schemator Data Mapper is licensed under the MIT License.
+Schemator is licensed under the MIT License.
