@@ -49,13 +49,13 @@ class BaseFiltersStorage implements FiltersStorageInterface
     public static function date(FilterContextInterface $context, string $format, ?int $timezone = null)
     {
         $source = $context->getSource();
-        if($source === null) {
+        if ($source === null) {
             throw SchematorException::createAsBadFilterSource($context);
         }
-        if($timezone === null) {
+        if ($timezone === null) {
             return date($format, intval($source));
         }
-        return gmdate($format, $source+3600*$timezone);
+        return gmdate($format, $source + 3600 * $timezone);
     }
 
     /**
@@ -68,7 +68,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
     public static function implode(FilterContextInterface $context, string $delimiter = ', '): ?string
     {
         $source = $context->getSource();
-        if($source === null || !is_array($source)) {
+        if ($source === null || !is_array($source)) {
             throw SchematorException::createAsBadFilterSource($context);
         }
         return implode($delimiter, $source);
@@ -84,7 +84,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
     public static function explode(FilterContextInterface $context, string $delimiter = ', ')
     {
         $source = $context->getSource();
-        if($source === null || !is_scalar($source)) {
+        if ($source === null || !is_scalar($source)) {
             throw SchematorException::createAsBadFilterSource($context);
         }
         return explode($delimiter, (string)$source);
@@ -99,7 +99,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
     public static function sum(FilterContextInterface $context)
     {
         $source = $context->getSource();
-        if($source === null || !is_array($source)) {
+        if ($source === null || !is_array($source)) {
             throw SchematorException::createAsBadFilterSource($context);
         }
         return array_sum($source);
@@ -114,10 +114,10 @@ class BaseFiltersStorage implements FiltersStorageInterface
     public static function average(FilterContextInterface $context)
     {
         $source = $context->getSource();
-        if($source === null || !is_array($source)) {
+        if ($source === null || !is_array($source)) {
             throw SchematorException::createAsBadFilterSource($context);
         }
-        return array_sum($source)/count($source);
+        return array_sum($source) / count($source);
     }
 
     /**
@@ -130,29 +130,29 @@ class BaseFiltersStorage implements FiltersStorageInterface
     public static function filter(FilterContextInterface $context, $filterConfig): ?array
     {
         $source = $context->getSource();
-        if($source === null || !is_array($source)) {
+        if ($source === null || !is_array($source)) {
             throw SchematorException::createAsBadFilterSource($context);
         }
 
-        if(is_callable($filterConfig)) {
+        if (is_callable($filterConfig)) {
             return array_values(array_filter($source, $filterConfig));
         }
 
-        if(!is_array($filterConfig)) {
+        if (!is_array($filterConfig)) {
             throw SchematorException::createAsBadFilterConfig($context);
         }
 
         $result = [];
 
-        foreach($source as $item) {
-            foreach($filterConfig as $args) {
-                if(!is_array($args)) {
+        foreach ($source as $item) {
+            foreach ($filterConfig as $args) {
+                if (!is_array($args)) {
                     throw SchematorException::createAsBadFilterConfig($context);
                 }
 
                 $rule = array_shift($args);
 
-                if(RuleHelper::evaluate($item, $rule, $args)) {
+                if (RuleHelper::evaluate($item, $rule, $args)) {
                     $result[] = $item;
                     break;
                 }
@@ -172,10 +172,10 @@ class BaseFiltersStorage implements FiltersStorageInterface
     public static function sort(FilterContextInterface $context, ?callable $sortCallback = null): ?array
     {
         $source = $context->getSource();
-        if($source === null || !is_array($source)) {
+        if ($source === null || !is_array($source)) {
             throw SchematorException::createAsBadFilterSource($context);
         }
-        if($sortCallback !== null) {
+        if ($sortCallback !== null) {
             usort($source, $sortCallback);
         } else {
             sort($source);
@@ -192,7 +192,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
     public static function rsort(FilterContextInterface $context): ?array
     {
         $source = $context->getSource();
-        if($source === null || !is_array($source)) {
+        if ($source === null || !is_array($source)) {
             throw SchematorException::createAsBadFilterSource($context);
         }
 
@@ -209,7 +209,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
     public static function path(FilterContextInterface $context)
     {
         $source = $context->getSource();
-        if($source === null) {
+        if ($source === null) {
             throw SchematorException::createAsBadFilterSource($context);
         }
         return $context->getSchemator()->getValue($context->getRootSource(), $source);
@@ -224,7 +224,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
     public static function flatten(FilterContextInterface $context): ?array
     {
         $source = $context->getSource();
-        if($source === null || !is_array($source)) {
+        if ($source === null || !is_array($source)) {
             throw SchematorException::createAsBadFilterSource($context);
         }
         return ArrayHelper::flatten($source);
@@ -240,37 +240,37 @@ class BaseFiltersStorage implements FiltersStorageInterface
     public static function replace(FilterContextInterface $context, array $rules)
     {
         $source = $context->getSource();
-        if($source === null) {
+        if ($source === null) {
             throw SchematorException::createAsBadFilterSource($context);
         }
 
         $isArray = is_array($source);
 
-        if(!$isArray) {
+        if (!$isArray) {
             $source = [$source];
         }
 
         $result = [];
 
-        foreach($source as $item) {
+        foreach ($source as $item) {
             $isReplaced = false;
             $elseValue = $item;
 
-            foreach($rules as $args) {
-                if(!is_array($args)) {
+            foreach ($rules as $args) {
+                if (!is_array($args)) {
                     throw SchematorException::createAsBadFilterConfig($context);
                 }
 
                 $value = array_shift($args);
                 $rule = array_shift($args);
 
-                if($rule === 'else') {
+                if ($rule === 'else') {
                     $elseValue = $value;
                 }
 
                 $replace = null;
 
-                if(RuleHelper::evaluate($item, $rule, $args)) {
+                if (RuleHelper::evaluate($item, $rule, $args)) {
                     $replace = $value;
                     $isReplaced = true;
 
@@ -279,12 +279,12 @@ class BaseFiltersStorage implements FiltersStorageInterface
                 }
             }
 
-            if(!$isReplaced) {
+            if (!$isReplaced) {
                 $result[] = $elseValue;
             }
         }
 
-        if(!$isArray) {
+        if (!$isArray) {
             $result = $result[0];
         }
 

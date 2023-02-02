@@ -61,9 +61,9 @@ class Schemator implements SchematorInterface
     {
         $toAccessor = $this->nestedAccessorFactory->create($result, $this->pathDelimiter);
 
-        foreach($schema as $keyTo => $keyFrom) {
+        foreach ($schema as $keyTo => $keyFrom) {
             $value = $this->getValue($source, $keyFrom);
-            if($keyTo === '') {
+            if ($keyTo === '') {
                 return $value;
             }
             $toAccessor->set($keyTo, $value);
@@ -78,19 +78,19 @@ class Schemator implements SchematorInterface
      */
     public function getValue($source, $key)
     {
-        if($key === '' || $key === null) {
+        if ($key === '' || $key === null) {
             return $source;
         }
 
-        if(!is_array($source) && !is_object($source)) {
+        if (!is_array($source) && !is_object($source)) {
             return $this->getValueFromUnsupportedSource($source, $key);
         }
 
-        if(is_string($key)) {
+        if (is_string($key)) {
             return $this->getValueByKey($source, $key);
         }
 
-        if(is_array($key)) {
+        if (is_array($key)) {
             return $this->getValueByFilters($source, $key);
         }
 
@@ -138,7 +138,7 @@ class Schemator implements SchematorInterface
                 $key,
                 $this->needToThrow(SchematorException::CANNOT_GET_VALUE)
             );
-        } catch(NestedAccessorException $e) {
+        } catch (NestedAccessorException $e) {
             throw SchematorException::createAsCannotGetValue($source, $key, $e);
         }
     }
@@ -153,13 +153,13 @@ class Schemator implements SchematorInterface
     protected function getValueByFilters($source, array $filters)
     {
         $result = $source;
-        foreach($filters as $filterConfig) {
-            if(is_string($filterConfig)) {
+        foreach ($filters as $filterConfig) {
+            if (is_string($filterConfig)) {
                 $result = $this->getValue($result, $filterConfig);
-            } elseif(is_array($filterConfig)) {
+            } elseif (is_array($filterConfig)) {
                 $result = $this->runFilter($filterConfig, $result, $source);
             } else {
-                if($this->needToThrow(SchematorException::UNSUPPORTED_FILTER_CONFIG_TYPE)) {
+                if ($this->needToThrow(SchematorException::UNSUPPORTED_FILTER_CONFIG_TYPE)) {
                     throw SchematorException::createAsUnsupportedFilterConfigType($filterConfig);
                 }
                 $result = null;
@@ -178,7 +178,7 @@ class Schemator implements SchematorInterface
      */
     protected function getValueFromUnsupportedSource($source, $key)
     {
-        if($this->needToThrow(SchematorException::UNSUPPORTED_SOURCE_TYPE)) {
+        if ($this->needToThrow(SchematorException::UNSUPPORTED_SOURCE_TYPE)) {
             throw SchematorException::createAsUnsupportedSourceType($source, $key);
         }
         return null;
@@ -193,7 +193,7 @@ class Schemator implements SchematorInterface
      */
     protected function getValueByUnsupportedKey($source, $key)
     {
-        if($this->needToThrow(SchematorException::UNSUPPORTED_KEY_TYPE)) {
+        if ($this->needToThrow(SchematorException::UNSUPPORTED_KEY_TYPE)) {
             throw SchematorException::createAsUnsupportedKeyType($source, $key);
         }
         return null;
@@ -211,7 +211,7 @@ class Schemator implements SchematorInterface
     {
         $filterName = strval(array_shift($filterConfig));
 
-        if(
+        if (
             !isset($this->filterMap[$filterName])
             && $this->needToThrow(SchematorException::FILTER_NOT_FOUND)
         ) {
@@ -224,18 +224,18 @@ class Schemator implements SchematorInterface
                 $filterContext,
                 ...$filterConfig
             );
-        } catch(TypeError $e) {
-            if($this->needToThrow(SchematorException::BAD_FILTER_CONFIG)) {
+        } catch (TypeError $e) {
+            if ($this->needToThrow(SchematorException::BAD_FILTER_CONFIG)) {
                 throw SchematorException::createAsBadFilterConfig($filterContext, $e);
             }
             return null;
-        } catch(SchematorException $e) {
-            if($this->needToThrow($e->getCode())) {
+        } catch (SchematorException $e) {
+            if ($this->needToThrow($e->getCode())) {
                 throw $e;
             }
             return null;
-        } catch(Throwable $e) {
-            if($this->needToThrow(SchematorException::FILTER_ERROR)) {
+        } catch (Throwable $e) {
+            if ($this->needToThrow(SchematorException::FILTER_ERROR)) {
                 throw SchematorException::createAsFilterError($filterContext);
             }
             return null;

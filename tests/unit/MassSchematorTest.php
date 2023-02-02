@@ -46,7 +46,7 @@ class MassSchematorTest extends \Codeception\Test\Unit
         ];
 
         $i = 0;
-        foreach($gen as $item) {
+        foreach ($gen as $item) {
             $this->assertEquals($expectedResult[$i++], $item);
         }
 
@@ -77,7 +77,7 @@ class MassSchematorTest extends \Codeception\Test\Unit
         ]);
 
         $result = [];
-        foreach($gen2 as $item) {
+        foreach ($gen2 as $item) {
             $result[] = $item;
         }
 

@@ -17,8 +17,8 @@ class ArrayHelper
     public static function flatten(array $input): array
     {
         $tmp = [];
-        foreach($input as $val) {
-            if(is_array($val)) {
+        foreach ($input as $val) {
+            if (is_array($val)) {
                 $tmp = array_merge($tmp, static::flatten($val));
             } else {
                 $tmp[] = $val;

@@ -31,7 +31,7 @@ class MassSchemator implements MassSchematorInterface
      */
     public function generate(iterable $source, array $schema): Generator
     {
-        foreach($source as $item) {
+        foreach ($source as $item) {
             yield $this->schemator->convert($item, $schema);
         }
     }
@@ -44,7 +44,7 @@ class MassSchemator implements MassSchematorInterface
         $gen = $this->generate($source, $schema);
         $result = [];
 
-        foreach($gen as $item) {
+        foreach ($gen as $item) {
             $result[] = $item;
         }
 

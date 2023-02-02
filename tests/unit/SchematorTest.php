@@ -97,28 +97,28 @@ class SchematorTest extends Unit
                 'city_street_names' => ['streets.name', ['join', ', ']]
             ]);
             $this->expectError();
-        } catch(SchematorException $e) {
+        } catch (SchematorException $e) {
             $this->assertEquals(SchematorException::FILTER_NOT_FOUND, $e->getCode());
         }
 
         $schemator->addFilter(
             'implode',
-            function(FilterContextInterface $context, string $delimiter) {
+            function (FilterContextInterface $context, string $delimiter) {
                 return implode($delimiter, $context->getSource());
             }
         );
 
         $schemator->addFilter(
             'explode',
-            function(FilterContextInterface $context, string $delimiter) {
+            function (FilterContextInterface $context, string $delimiter) {
                 return explode($delimiter, $context->getSource());
             }
         );
 
         $schemator->addFilter(
             'startsWith',
-            function(FilterContextInterface $context, string $start) {
-                return array_filter($context->getSource(), function(string $candidate) use ($start) {
+            function (FilterContextInterface $context, string $start) {
+                return array_filter($context->getSource(), function (string $candidate) use ($start) {
                     return strpos($candidate, $start) === 0;
                 });
             }
@@ -126,7 +126,7 @@ class SchematorTest extends Unit
 
         $schemator->addFilter(
             'path',
-            function(FilterContextInterface $context) {
+            function (FilterContextInterface $context) {
                 return $context->getSchemator()->getValue($context->getRootSource(), $context->getSource());
             }
         );
@@ -233,28 +233,28 @@ class SchematorTest extends Unit
                 'city_street_names' => ['streets/name', ['join', ', ']]
             ]);
             $this->expectError();
-        } catch(SchematorException $e) {
+        } catch (SchematorException $e) {
             $this->assertEquals(SchematorException::FILTER_NOT_FOUND, $e->getCode());
         }
 
         $schemator->addFilter(
             'implode',
-            function(FilterContextInterface $context, string $delimiter) {
+            function (FilterContextInterface $context, string $delimiter) {
                 return implode($delimiter, $context->getSource());
             }
         );
 
         $schemator->addFilter(
             'explode',
-            function(FilterContextInterface $context, string $delimiter) {
+            function (FilterContextInterface $context, string $delimiter) {
                 return explode($delimiter, $context->getSource());
             }
         );
 
         $schemator->addFilter(
             'startsWith',
-            function(FilterContextInterface $context, string $start) {
-                return array_filter($context->getSource(), function(string $candidate) use ($start) {
+            function (FilterContextInterface $context, string $start) {
+                return array_filter($context->getSource(), function (string $candidate) use ($start) {
                     return strpos($candidate, $start) === 0;
                 });
             }
@@ -262,7 +262,7 @@ class SchematorTest extends Unit
 
         $schemator->addFilter(
             'path',
-            function(FilterContextInterface $context) {
+            function (FilterContextInterface $context) {
                 return $context->getSchemator()->getValue($context->getRootSource(), $context->getSource());
             }
         );
@@ -297,8 +297,8 @@ class SchematorTest extends Unit
             ->withErrorsLevelMask(ErrorsLevelMask::default())
             ->withFilters(new BaseFiltersStorage())
             ->withFilters([
-                'startsWith' => function(FilterContextInterface $context, string $start) {
-                    return array_filter($context->getSource(), function(string $candidate) use ($start) {
+                'startsWith' => function (FilterContextInterface $context, string $start) {
+                    return array_filter($context->getSource(), function (string $candidate) use ($start) {
                         return strpos($candidate, $start) === 0;
                     });
                 },
@@ -342,7 +342,7 @@ class SchematorTest extends Unit
             'city_street_names.second' => ['streets.name', ['implode', ', '], ['explode', ', ']],
             'city_street_names.third' => ['streets.name', ['startsWith', 'T'], ['implode', ', ']],
             'city_street_names.sorted' => ['streets.name', ['sort'], ['implode', ', ']],
-            'city_street_names.filtered' => ['streets.name', ['filter', function(string $candidate) {
+            'city_street_names.filtered' => ['streets.name', ['filter', function (string $candidate) {
                 return strpos($candidate, 'Len') !== false;
             }]],
             'msk' => ['msk_path', ['path']],
@@ -439,7 +439,7 @@ class SchematorTest extends Unit
         ];
 
         $schema = [
-            'date' => ['date', ['format', function(int $source, string $format) {
+            'date' => ['date', ['format', function (int $source, string $format) {
                 return gmdate($format, $source);
             }, 'Y-m-d']]
         ];
@@ -481,7 +481,7 @@ class SchematorTest extends Unit
         try {
             $schemator->convert($input, $schema);
             $this->expectError();
-        } catch(SchematorException $e) {
+        } catch (SchematorException $e) {
             $this->assertEquals(SchematorException::BAD_FILTER_CONFIG, $e->getCode());
             $this->assertEquals('date', $e->getData()['filter_name']);
             $this->assertEquals($input['date'], $e->getData()['source']);
@@ -558,7 +558,7 @@ class SchematorTest extends Unit
                 ],
             ]);
             $this->expectError();
-        } catch(SchematorException $e) {
+        } catch (SchematorException $e) {
             $this->assertEquals(SchematorException::BAD_FILTER_CONFIG, $e->getCode());
         }
 
@@ -572,7 +572,7 @@ class SchematorTest extends Unit
                 ],
             ]);
             $this->expectError();
-        } catch(SchematorException $e) {
+        } catch (SchematorException $e) {
             $this->assertEquals(SchematorException::BAD_FILTER_CONFIG, $e->getCode());
         }
 
@@ -586,7 +586,7 @@ class SchematorTest extends Unit
                 ],
             ]);
             $this->expectError();
-        } catch(SchematorException $e) {
+        } catch (SchematorException $e) {
             $this->assertEquals(SchematorException::BAD_FILTER_SOURCE, $e->getCode());
         }
 
@@ -598,7 +598,7 @@ class SchematorTest extends Unit
                     'not array',
                 ]]
             ]);
-        } catch(SchematorException $e) {
+        } catch (SchematorException $e) {
             $this->assertEquals(SchematorException::BAD_FILTER_CONFIG, $e->getCode());
         }
 
@@ -612,18 +612,18 @@ class SchematorTest extends Unit
                     ]
                 ]]
             ]);
-        } catch(SchematorException $e) {
+        } catch (SchematorException $e) {
             $this->assertEquals(SchematorException::BAD_FILTER_CONFIG, $e->getCode());
         }
 
-        $schemator->addFilter('myfilter', function(FilterContextInterface $context) {
+        $schemator->addFilter('myfilter', function (FilterContextInterface $context) {
             throw new Exception();
         });
         try {
             $schemator->convert($input, [
                 'number_types' => ['numbers', ['myfilter']]
             ]);
-        } catch(SchematorException $e) {
+        } catch (SchematorException $e) {
             $this->assertEquals(SchematorException::FILTER_ERROR, $e->getCode());
         }
     }
@@ -727,21 +727,21 @@ class SchematorTest extends Unit
         try {
             $this->assertEquals(null, $schemator->getValue($input, 'a.b.c.d'));
             $this->expectError();
-        } catch(SchematorException $e) {
+        } catch (SchematorException $e) {
             $this->assertEquals(SchematorException::CANNOT_GET_VALUE, $e->getCode());
             $this->assertEquals('a.b.c.d', $e->getData()['key']);
         }
         try {
             $schemator->getValue(null, 'a.b.c');
             $this->expectError();
-        } catch(SchematorException $e) {
+        } catch (SchematorException $e) {
             $this->assertEquals(SchematorException::UNSUPPORTED_SOURCE_TYPE, $e->getCode());
             $this->assertEquals('NULL', $e->getData()['source_type']);
         }
         try {
             $schemator->getValue('my string', 'a.b.c');
             $this->expectError();
-        } catch(SchematorException $e) {
+        } catch (SchematorException $e) {
             $this->assertEquals(SchematorException::UNSUPPORTED_SOURCE_TYPE, $e->getCode());
             $this->assertEquals('string', $e->getData()['source_type']);
         }
@@ -749,7 +749,7 @@ class SchematorTest extends Unit
         try {
             $schemator->getValue($input, (object)[]);
             $this->expectError();
-        } catch(SchematorException $e) {
+        } catch (SchematorException $e) {
             $this->assertEquals(SchematorException::UNSUPPORTED_KEY_TYPE, $e->getCode());
             $this->assertEquals('object', $e->getData()['key_type']);
         }
@@ -757,7 +757,7 @@ class SchematorTest extends Unit
         try {
             $schemator->getValue($input, ['a', (object)[]]);
             $this->expectError();
-        } catch(SchematorException $e) {
+        } catch (SchematorException $e) {
             $this->assertEquals(SchematorException::UNSUPPORTED_FILTER_CONFIG_TYPE, $e->getCode());
             $this->assertEquals('object', $e->getData()['filter_config_type']);
         }
@@ -802,7 +802,7 @@ class SchematorTest extends Unit
 
         $this->assertEquals([1, 2, 3], $schemator->getValue($input, ['mylist', ['sort']]));
         $this->assertEquals(null, $schemator->getValue($input, ['mynull', ['sort']]));
-        $this->assertEquals([3, 2, 1], $schemator->getValue($input, ['mylist', ['sort', function($lhs, $rhs) {
+        $this->assertEquals([3, 2, 1], $schemator->getValue($input, ['mylist', ['sort', function ($lhs, $rhs) {
             return $rhs - $lhs;
         }]]));
 
@@ -1050,7 +1050,7 @@ class SchematorTest extends Unit
     {
         try {
             $this->assertEquals($value, $schemator->convert($input, $schema));
-        } catch(SchematorException $e) {
+        } catch (SchematorException $e) {
             $this->expectError();
         }
     }
@@ -1060,7 +1060,7 @@ class SchematorTest extends Unit
         try {
             $schemator->convert($input, $schema);
             $this->expectError();
-        } catch(SchematorException $e) {
+        } catch (SchematorException $e) {
             $this->assertEquals($errorCode, $e->getCode());
         }
     }

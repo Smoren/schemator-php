@@ -13,6 +13,7 @@ Schematic data mapper is a tool for converting nested data structures
 according to the given conversion schema.
 
 ## How to install to your project
+
 ```
 composer require smoren/schemator
 ```
@@ -183,7 +184,7 @@ $input = [
 $schema = [
     'city_street_names.all' => ['streets.name', ['implode', ', ']],
     'city_street_names.sorted' => ['streets.name', ['sort'], ['implode', ', ']],
-    'city_street_names.filtered' => ['streets.name', ['filter', function(string $candidate) {
+    'city_street_names.filtered' => ['streets.name', ['filter', function (string $candidate) {
         return strpos($candidate, 'Len') !== false;
     }]],
     'msk' => ['msk_path', ['path']],
@@ -332,8 +333,8 @@ use Smoren\Schemator\Interfaces\FilterContextInterface;
 
 $schemator = SchematorFactory::createBuilder()
     ->withFilters([
-        'startsWith' => function(FilterContextInterface $context, string $start) {
-            return array_filter($context->getSource(), function(string $candidate) use ($start) {
+        'startsWith' => function (FilterContextInterface $context, string $start) {
+            return array_filter($context->getSource(), function (string $candidate) use ($start) {
                 return strpos($candidate, $start) === 0;
             });
         },
@@ -457,58 +458,71 @@ Array
 ## Filters
 
 ### const
+
 Sets the value from const param.
 
 Schema:
+
 ```php
 ["value" => [["const", "My const value"]]]
 ```
 
 Result:
+
 ```php
 ["value" => "My const value"]
 ```
 
 ### sum
+
 Returns the sum of given array.
 
 Given:
+
 ```php
 ["numbers" => [1, 2, 3, 4, 5]]
 ```
 
 Schema:
+
 ```php
 ["value" => ["numbers", ["sum"]]]
 ```
 
 Result:
+
 ```php
 ["value" => 15]
 ```
 
 ### average
+
 Returns the average of given array.
 
 Given:
+
 ```php
 ["numbers" => [1, 2, 3, 4, 5]]
 ```
 
 Schema:
+
 ```php
 ["value" => ["numbers", ["average"]]]
 ```
 
 Result:
+
 ```php
 ["value" => 3]
 ```
 
 ### date
+
 Returns formatted date from the Unix timestamp given value.
 
 Params:
+
 1. Date format
     * required
     * data type — string
@@ -520,72 +534,87 @@ Params:
     * default — 0
 
 Given:
+
 ```php
 ["some_date" => 1651481881]
 ```
 
 Schema:
+
 ```php
 ["value" => ["some_date", ["date", "d.m.Y H:i:s", 3]]]
 ```
 
 Result:
+
 ```php
 ["value" => "02.05.2022 11:58:01"]
 ```
 
 ### implode
+
 Returns string of imploded items of given array with separator from args list.
 
 params:
+
 1. Separator
     * required
     * data type — string
     * example: `; `
 
 Given:
+
 ```php
 ["numbers" => [1, 2, 3, 4, 5]]
 ```
 
 Schema:
+
 ```php
 ["value" => ["numbers", ["implode", "; "]]]
 ```
 
 Result:
+
 ```php
 ["value" => "1; 2; 3; 4; 5"]
 ```
 
 ### explode
+
 Returns array of exploded strings from given string with separator from args list
 
 params:
+
 1. Separator
     * required
     * data type — string
     * example: `; `
 
 Given:
+
 ```php
 ["numbers" => "1; 2; 3; 4; 5"]
 ```
 
 Schema:
+
 ```php
 ["value" => ["numbers", ["explode", "; "]]]
 ```
 
 Result:
+
 ```php
 ["value" => ["1", "2", "3", "4", "5"]]
 ```
 
 ### flatten
+
 Returns flat array contains all the dead end leaves of tree array.
 
 Given:
+
 ```php
 [
    "numbers" => [
@@ -599,55 +628,67 @@ Given:
 ```
 
 Schema:
+
 ```php
 ["value" => ["numbers", ["flatten"]]]
 ```
 
 Result:
+
 ```php
 ["value" => [1, 2, 3, 4, 5, 6, 7, 8, 9]]
 ```
 
 ### sort
+
 Sorts and returns given array.
 
 Given:
+
 ```php
 ["numbers" => [3, 5, 4, 1, 2]]
 ```
 
 Schema:
+
 ```php
 ["value" => ["numbers", ["sort"]]]
 ```
 
 Result:
+
 ```php
 ["value" => [1, 2, 3, 4, 5]]
 ```
 
 ### rsort
+
 Sorts reversely and returns given array.
 
 Given:
+
 ```php
 ["numbers" => [3, 5, 4, 1, 2]]
 ```
 
 Schema:
+
 ```php
 ["value" => ["numbers", ["sort"]]]
 ```
 
 Result:
+
 ```php
 ["value" => [5, 4, 3, 2, 1]]
 ```
 
 ### filter
+
 Returns array contains elements from given array, that match the predicates from params list.
 
 Rules:
+
 * Every predicate has such format `["predicate name", ...parans]`.
 * Predicates in one filter apply according the "OR" logic.
 * To apply "AND" logic use [chain of filters](#Chain-of-filters).
@@ -663,11 +704,13 @@ Rules:
     * `["between strict", 1, 5]` means `1 < value < 5`
 
 Given:
+
 ```php
 ["numbers" => [-5, -3, -1, 1, 3, 5]]
 ```
 
 Schema:
+
 ```php
 [
    "value" => [
@@ -681,14 +724,17 @@ Schema:
 ```
 
 Result:
+
 ```php
 ["value" => [-5, -3, 3, 5]]
 ```
 
 ### replace
+
 Returns array of elements from given array with replaces by rules from params list.
 
 Rules:
+
 * Every rule has such format `["value to replace", "rule name", ...params]`.
 * Rules in one filter apply according the "OR" logic.
 * To apply "AND" logic use [chain of filters](#Chain-of-filters).
@@ -706,11 +752,13 @@ Rules:
       _(If rule `else` did not use, by default such values are replaced with `null`)_
 
 Given:
+
 ```php
 ["numbers" => [-5, -3, -1, 1, 3, 5]]
 ```
 
 Schema:
+
 ```php
 [
    "value" => [
@@ -728,6 +776,7 @@ Schema:
 ```
 
 Result:
+
 ```php
 ["value" => ["negative", "negative", "negative", "zero", "positive", "positive", "positive"]]
 ```
@@ -735,11 +784,13 @@ Result:
 ### Chain of filters
 
 Given:
+
 ```php
 ["numbers" => [-5, -3, -1, 1, 3, 5]]
 ```
 
 Schema:
+
 ```php
 [
    "value" => [
@@ -758,16 +809,26 @@ Schema:
 ```
 
 Result:
+
 ```php
 ["value" => [-3, 3, 5]]
 ```
 
 ## Unit testing
+
 ```
 composer install
 composer test-init
 composer test
 ```
+
+## Standards
+
+IterTools PHP conforms to the following standards:
+
+* PSR-1 - Basic coding standard (http://www.php-fig.org/psr/psr-1/)
+* PSR-4 - Autoloader (http://www.php-fig.org/psr/psr-4/)
+* PSR-12 - Extended coding style guide (http://www.php-fig.org/psr/psr-12/)
 
 ## License
 

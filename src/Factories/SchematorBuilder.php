@@ -58,7 +58,7 @@ class SchematorBuilder implements SchematorBuilderInterface
      */
     public function withFilters(iterable $filters): SchematorBuilder
     {
-        foreach($filters as $filterName => $filter) {
+        foreach ($filters as $filterName => $filter) {
             $this->schemator->addFilter($filterName, $filter);
         }
         return $this;
