@@ -74,15 +74,15 @@ class SchematorTest extends Unit
             'country_data.country_name' => 'country.name',
         ]);
 
-        $this->assertEquals(100, $data['city_id']);
-        $this->assertEquals('Novgorod', $data['city_name']);
+        $this->assertSame(100, $data['city_id']);
+        $this->assertSame('Novgorod', $data['city_name']);
         $this->assertEquals(['Tverskaya', 'Leninskiy', 'Tarusskaya'], $data['city_street_names']);
         $this->assertEquals([[1, 5, 9], [22, 35, 49], [11, 12, 15]], $data['city_street_houses']);
-        $this->assertEquals(10, $data['country_id']);
-        $this->assertEquals('Russia', $data['country_name']);
+        $this->assertSame(10, $data['country_id']);
+        $this->assertSame('Russia', $data['country_name']);
         $this->assertEquals(['Kazakhstan', 'Belarus', 'Armenia'], $data['country_friends']);
-        $this->assertEquals('Moscow', $data['country_first_capital']);
-        $this->assertEquals('St. Petersburg', $data['country_second_capital']);
+        $this->assertSame('Moscow', $data['country_first_capital']);
+        $this->assertSame('St. Petersburg', $data['country_second_capital']);
         $this->assertNull($data['unknown']);
         $this->assertNull($data['unknown_another']);
         $this->assertEquals([null, 'some value'], $data['unknown_array']);
@@ -98,7 +98,7 @@ class SchematorTest extends Unit
             ]);
             $this->expectError();
         } catch (SchematorException $e) {
-            $this->assertEquals(SchematorException::FILTER_NOT_FOUND, $e->getCode());
+            $this->assertSame(SchematorException::FILTER_NOT_FOUND, $e->getCode());
         }
 
         $schemator->addFilter(
@@ -134,7 +134,7 @@ class SchematorTest extends Unit
         $data = $schemator->convert($input, [
             'city_street_names' => ['streets.name', ['implode', ', ']]
         ]);
-        $this->assertEquals('Tverskaya, Leninskiy, Tarusskaya', $data['city_street_names']);
+        $this->assertSame('Tverskaya, Leninskiy, Tarusskaya', $data['city_street_names']);
 
         $data = $schemator->convert($input, [
             'city_street_names' => ['streets.name', ['implode', ', '], ['explode', ', ']]
@@ -144,12 +144,12 @@ class SchematorTest extends Unit
         $data = $schemator->convert($input, [
             'city_street_names' => ['streets.name', ['startsWith', 'T'], ['implode', ', ']]
         ]);
-        $this->assertEquals('Tverskaya, Tarusskaya', $data['city_street_names']);
+        $this->assertSame('Tverskaya, Tarusskaya', $data['city_street_names']);
 
         $data = $schemator->convert($input, [
             'msk' => ['msk_path', ['path']]
         ]);
-        $this->assertEquals('Moscow', $data['msk']);
+        $this->assertSame('Moscow', $data['msk']);
     }
 
     /**
@@ -210,15 +210,15 @@ class SchematorTest extends Unit
             'country_data/country_name' => 'country/name',
         ]);
 
-        $this->assertEquals(100, $data['city_id']);
-        $this->assertEquals('Novgorod', $data['city_name']);
+        $this->assertSame(100, $data['city_id']);
+        $this->assertSame('Novgorod', $data['city_name']);
         $this->assertEquals(['Tverskaya', 'Leninskiy', 'Tarusskaya'], $data['city_street_names']);
         $this->assertEquals([[1, 5, 9], [22, 35, 49], [11, 12, 15]], $data['city_street_houses']);
-        $this->assertEquals(10, $data['country_id']);
-        $this->assertEquals('Russia', $data['country_name']);
+        $this->assertSame(10, $data['country_id']);
+        $this->assertSame('Russia', $data['country_name']);
         $this->assertEquals(['Kazakhstan', 'Belarus', 'Armenia'], $data['country_friends']);
-        $this->assertEquals('Moscow', $data['country_first_capital']);
-        $this->assertEquals('St. Petersburg', $data['country_second_capital']);
+        $this->assertSame('Moscow', $data['country_first_capital']);
+        $this->assertSame('St. Petersburg', $data['country_second_capital']);
         $this->assertNull($data['unknown']);
         $this->assertNull($data['unknown_another']);
         $this->assertEquals([], $data['unknown_array']);
@@ -234,7 +234,7 @@ class SchematorTest extends Unit
             ]);
             $this->expectError();
         } catch (SchematorException $e) {
-            $this->assertEquals(SchematorException::FILTER_NOT_FOUND, $e->getCode());
+            $this->assertSame(SchematorException::FILTER_NOT_FOUND, $e->getCode());
         }
 
         $schemator->addFilter(
@@ -270,7 +270,7 @@ class SchematorTest extends Unit
         $data = $schemator->convert($input, [
             'city_street_names' => ['streets/name', ['implode', ', ']]
         ]);
-        $this->assertEquals('Tverskaya, Leninskiy, Tarusskaya', $data['city_street_names']);
+        $this->assertSame('Tverskaya, Leninskiy, Tarusskaya', $data['city_street_names']);
 
         $data = $schemator->convert($input, [
             'city_street_names' => ['streets/name', ['implode', ', '], ['explode', ', ']]
@@ -280,12 +280,12 @@ class SchematorTest extends Unit
         $data = $schemator->convert($input, [
             'city_street_names' => ['streets/name', ['startsWith', 'T'], ['implode', ', ']]
         ]);
-        $this->assertEquals('Tverskaya, Tarusskaya', $data['city_street_names']);
+        $this->assertSame('Tverskaya, Tarusskaya', $data['city_street_names']);
 
         $data = $schemator->convert($input, [
             'msk' => ['msk_path', ['path']]
         ]);
-        $this->assertEquals('Moscow', $data['msk']);
+        $this->assertSame('Moscow', $data['msk']);
     }
 
     /**
@@ -349,14 +349,14 @@ class SchematorTest extends Unit
             'city_street_houses' => ['streets.houses', ['flatten']],
             'const' => [['const', 'my const']],
         ]);
-        $this->assertEquals('Tverskaya, Leninskiy, Tarusskaya', $data['city_street_names']['first']);
+        $this->assertSame('Tverskaya, Leninskiy, Tarusskaya', $data['city_street_names']['first']);
         $this->assertEquals(['Tverskaya', 'Leninskiy', 'Tarusskaya'], $data['city_street_names']['second']);
-        $this->assertEquals('Tverskaya, Tarusskaya', $data['city_street_names']['third']);
-        $this->assertEquals('Leninskiy, Tarusskaya, Tverskaya', $data['city_street_names']['sorted']);
+        $this->assertSame('Tverskaya, Tarusskaya', $data['city_street_names']['third']);
+        $this->assertSame('Leninskiy, Tarusskaya, Tverskaya', $data['city_street_names']['sorted']);
         $this->assertEquals(['Leninskiy'], $data['city_street_names']['filtered']);
-        $this->assertEquals('Moscow', $data['msk']);
+        $this->assertSame('Moscow', $data['msk']);
         $this->assertEquals([1, 5, 9, 22, 35, 49, 11, 12, 15], $data['city_street_houses']);
-        $this->assertEquals('my const', $data['const']);
+        $this->assertSame('my const', $data['const']);
     }
 
     /**
@@ -445,25 +445,25 @@ class SchematorTest extends Unit
         ];
 
         $output = $schemator->convert($input, $schema);
-        $this->assertEquals('2022-04-28', $output['date']);
+        $this->assertSame('2022-04-28', $output['date']);
 
         $schema = [
             'date' => ['date', ['date', 'Y-m-d']]
         ];
         $output = $schemator->convert($input, $schema);
-        $this->assertEquals('2022-04-28', $output['date']);
+        $this->assertSame('2022-04-28', $output['date']);
 
         $schema = [
             'date' => ['date', ['date', 'Y-m-d H:i', 3]]
         ];
         $output = $schemator->convert($input, $schema);
-        $this->assertEquals('2022-04-28 19:01', $output['date']);
+        $this->assertSame('2022-04-28 19:01', $output['date']);
 
         $schema = [
             'date' => ['date', ['date', 'Y-m-d H:i', 0]]
         ];
         $output = $schemator->convert($input, $schema);
-        $this->assertEquals('2022-04-28 16:01', $output['date']);
+        $this->assertSame('2022-04-28 16:01', $output['date']);
 
         $schema = [
             'date' => ['date', ['date', ['error: in array'], 0]]
@@ -482,9 +482,9 @@ class SchematorTest extends Unit
             $schemator->convert($input, $schema);
             $this->expectError();
         } catch (SchematorException $e) {
-            $this->assertEquals(SchematorException::BAD_FILTER_CONFIG, $e->getCode());
-            $this->assertEquals('date', $e->getData()['filter_name']);
-            $this->assertEquals($input['date'], $e->getData()['source']);
+            $this->assertSame(SchematorException::BAD_FILTER_CONFIG, $e->getCode());
+            $this->assertSame('date', $e->getData()['filter_name']);
+            $this->assertSame($input['date'], $e->getData()['source']);
         }
     }
 
@@ -503,13 +503,13 @@ class SchematorTest extends Unit
             'result' => ['numbers', ['sum']],
         ];
         $output = $schemator->convert($input, $schema);
-        $this->assertEquals(85, $output['result']);
+        $this->assertSame(85, $output['result']);
 
         $schema = [
             'result' => ['numbers', ['average']],
         ];
         $output = $schemator->convert($input, $schema);
-        $this->assertEquals(7.73, round($output['result'], 2));
+        $this->assertSame(7.73, round($output['result'], 2));
 
         $input = [
             'id' => 1,
@@ -559,7 +559,7 @@ class SchematorTest extends Unit
             ]);
             $this->expectError();
         } catch (SchematorException $e) {
-            $this->assertEquals(SchematorException::BAD_FILTER_CONFIG, $e->getCode());
+            $this->assertSame(SchematorException::BAD_FILTER_CONFIG, $e->getCode());
         }
 
         $input = ['numbers' => [1, 2, 3, 4, 5]];
@@ -573,7 +573,7 @@ class SchematorTest extends Unit
             ]);
             $this->expectError();
         } catch (SchematorException $e) {
-            $this->assertEquals(SchematorException::BAD_FILTER_CONFIG, $e->getCode());
+            $this->assertSame(SchematorException::BAD_FILTER_CONFIG, $e->getCode());
         }
 
         $input = ['numbers' => 123];
@@ -587,7 +587,7 @@ class SchematorTest extends Unit
             ]);
             $this->expectError();
         } catch (SchematorException $e) {
-            $this->assertEquals(SchematorException::BAD_FILTER_SOURCE, $e->getCode());
+            $this->assertSame(SchematorException::BAD_FILTER_SOURCE, $e->getCode());
         }
 
         $input = ['numbers' => [1, 2, 3, 4, 5]];
@@ -599,7 +599,7 @@ class SchematorTest extends Unit
                 ]]
             ]);
         } catch (SchematorException $e) {
-            $this->assertEquals(SchematorException::BAD_FILTER_CONFIG, $e->getCode());
+            $this->assertSame(SchematorException::BAD_FILTER_CONFIG, $e->getCode());
         }
 
         $input = ['numbers' => [1, 2, 3, 4, 5]];
@@ -613,7 +613,7 @@ class SchematorTest extends Unit
                 ]]
             ]);
         } catch (SchematorException $e) {
-            $this->assertEquals(SchematorException::BAD_FILTER_CONFIG, $e->getCode());
+            $this->assertSame(SchematorException::BAD_FILTER_CONFIG, $e->getCode());
         }
 
         $schemator->addFilter('myfilter', function (FilterContextInterface $context) {
@@ -624,7 +624,7 @@ class SchematorTest extends Unit
                 'number_types' => ['numbers', ['myfilter']]
             ]);
         } catch (SchematorException $e) {
-            $this->assertEquals(SchematorException::FILTER_ERROR, $e->getCode());
+            $this->assertSame(SchematorException::FILTER_ERROR, $e->getCode());
         }
     }
 
@@ -698,7 +698,7 @@ class SchematorTest extends Unit
         ];
         $schemator = SchematorFactory::create();
         $this->assertEquals($input, $schemator->getValue($input, null));
-        $this->assertEquals(1, $schemator->getValue($input, 'a.b.c'));
+        $this->assertSame(1, $schemator->getValue($input, 'a.b.c'));
         $this->assertEquals(['c' => 1], $schemator->getValue($input, 'a.b'));
 
         $this->assertNull($schemator->getValue($input, 'a.b.c.d'));
@@ -728,38 +728,38 @@ class SchematorTest extends Unit
             $this->assertNull($schemator->getValue($input, 'a.b.c.d'));
             $this->expectError();
         } catch (SchematorException $e) {
-            $this->assertEquals(SchematorException::CANNOT_GET_VALUE, $e->getCode());
-            $this->assertEquals('a.b.c.d', $e->getData()['key']);
+            $this->assertSame(SchematorException::CANNOT_GET_VALUE, $e->getCode());
+            $this->assertSame('a.b.c.d', $e->getData()['key']);
         }
         try {
             $schemator->getValue(null, 'a.b.c');
             $this->expectError();
         } catch (SchematorException $e) {
-            $this->assertEquals(SchematorException::UNSUPPORTED_SOURCE_TYPE, $e->getCode());
-            $this->assertEquals('NULL', $e->getData()['source_type']);
+            $this->assertSame(SchematorException::UNSUPPORTED_SOURCE_TYPE, $e->getCode());
+            $this->assertSame('NULL', $e->getData()['source_type']);
         }
         try {
             $schemator->getValue('my string', 'a.b.c');
             $this->expectError();
         } catch (SchematorException $e) {
-            $this->assertEquals(SchematorException::UNSUPPORTED_SOURCE_TYPE, $e->getCode());
-            $this->assertEquals('string', $e->getData()['source_type']);
+            $this->assertSame(SchematorException::UNSUPPORTED_SOURCE_TYPE, $e->getCode());
+            $this->assertSame('string', $e->getData()['source_type']);
         }
 
         try {
             $schemator->getValue($input, (object)[]);
             $this->expectError();
         } catch (SchematorException $e) {
-            $this->assertEquals(SchematorException::UNSUPPORTED_KEY_TYPE, $e->getCode());
-            $this->assertEquals('object', $e->getData()['key_type']);
+            $this->assertSame(SchematorException::UNSUPPORTED_KEY_TYPE, $e->getCode());
+            $this->assertSame('object', $e->getData()['key_type']);
         }
 
         try {
             $schemator->getValue($input, ['a', (object)[]]);
             $this->expectError();
         } catch (SchematorException $e) {
-            $this->assertEquals(SchematorException::UNSUPPORTED_FILTER_CONFIG_TYPE, $e->getCode());
-            $this->assertEquals('object', $e->getData()['filter_config_type']);
+            $this->assertSame(SchematorException::UNSUPPORTED_FILTER_CONFIG_TYPE, $e->getCode());
+            $this->assertSame('object', $e->getData()['filter_config_type']);
         }
     }
 
@@ -777,19 +777,19 @@ class SchematorTest extends Unit
         ];
         $schemator = SchematorFactory::create();
 
-        $this->assertEquals('2022-08-10', $schemator->getValue($input, ['mydate', ['date', 'Y-m-d', 0]]));
+        $this->assertSame('2022-08-10', $schemator->getValue($input, ['mydate', ['date', 'Y-m-d', 0]]));
         $this->assertNull($schemator->getValue($input, ['mynull', ['date', 'Y-m-d', 0]]));
 
-        $this->assertEquals('1; 2; 3', $schemator->getValue($input, ['mylist', ['implode', '; ']]));
+        $this->assertSame('1; 2; 3', $schemator->getValue($input, ['mylist', ['implode', '; ']]));
         $this->assertNull($schemator->getValue($input, ['mynull', ['implode', '; ']]));
 
         $this->assertEquals([1, 2, 3], $schemator->getValue($input, ['mystring', ['explode', '; ']]));
         $this->assertNull($schemator->getValue($input, ['mynull', ['explode', '; ']]));
 
-        $this->assertEquals(6, $schemator->getValue($input, ['mylist', ['sum']]));
+        $this->assertSame(6, $schemator->getValue($input, ['mylist', ['sum']]));
         $this->assertNull($schemator->getValue($input, ['mynull', ['sum']]));
 
-        $this->assertEquals(2, $schemator->getValue($input, ['mylist', ['average']]));
+        $this->assertSame(2, $schemator->getValue($input, ['mylist', ['average']]));
         $this->assertNull($schemator->getValue($input, ['mynull', ['average']]));
 
         $this->assertEquals([1, 2], $schemator->getValue($input, ['mylist', ['filter', [['<', 3]]]]));
@@ -809,7 +809,7 @@ class SchematorTest extends Unit
         $this->assertEquals([3, 2, 1], $schemator->getValue($input, ['mylist', ['rsort']]));
         $this->assertNull($schemator->getValue($input, ['mynull', ['rsort']]));
 
-        $this->assertEquals(123, $schemator->getValue($input, ['mypath', ['path']]));
+        $this->assertSame(123, $schemator->getValue($input, ['mypath', ['path']]));
         $this->assertNull($schemator->getValue($input, ['mynull', ['path']]));
 
         $this->assertEquals([123], $schemator->getValue($input, ['mysource', ['flatten']]));
@@ -817,8 +817,8 @@ class SchematorTest extends Unit
         $this->assertNull($schemator->getValue($input, ['mystring', ['flatten']]));
 
         $this->assertEquals([0, 0, 3], $schemator->getValue($input, ['mylist', ['replace', [[0, '<=', 2]]]]));
-        $this->assertEquals(0, $schemator->getValue($input, ['mysource.key', ['replace', [[0, '<=', 200]]]]));
-        $this->assertEquals(123, $schemator->getValue($input, ['mysource.key', ['replace', [[0, '<=', 122]]]]));
+        $this->assertSame(0, $schemator->getValue($input, ['mysource.key', ['replace', [[0, '<=', 200]]]]));
+        $this->assertSame(123, $schemator->getValue($input, ['mysource.key', ['replace', [[0, '<=', 122]]]]));
         $this->assertNull($schemator->getValue($input, ['mynull', ['replace', [[0, '<=', 122]]]]));
     }
 
@@ -1049,7 +1049,7 @@ class SchematorTest extends Unit
     protected function assertSuccess(Schemator $schemator, $input, $schema, $value)
     {
         try {
-            $this->assertEquals($value, $schemator->convert($input, $schema));
+            $this->assertSame($value, $schemator->convert($input, $schema));
         } catch (SchematorException $e) {
             $this->expectError();
         }
@@ -1061,7 +1061,7 @@ class SchematorTest extends Unit
             $schemator->convert($input, $schema);
             $this->expectError();
         } catch (SchematorException $e) {
-            $this->assertEquals($errorCode, $e->getCode());
+            $this->assertSame($errorCode, $e->getCode());
         }
     }
 }
