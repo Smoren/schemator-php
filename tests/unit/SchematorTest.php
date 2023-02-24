@@ -83,8 +83,8 @@ class SchematorTest extends Unit
         $this->assertEquals(['Kazakhstan', 'Belarus', 'Armenia'], $data['country_friends']);
         $this->assertEquals('Moscow', $data['country_first_capital']);
         $this->assertEquals('St. Petersburg', $data['country_second_capital']);
-        $this->assertEquals(null, $data['unknown']);
-        $this->assertEquals(null, $data['unknown_another']);
+        $this->assertNull($data['unknown']);
+        $this->assertNull($data['unknown_another']);
         $this->assertEquals([null, 'some value'], $data['unknown_array']);
         $this->assertEquals($input, $data['raw']);
         $this->assertEquals([
@@ -219,8 +219,8 @@ class SchematorTest extends Unit
         $this->assertEquals(['Kazakhstan', 'Belarus', 'Armenia'], $data['country_friends']);
         $this->assertEquals('Moscow', $data['country_first_capital']);
         $this->assertEquals('St. Petersburg', $data['country_second_capital']);
-        $this->assertEquals(null, $data['unknown']);
-        $this->assertEquals(null, $data['unknown_another']);
+        $this->assertNull($data['unknown']);
+        $this->assertNull($data['unknown_another']);
         $this->assertEquals([], $data['unknown_array']);
         $this->assertEquals($input, $data['raw']);
         $this->assertEquals([
@@ -701,17 +701,17 @@ class SchematorTest extends Unit
         $this->assertEquals(1, $schemator->getValue($input, 'a.b.c'));
         $this->assertEquals(['c' => 1], $schemator->getValue($input, 'a.b'));
 
-        $this->assertEquals(null, $schemator->getValue($input, 'a.b.c.d'));
+        $this->assertNull($schemator->getValue($input, 'a.b.c.d'));
 
         $schemator = new Schemator('.', ErrorsLevelMask::nothing());
 
         // unsupported key type
-        $this->assertEquals(null, $schemator->getValue($input, (object)[]));
+        $this->assertNull($schemator->getValue($input, (object)[]));
         // unsupported source type
-        $this->assertEquals(null, $schemator->getValue(null, 'a.b.c'));
-        $this->assertEquals(null, $schemator->getValue('my string', 'a.b.c'));
+        $this->assertNull($schemator->getValue(null, 'a.b.c'));
+        $this->assertNull($schemator->getValue('my string', 'a.b.c'));
         // unsupported filter config type
-        $this->assertEquals(null, $schemator->getValue($input, ['a', (object)[]]));
+        $this->assertNull($schemator->getValue($input, ['a', (object)[]]));
 
         $schemator = SchematorFactory::createBuilder()
             ->withErrorsLevelMask(
@@ -725,7 +725,7 @@ class SchematorTest extends Unit
             ->get();
 
         try {
-            $this->assertEquals(null, $schemator->getValue($input, 'a.b.c.d'));
+            $this->assertNull($schemator->getValue($input, 'a.b.c.d'));
             $this->expectError();
         } catch (SchematorException $e) {
             $this->assertEquals(SchematorException::CANNOT_GET_VALUE, $e->getCode());
@@ -778,22 +778,22 @@ class SchematorTest extends Unit
         $schemator = SchematorFactory::create();
 
         $this->assertEquals('2022-08-10', $schemator->getValue($input, ['mydate', ['date', 'Y-m-d', 0]]));
-        $this->assertEquals(null, $schemator->getValue($input, ['mynull', ['date', 'Y-m-d', 0]]));
+        $this->assertNull($schemator->getValue($input, ['mynull', ['date', 'Y-m-d', 0]]));
 
         $this->assertEquals('1; 2; 3', $schemator->getValue($input, ['mylist', ['implode', '; ']]));
-        $this->assertEquals(null, $schemator->getValue($input, ['mynull', ['implode', '; ']]));
+        $this->assertNull($schemator->getValue($input, ['mynull', ['implode', '; ']]));
 
         $this->assertEquals([1, 2, 3], $schemator->getValue($input, ['mystring', ['explode', '; ']]));
-        $this->assertEquals(null, $schemator->getValue($input, ['mynull', ['explode', '; ']]));
+        $this->assertNull($schemator->getValue($input, ['mynull', ['explode', '; ']]));
 
         $this->assertEquals(6, $schemator->getValue($input, ['mylist', ['sum']]));
-        $this->assertEquals(null, $schemator->getValue($input, ['mynull', ['sum']]));
+        $this->assertNull($schemator->getValue($input, ['mynull', ['sum']]));
 
         $this->assertEquals(2, $schemator->getValue($input, ['mylist', ['average']]));
-        $this->assertEquals(null, $schemator->getValue($input, ['mynull', ['average']]));
+        $this->assertNull($schemator->getValue($input, ['mynull', ['average']]));
 
         $this->assertEquals([1, 2], $schemator->getValue($input, ['mylist', ['filter', [['<', 3]]]]));
-        $this->assertEquals(null, $schemator->getValue($input, ['mynull', ['filter', [['<', 3]]]]));
+        $this->assertNull($schemator->getValue($input, ['mynull', ['filter', [['<', 3]]]]));
 
         $this->assertEquals([1, 3], $schemator->getValue($input, ['mylist', ['filter', [['!=', 2]]]]));
         $this->assertEquals([2], $schemator->getValue($input, ['mylist', ['filter', [['between strict', 1, 3]]]]));
@@ -801,25 +801,25 @@ class SchematorTest extends Unit
         $this->assertEquals([2], $schemator->getValue($input, ['mylist', ['filter', [['not in', [1, 3]]]]]));
 
         $this->assertEquals([1, 2, 3], $schemator->getValue($input, ['mylist', ['sort']]));
-        $this->assertEquals(null, $schemator->getValue($input, ['mynull', ['sort']]));
+        $this->assertNull($schemator->getValue($input, ['mynull', ['sort']]));
         $this->assertEquals([3, 2, 1], $schemator->getValue($input, ['mylist', ['sort', function ($lhs, $rhs) {
             return $rhs - $lhs;
         }]]));
 
         $this->assertEquals([3, 2, 1], $schemator->getValue($input, ['mylist', ['rsort']]));
-        $this->assertEquals(null, $schemator->getValue($input, ['mynull', ['rsort']]));
+        $this->assertNull($schemator->getValue($input, ['mynull', ['rsort']]));
 
         $this->assertEquals(123, $schemator->getValue($input, ['mypath', ['path']]));
-        $this->assertEquals(null, $schemator->getValue($input, ['mynull', ['path']]));
+        $this->assertNull($schemator->getValue($input, ['mynull', ['path']]));
 
         $this->assertEquals([123], $schemator->getValue($input, ['mysource', ['flatten']]));
-        $this->assertEquals(null, $schemator->getValue($input, ['mynull', ['flatten']]));
-        $this->assertEquals(null, $schemator->getValue($input, ['mystring', ['flatten']]));
+        $this->assertNull($schemator->getValue($input, ['mynull', ['flatten']]));
+        $this->assertNull($schemator->getValue($input, ['mystring', ['flatten']]));
 
         $this->assertEquals([0, 0, 3], $schemator->getValue($input, ['mylist', ['replace', [[0, '<=', 2]]]]));
         $this->assertEquals(0, $schemator->getValue($input, ['mysource.key', ['replace', [[0, '<=', 200]]]]));
         $this->assertEquals(123, $schemator->getValue($input, ['mysource.key', ['replace', [[0, '<=', 122]]]]));
-        $this->assertEquals(null, $schemator->getValue($input, ['mynull', ['replace', [[0, '<=', 122]]]]));
+        $this->assertNull($schemator->getValue($input, ['mynull', ['replace', [[0, '<=', 122]]]]));
     }
 
     public function testErrorsLevel()
