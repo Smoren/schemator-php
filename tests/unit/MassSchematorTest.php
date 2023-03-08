@@ -31,17 +31,17 @@ class MassSchematorTest extends \Codeception\Test\Unit
         $expectedResult = [
             [
                 'city_id' => 100,
-                'city_name' => 'Novgorod',
-                'city_street_names' => ['Glavnaya', 'Lenina'],
+                'city_name' => 'London',
+                'city_street_names' => ['The Mall', 'Carnaby Street'],
                 'country_id' => 10,
-                'country_name' => 'Russia',
+                'country_name' => 'UK',
             ],
             [
                 'city_id' => 101,
-                'city_name' => 'Moscow',
-                'city_street_names' => ['Tverskaya', 'Tarusskaya'],
+                'city_name' => 'Oxford',
+                'city_street_names' => ['Turl Street', 'Holywell Street'],
                 'country_id' => 10,
-                'country_name' => 'Russia',
+                'country_name' => 'UK',
             ],
         ];
 
@@ -86,14 +86,14 @@ class MassSchematorTest extends \Codeception\Test\Unit
                 'my_city_id' => 100,
                 'my_country' => [
                     'my_id' => 10,
-                    'my_name' => 'Russia',
+                    'my_name' => 'UK',
                 ],
             ],
             [
                 'my_city_id' => 101,
                 'my_country' => [
                     'my_id' => 10,
-                    'my_name' => 'Russia',
+                    'my_name' => 'UK',
                 ],
             ],
         ];
@@ -110,7 +110,7 @@ class MassSchematorTest extends \Codeception\Test\Unit
             '' => 'name',
         ]);
 
-        $this->assertEquals(['Novgorod', 'Moscow'], $result);
+        $this->assertEquals(['London', 'Oxford'], $result);
     }
 
     /**
@@ -121,37 +121,37 @@ class MassSchematorTest extends \Codeception\Test\Unit
         return [
             [
                 'id' => 100,
-                'name' => 'Novgorod',
+                'name' => 'London',
                 'country' => [
                     'id' => 10,
-                    'name' => 'Russia',
+                    'name' => 'UK',
                 ],
                 'streets' => [
                     [
                         'id' => 1001,
-                        'name' => 'Glavnaya',
+                        'name' => 'The Mall',
                     ],
                     [
                         'id' => 1002,
-                        'name' => 'Lenina',
+                        'name' => 'Carnaby Street',
                     ],
                 ],
             ],
             [
                 'id' => 101,
-                'name' => 'Moscow',
+                'name' => 'Oxford',
                 'country' => [
                     'id' => 10,
-                    'name' => 'Russia',
+                    'name' => 'UK',
                 ],
                 'streets' => [
                     [
                         'id' => 1003,
-                        'name' => 'Tverskaya',
+                        'name' => 'Turl Street',
                     ],
                     [
                         'id' => 1004,
-                        'name' => 'Tarusskaya',
+                        'name' => 'Holywell Street',
                     ],
                 ],
             ],

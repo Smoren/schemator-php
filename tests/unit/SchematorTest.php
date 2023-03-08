@@ -23,36 +23,36 @@ class SchematorTest extends Unit
 
         $input = [
             'id' => 100,
-            'name' => 'Novgorod',
+            'name' => 'Oxford',
             'country' => [
                 'id' => 10,
-                'name' => 'Russia',
-                'friends' => ['Kazakhstan', 'Belarus', 'Armenia'],
+                'name' => 'UK',
+                'neighbours' => ['Ireland', 'Sweden', 'France'],
                 'capitals' => [
-                    'msk' => 'Moscow',
-                    'spb' => 'St. Petersburg',
+                    'lnd' => 'London',
+                    'edb' => 'Edinburgh',
                 ],
             ],
             'streets' => [
                 [
                     'id' => 1000,
-                    'name' => 'Tverskaya',
+                    'name' => 'Woodstock Rd',
                     'houses' => [1, 5, 9],
                 ],
                 [
                     'id' => 1002,
-                    'name' => 'Leninskiy',
+                    'name' => 'Banbury Rd',
                     'houses' => [22, 35, 49],
                     'unknown' => null,
                 ],
                 [
                     'id' => 1003,
-                    'name' => 'Tarusskaya',
+                    'name' => 'Beamont St',
                     'houses' => [11, 12, 15],
                     'unknown' => 'some value',
                 ],
             ],
-            'msk_path' => 'country.capitals.msk',
+            'lnd_path' => 'country.capitals.lnd',
         ];
 
         $data = $schemator->convert($input, [
@@ -62,10 +62,10 @@ class SchematorTest extends Unit
             'city_street_houses' => 'streets.houses',
             'country_id' => 'country.id',
             'country_name' => 'country.name',
-            'country_friends' => 'country.friends',
-            'country_friend' => 'country.friends',
-            'country_first_capital' => 'country.capitals.msk',
-            'country_second_capital' => 'country.capitals.spb',
+            'country_neighbours' => 'country.neighbours',
+            'country_neighbour' => 'country.neighbours',
+            'country_first_capital' => 'country.capitals.lnd',
+            'country_second_capital' => 'country.capitals.edb',
             'unknown' => 'unknown',
             'unknown_another' => 'country.unknown',
             'unknown_array' => 'streets.unknown',
@@ -75,21 +75,21 @@ class SchematorTest extends Unit
         ]);
 
         $this->assertSame(100, $data['city_id']);
-        $this->assertSame('Novgorod', $data['city_name']);
-        $this->assertEquals(['Tverskaya', 'Leninskiy', 'Tarusskaya'], $data['city_street_names']);
+        $this->assertSame('Oxford', $data['city_name']);
+        $this->assertEquals(['Woodstock Rd', 'Banbury Rd', 'Beamont St'], $data['city_street_names']);
         $this->assertEquals([[1, 5, 9], [22, 35, 49], [11, 12, 15]], $data['city_street_houses']);
         $this->assertSame(10, $data['country_id']);
-        $this->assertSame('Russia', $data['country_name']);
-        $this->assertEquals(['Kazakhstan', 'Belarus', 'Armenia'], $data['country_friends']);
-        $this->assertSame('Moscow', $data['country_first_capital']);
-        $this->assertSame('St. Petersburg', $data['country_second_capital']);
+        $this->assertSame('UK', $data['country_name']);
+        $this->assertEquals(['Ireland', 'Sweden', 'France'], $data['country_neighbours']);
+        $this->assertSame('London', $data['country_first_capital']);
+        $this->assertSame('Edinburgh', $data['country_second_capital']);
         $this->assertNull($data['unknown']);
         $this->assertNull($data['unknown_another']);
         $this->assertEquals([null, 'some value'], $data['unknown_array']);
         $this->assertEquals($input, $data['raw']);
         $this->assertEquals([
             'country_id' => 10,
-            'country_name' => 'Russia',
+            'country_name' => 'UK',
         ], $data['country_data']);
 
         try {
@@ -134,22 +134,22 @@ class SchematorTest extends Unit
         $data = $schemator->convert($input, [
             'city_street_names' => ['streets.name', ['implode', ', ']]
         ]);
-        $this->assertSame('Tverskaya, Leninskiy, Tarusskaya', $data['city_street_names']);
+        $this->assertSame('Woodstock Rd, Banbury Rd, Beamont St', $data['city_street_names']);
 
         $data = $schemator->convert($input, [
             'city_street_names' => ['streets.name', ['implode', ', '], ['explode', ', ']]
         ]);
-        $this->assertEquals(['Tverskaya', 'Leninskiy', 'Tarusskaya'], $data['city_street_names']);
+        $this->assertEquals(['Woodstock Rd', 'Banbury Rd', 'Beamont St'], $data['city_street_names']);
 
         $data = $schemator->convert($input, [
-            'city_street_names' => ['streets.name', ['startsWith', 'T'], ['implode', ', ']]
+            'city_street_names' => ['streets.name', ['startsWith', 'B'], ['implode', ', ']]
         ]);
-        $this->assertSame('Tverskaya, Tarusskaya', $data['city_street_names']);
+        $this->assertSame('Banbury Rd, Beamont St', $data['city_street_names']);
 
         $data = $schemator->convert($input, [
-            'msk' => ['msk_path', ['path']]
+            'lnd' => ['lnd_path', ['path']]
         ]);
-        $this->assertSame('Moscow', $data['msk']);
+        $this->assertSame('London', $data['lnd']);
     }
 
     /**
@@ -161,34 +161,34 @@ class SchematorTest extends Unit
 
         $input = [
             'id' => 100,
-            'name' => 'Novgorod',
+            'name' => 'Oxford',
             'country' => [
                 'id' => 10,
-                'name' => 'Russia',
-                'friends' => ['Kazakhstan', 'Belarus', 'Armenia'],
+                'name' => 'UK',
+                'neighbours' => ['Ireland', 'Sweden', 'France'],
                 'capitals' => [
-                    'msk' => 'Moscow',
-                    'spb' => 'St. Petersburg',
+                    'lnd' => 'London',
+                    'edb' => 'Edinburgh',
                 ],
             ],
             'streets' => [
                 [
                     'id' => 1000,
-                    'name' => 'Tverskaya',
+                    'name' => 'Woodstock Rd',
                     'houses' => [1, 5, 9],
                 ],
                 [
                     'id' => 1002,
-                    'name' => 'Leninskiy',
+                    'name' => 'Banbury Rd',
                     'houses' => [22, 35, 49],
                 ],
                 [
                     'id' => 1003,
-                    'name' => 'Tarusskaya',
+                    'name' => 'Beamont St',
                     'houses' => [11, 12, 15],
                 ],
             ],
-            'msk_path' => 'country/capitals/msk',
+            'lnd_path' => 'country/capitals/lnd',
         ];
 
         $data = $schemator->convert($input, [
@@ -198,10 +198,10 @@ class SchematorTest extends Unit
             'city_street_houses' => 'streets/houses',
             'country_id' => 'country/id',
             'country_name' => 'country/name',
-            'country_friends' => 'country/friends',
-            'country_friend' => 'country/friends',
-            'country_first_capital' => 'country/capitals/msk',
-            'country_second_capital' => 'country/capitals/spb',
+            'country_neighbours' => 'country/neighbours',
+            'country_neighbour' => 'country/neighbours',
+            'country_first_capital' => 'country/capitals/lnd',
+            'country_second_capital' => 'country/capitals/edb',
             'unknown' => 'unknown',
             'unknown_another' => 'country/unknown',
             'unknown_array' => 'streets/unknown',
@@ -211,21 +211,21 @@ class SchematorTest extends Unit
         ]);
 
         $this->assertSame(100, $data['city_id']);
-        $this->assertSame('Novgorod', $data['city_name']);
-        $this->assertEquals(['Tverskaya', 'Leninskiy', 'Tarusskaya'], $data['city_street_names']);
+        $this->assertSame('Oxford', $data['city_name']);
+        $this->assertEquals(['Woodstock Rd', 'Banbury Rd', 'Beamont St'], $data['city_street_names']);
         $this->assertEquals([[1, 5, 9], [22, 35, 49], [11, 12, 15]], $data['city_street_houses']);
         $this->assertSame(10, $data['country_id']);
-        $this->assertSame('Russia', $data['country_name']);
-        $this->assertEquals(['Kazakhstan', 'Belarus', 'Armenia'], $data['country_friends']);
-        $this->assertSame('Moscow', $data['country_first_capital']);
-        $this->assertSame('St. Petersburg', $data['country_second_capital']);
+        $this->assertSame('UK', $data['country_name']);
+        $this->assertEquals(['Ireland', 'Sweden', 'France'], $data['country_neighbours']);
+        $this->assertSame('London', $data['country_first_capital']);
+        $this->assertSame('Edinburgh', $data['country_second_capital']);
         $this->assertNull($data['unknown']);
         $this->assertNull($data['unknown_another']);
         $this->assertEquals([], $data['unknown_array']);
         $this->assertEquals($input, $data['raw']);
         $this->assertEquals([
             'country_id' => 10,
-            'country_name' => 'Russia',
+            'country_name' => 'UK',
         ], $data['country_data']);
 
         try {
@@ -270,22 +270,22 @@ class SchematorTest extends Unit
         $data = $schemator->convert($input, [
             'city_street_names' => ['streets/name', ['implode', ', ']]
         ]);
-        $this->assertSame('Tverskaya, Leninskiy, Tarusskaya', $data['city_street_names']);
+        $this->assertSame('Woodstock Rd, Banbury Rd, Beamont St', $data['city_street_names']);
 
         $data = $schemator->convert($input, [
             'city_street_names' => ['streets/name', ['implode', ', '], ['explode', ', ']]
         ]);
-        $this->assertEquals(['Tverskaya', 'Leninskiy', 'Tarusskaya'], $data['city_street_names']);
+        $this->assertEquals(['Woodstock Rd', 'Banbury Rd', 'Beamont St'], $data['city_street_names']);
 
         $data = $schemator->convert($input, [
-            'city_street_names' => ['streets/name', ['startsWith', 'T'], ['implode', ', ']]
+            'city_street_names' => ['streets/name', ['startsWith', 'B'], ['implode', ', ']]
         ]);
-        $this->assertSame('Tverskaya, Tarusskaya', $data['city_street_names']);
+        $this->assertSame('Banbury Rd, Beamont St', $data['city_street_names']);
 
         $data = $schemator->convert($input, [
-            'msk' => ['msk_path', ['path']]
+            'lnd' => ['lnd_path', ['path']]
         ]);
-        $this->assertSame('Moscow', $data['msk']);
+        $this->assertSame('London', $data['lnd']);
     }
 
     /**
@@ -307,54 +307,54 @@ class SchematorTest extends Unit
 
         $input = [
             'id' => 100,
-            'name' => 'Novgorod',
+            'name' => 'Oxford',
             'country' => [
                 'id' => 10,
-                'name' => 'Russia',
-                'friends' => ['Kazakhstan', 'Belarus', 'Armenia'],
+                'name' => 'UK',
+                'neighbours' => ['Ireland', 'Sweden', 'France'],
                 'capitals' => [
-                    'msk' => 'Moscow',
-                    'spb' => 'St. Petersburg',
+                    'lnd' => 'London',
+                    'edb' => 'Edinburgh',
                 ],
             ],
             'streets' => [
                 [
                     'id' => 1000,
-                    'name' => 'Tverskaya',
+                    'name' => 'Woodstock Rd',
                     'houses' => [1, 5, 9],
                 ],
                 [
                     'id' => 1002,
-                    'name' => 'Leninskiy',
+                    'name' => 'Banbury Rd',
                     'houses' => [22, 35, 49],
                 ],
                 [
                     'id' => 1003,
-                    'name' => 'Tarusskaya',
+                    'name' => 'Beamont St',
                     'houses' => [11, 12, 15],
                 ],
             ],
-            'msk_path' => 'country.capitals.msk',
+            'lnd_path' => 'country.capitals.lnd',
         ];
 
         $data = $schemator->convert($input, [
             'city_street_names.first' => ['streets.name', ['implode', ', ']],
             'city_street_names.second' => ['streets.name', ['implode', ', '], ['explode', ', ']],
-            'city_street_names.third' => ['streets.name', ['startsWith', 'T'], ['implode', ', ']],
+            'city_street_names.third' => ['streets.name', ['startsWith', 'B'], ['implode', ', ']],
             'city_street_names.sorted' => ['streets.name', ['sort'], ['implode', ', ']],
             'city_street_names.filtered' => ['streets.name', ['filter', function (string $candidate) {
-                return strpos($candidate, 'Len') !== false;
+                return strpos($candidate, 'Ban') !== false;
             }]],
-            'msk' => ['msk_path', ['path']],
+            'lnd' => ['lnd_path', ['path']],
             'city_street_houses' => ['streets.houses', ['flatten']],
             'const' => [['const', 'my const']],
         ]);
-        $this->assertSame('Tverskaya, Leninskiy, Tarusskaya', $data['city_street_names']['first']);
-        $this->assertEquals(['Tverskaya', 'Leninskiy', 'Tarusskaya'], $data['city_street_names']['second']);
-        $this->assertSame('Tverskaya, Tarusskaya', $data['city_street_names']['third']);
-        $this->assertSame('Leninskiy, Tarusskaya, Tverskaya', $data['city_street_names']['sorted']);
-        $this->assertEquals(['Leninskiy'], $data['city_street_names']['filtered']);
-        $this->assertSame('Moscow', $data['msk']);
+        $this->assertSame('Woodstock Rd, Banbury Rd, Beamont St', $data['city_street_names']['first']);
+        $this->assertEquals(['Woodstock Rd', 'Banbury Rd', 'Beamont St'], $data['city_street_names']['second']);
+        $this->assertSame('Banbury Rd, Beamont St', $data['city_street_names']['third']);
+        $this->assertSame('Banbury Rd, Beamont St, Woodstock Rd', $data['city_street_names']['sorted']);
+        $this->assertEquals(['Banbury Rd'], $data['city_street_names']['filtered']);
+        $this->assertSame('London', $data['lnd']);
         $this->assertEquals([1, 5, 9, 22, 35, 49, 11, 12, 15], $data['city_street_houses']);
         $this->assertSame('my const', $data['const']);
     }
@@ -637,17 +637,17 @@ class SchematorTest extends Unit
             'id' => 1,
             'countries' => [
                 [
-                    'name' => 'Russia',
+                    'name' => 'UK',
                     'cities' => [
                         [
-                            'name' => 'Moscow',
+                            'name' => 'London',
                             'streets' => [
-                                ['name' => 'Tverskaya'],
-                                ['name' => 'Leninskiy'],
+                                ['name' => 'Woodstock Rd'],
+                                ['name' => 'Banbury Rd'],
                             ]
                         ],
                         [
-                            'name' => 'Novgorod',
+                            'name' => 'Oxford',
                             'streets' => [
                                 ['name' => 'Lenina'],
                                 ['name' => 'Komsomola'],
@@ -656,7 +656,7 @@ class SchematorTest extends Unit
                     ]
                 ],
                 [
-                    'name' => 'Belarus',
+                    'name' => 'Sweden',
                     'cities' => [
                         [
                             'name' => 'Minsk',
@@ -680,10 +680,10 @@ class SchematorTest extends Unit
 
         $result = $schemator->convert($data, $schema);
 
-        $this->assertEquals(['Russia', 'Belarus'], $result['country_names']);
-        $this->assertEquals(['Moscow', 'Novgorod', 'Minsk'], $result['city_names']);
+        $this->assertEquals(['UK', 'Sweden'], $result['country_names']);
+        $this->assertEquals(['London', 'Oxford', 'Minsk'], $result['city_names']);
         $this->assertEquals([
-            'Tverskaya', 'Leninskiy', 'Lenina', 'Komsomola', 'Moskovskaya', 'Russkaya',
+            'Woodstock Rd', 'Banbury Rd', 'Lenina', 'Komsomola', 'Moskovskaya', 'Russkaya',
         ], $result['street_names']);
     }
 

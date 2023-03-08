@@ -27,34 +27,34 @@ use Smoren\Schemator\Factories\SchematorFactory;
 
 $input = [
     'id' => 100,
-    'name' => 'Novgorod',
+    'name' => 'Oxford',
     'country' => [
         'id' => 10,
-        'name' => 'Russia',
-        'friends' => ['Kazakhstan', 'Belarus', 'Armenia'],
+        'name' => 'UK',
+        'neighbours' => ['Ireland', 'Sweden', 'France'],
         'capitals' => [
-            'msk' => 'Moscow',
-            'spb' => 'St. Petersburg',
+            'lnd' => 'London',
+            'edb' => 'Edinburgh',
         ],
     ],
     'streets' => [
         [
             'id' => 1000,
-            'name' => 'Tverskaya',
+            'name' => 'Woodstock Rd',
             'houses' => [1, 5, 9],
         ],
         [
             'id' => 1002,
-            'name' => 'Leninskiy',
+            'name' => 'Banbury Rd',
             'houses' => [22, 35, 49],
         ],
         [
             'id' => 1003,
-            'name' => 'Tarusskaya',
+            'name' => 'Beamont St',
             'houses' => [11, 12, 15],
         ],
     ],
-    'msk_path' => 'country.capitals.msk',
+    'lnd_path' => 'country.capitals.lnd',
 ];
 
 $schema = [
@@ -63,10 +63,10 @@ $schema = [
     'city_street_names' => 'streets.name',
     'country_id' => 'country.id',
     'country_name' => 'country.name',
-    'country_friends' => 'country.friends',
-    'country_friend' => 'country.friends',
-    'country_first_capital' => 'country.capitals.msk',
-    'country_second_capital' => 'country.capitals.spb',
+    'country_neighbours' => 'country.neighbours',
+    'country_neighbour' => 'country.neighbours',
+    'country_first_capital' => 'country.capitals.lnd',
+    'country_second_capital' => 'country.capitals.edb',
     'country_data.country_id' => 'country.id',
     'country_data.country_name' => 'country.name',
 ];
@@ -78,36 +78,36 @@ print_r($output);
 /* Array
 (
     [city_id] => 100
-    [city_name] => Novgorod
+    [city_name] => Oxford
     [city_street_names] => Array
         (
-            [0] => Tverskaya
-            [1] => Leninskiy
-            [2] => Tarusskaya
+            [0] => Woodstock Rd
+            [1] => Banbury Rd
+            [2] => Beamont St
         )
 
     [country_id] => 10
-    [country_name] => Russia
-    [country_friends] => Array
+    [country_name] => UK
+    [country_neighbours] => Array
         (
-            [0] => Kazakhstan
-            [1] => Belarus
-            [2] => Armenia
+            [0] => Ireland
+            [1] => Sweden
+            [2] => France
         )
 
-    [country_friend] => Array
+    [country_neighbour] => Array
         (
-            [0] => Kazakhstan
-            [1] => Belarus
-            [2] => Armenia
+            [0] => Ireland
+            [1] => Sweden
+            [2] => France
         )
 
-    [country_first_capital] => Moscow
-    [country_second_capital] => St. Petersburg
+    [country_first_capital] => London
+    [country_second_capital] => Edinburgh
     [country_data] => Array
         (
             [country_id] => 10
-            [country_name] => Russia
+            [country_name] => UK
         )
 
 )
@@ -151,43 +151,43 @@ use Smoren\Schemator\Filters\BaseFiltersStorage;
 
 $input = [
     'id' => 100,
-    'name' => 'Novgorod',
+    'name' => 'Oxford',
     'country' => [
         'id' => 10,
-        'name' => 'Russia',
-        'friends' => ['Kazakhstan', 'Belarus', 'Armenia'],
+        'name' => 'UK',
+        'neighbours' => ['Ireland', 'Sweden', 'France'],
         'capitals' => [
-            'msk' => 'Moscow',
-            'spb' => 'St. Petersburg',
+            'lnd' => 'London',
+            'edb' => 'Edinburgh',
         ],
     ],
     'streets' => [
         [
             'id' => 1000,
-            'name' => 'Tverskaya',
+            'name' => 'Woodstock Rd',
             'houses' => [1, 5, 9],
         ],
         [
             'id' => 1002,
-            'name' => 'Leninskiy',
+            'name' => 'Banbury Rd',
             'houses' => [22, 35, 49],
         ],
         [
             'id' => 1003,
-            'name' => 'Tarusskaya',
+            'name' => 'Beamont St',
             'houses' => [11, 12, 15],
         ],
     ],
-    'msk_path' => 'country.capitals.msk',
+    'lnd_path' => 'country.capitals.lnd',
 ];
 
 $schema = [
     'city_street_names.all' => ['streets.name', ['implode', ', ']],
     'city_street_names.sorted' => ['streets.name', ['sort'], ['implode', ', ']],
     'city_street_names.filtered' => ['streets.name', ['filter', function (string $candidate) {
-        return strpos($candidate, 'Len') !== false;
+        return strpos($candidate, 'Ban') !== false;
     }]],
-    'msk' => ['msk_path', ['path']],
+    'lnd' => ['lnd_path', ['path']],
     'city_street_houses' => ['streets.houses', ['flatten']],
 ];
 
@@ -200,16 +200,16 @@ Array
 (
     [city_street_names] => Array
         (
-            [all] => Tverskaya, Leninskiy, Tarusskaya
-            [sorted] => Leninskiy, Tarusskaya, Tverskaya
+            [all] => Woodstock Rd, Banbury Rd, Beamont St
+            [sorted] => Banbury Rd, Beamont St, Woodstock Rd
             [filtered] => Array
                 (
-                    [0] => Leninskiy
+                    [0] => Banbury Rd
                 )
 
         )
 
-    [msk] => Moscow
+    [lnd] => London
     [city_street_houses] => Array
         (
             [0] => 1
@@ -342,7 +342,7 @@ $schemator = SchematorFactory::createBuilder()
     ->get();
 
 $input = [
-    'streets' => ['Tverskaya', 'Leninskiy', 'Tarusskaya'],
+    'streets' => ['Woodstock Rd', 'Banbury Rd', 'Beamont St'],
 ];
 
 $schema = [
@@ -355,7 +355,7 @@ print_r($output);
 /*
 Array
 (
-    [street_names] => Tverskaya, Tarusskaya
+    [street_names] => Woodstock Rd, Beamont St
 )
 */
 ```
@@ -370,37 +370,37 @@ $massSchemator = SchematorFactory::createMass();
 $cities = [
     [
         'id' => 100,
-        'name' => 'Novgorod',
+        'name' => 'London',
         'country' => [
             'id' => 10,
-            'name' => 'Russia',
+            'name' => 'UK',
         ],
         'streets' => [
             [
                 'id' => 1001,
-                'name' => 'Glavnaya',
+                'name' => 'The Mall',
             ],
             [
                 'id' => 1002,
-                'name' => 'Lenina',
+                'name' => 'Carnaby Street',
             ],
         ],
     ],
     [
         'id' => 101,
-        'name' => 'Moscow',
+        'name' => 'Oxford',
         'country' => [
             'id' => 10,
-            'name' => 'Russia',
+            'name' => 'UK',
         ],
         'streets' => [
             [
                 'id' => 1003,
-                'name' => 'Tverskaya',
+                'name' => 'Turl Street',
             ],
             [
                 'id' => 1004,
-                'name' => 'Tarusskaya',
+                'name' => 'Holywell Street',
             ],
         ],
     ],
@@ -428,28 +428,28 @@ Array
     [0] => Array
         (
             [city_id] => 100
-            [city_name] => Novgorod
+            [city_name] => London
             [city_street_names] => Array
                 (
-                    [0] => Glavnaya
-                    [1] => Lenina
+                    [0] => The Mall
+                    [1] => Carnaby Street
                 )
 
             [country_id] => 10
-            [country_name] => Russia
+            [country_name] => UK
         )
     [1] => Array
         (
             [city_id] => 101
-            [city_name] => Moscow
+            [city_name] => Oxford
             [city_street_names] => Array
                 (
-                    [0] => Tverskaya
-                    [1] => Tarusskaya
+                    [0] => Turl Street
+                    [1] => Holywell Street
                 )
 
             [country_id] => 10
-            [country_name] => Russia
+            [country_name] => UK
         )
 )
 */
