@@ -41,6 +41,78 @@ class NestedAccessor
     {
         while (count($pathToTravel)) {
             $key = array_pop($pathToTravel);
+            $prevKey = count($traveledPath)
+                ? $traveledPath[count($traveledPath) - 1]
+                : null;
+
+            if ($key === '|') {
+                $traveledPath[] = $key;
+                continue;
+            }
+
+            if ($key === '*') {
+                if (!is_iterable($carry)) {
+                    return $this->handleError($key, $traveledPath, $strict);
+                }
+
+                $result = [];
+
+                if ($prevKey === '*') {
+                    foreach ($carry as $item) {
+                        if (!is_iterable($item)) {
+                            return $this->handleError($key, $traveledPath, $strict);
+                        }
+                        foreach ($item as $subItem) {
+                            $result[] = $subItem;
+                        }
+                    }
+                } else {
+                    foreach ($carry as $item) {
+                        $result[] = $item;
+                    }
+                }
+
+                $traveledPath[] = $key;
+                $carry = $result;
+
+                continue;
+            }
+
+            if ($prevKey === '*') {
+                $result = [];
+                foreach ($carry as $item) {
+                    if (!ContainerAccessHelper::exists($item, $key)) {
+                        return $this->handleError($key, $traveledPath, $strict);
+                    }
+                    $result[] = ContainerAccessHelper::get($item, $key);
+                }
+                $traveledPath[] = $key;
+                $carry = $result;
+
+                continue;
+            }
+
+            if (!ContainerAccessHelper::exists($carry, $key)) {
+                return $this->handleError($key, $traveledPath, $strict);
+            }
+
+            $carry = ContainerAccessHelper::get($carry, $key);
+            $traveledPath[] = $key;
+        }
+
+        return $carry;
+    }
+
+    /**
+     * @param mixed $carry
+     * @param string[] $pathToTravel
+     * @param bool $strict
+     * @return mixed
+     */
+    protected function getInternalOld($carry, array $pathToTravel, array $traveledPath, bool $strict)
+    {
+        while (count($pathToTravel)) {
+            $key = array_pop($pathToTravel);
 
             if ($key === '*') {
                 if (!is_iterable($carry)) {
