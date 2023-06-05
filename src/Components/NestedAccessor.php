@@ -50,6 +50,11 @@ class NestedAccessor
                 continue;
             }
 
+            if ($key === '**') {
+                $key = '*';
+                $pathToTravel[] = '*';
+            }
+
             if ($key === '*') {
                 if (!is_iterable($carry)) {
                     return $this->handleError($key, $traveledPath, $strict);
