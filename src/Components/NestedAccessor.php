@@ -56,6 +56,7 @@ class NestedAccessor
                 return $result;
             }
 
+            // TODO mayby go throw 2 levels only if there is *.*
             if ($key === '>') {
                 if (!is_iterable($carry)) {
                     return $this->handleError($key, $traveledPath, $strict);
