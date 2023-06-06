@@ -28,7 +28,7 @@ class NestedAccessor
      */
     public function get($path = null, bool $strict = true)
     {
-        return $this->getInternal($this->source, $this->getPathArray($path), [], $strict);
+        return $this->getInternal($this->source, $this->getPathArray($path), $strict);
     }
 
     /**
@@ -37,8 +37,9 @@ class NestedAccessor
      * @param bool $strict
      * @return mixed
      */
-    protected function getInternal($carry, array $pathToTravel, array $traveledPath, bool $strict)
+    protected function getInternal($carry, array $pathToTravel, bool $strict)
     {
+        $traveledPath = [];
         while (count($pathToTravel)) {
             $key = array_pop($pathToTravel);
             $prevKey = count($traveledPath)
@@ -67,7 +68,10 @@ class NestedAccessor
                 if ($prevKey === '*') {
                     foreach ($carry as $item) {
                         if (!is_iterable($item)) {
-                            return $this->handleError($key, $traveledPath, $strict);
+                            if ($strict) {
+                                return $this->handleError($key, $traveledPath, $strict);
+                            }
+                            continue;
                         }
                         foreach ($item as $subItem) {
                             $result[] = $subItem;
@@ -89,7 +93,10 @@ class NestedAccessor
                 $result = [];
                 foreach ($carry as $item) {
                     if (!ContainerAccessHelper::exists($item, $key)) {
-                        return $this->handleError($key, $traveledPath, $strict);
+                        if ($strict) {
+                            return $this->handleError($key, $traveledPath, $strict);
+                        }
+                        continue;
                     }
                     $result[] = ContainerAccessHelper::get($item, $key);
                 }
@@ -97,65 +104,6 @@ class NestedAccessor
                 $carry = $result;
 
                 continue;
-            }
-
-            if (!ContainerAccessHelper::exists($carry, $key)) {
-                return $this->handleError($key, $traveledPath, $strict);
-            }
-
-            $carry = ContainerAccessHelper::get($carry, $key);
-            $traveledPath[] = $key;
-        }
-
-        return $carry;
-    }
-
-    /**
-     * @param mixed $carry
-     * @param string[] $pathToTravel
-     * @param bool $strict
-     * @return mixed
-     */
-    protected function getInternalOld($carry, array $pathToTravel, array $traveledPath, bool $strict)
-    {
-        while (count($pathToTravel)) {
-            $key = array_pop($pathToTravel);
-
-            if ($key === '*') {
-                if (!is_iterable($carry)) {
-                    return $this->handleError($key, $traveledPath, $strict);
-                }
-
-                $result = [];
-                $traveledPath[] = $key;
-                foreach ($carry as $item) {
-                    $result[] = $this->getInternal($item, $pathToTravel, $traveledPath, $strict);
-                }
-
-                return $result;
-            }
-
-            // TODO mayby go throw 2 levels only if there is *.*
-            if ($key === '>') {
-                if (!is_iterable($carry)) {
-                    return $this->handleError($key, $traveledPath, $strict);
-                }
-
-                $result = [];
-                foreach ($carry as $item) {
-                    if (!is_iterable($item)) {
-                        if ($strict) {
-                            return $this->handleError($key, $traveledPath, true);
-                        }
-                        continue;
-                    }
-                    foreach ($item as $subItem) {
-                        $result[] = $subItem;
-                    }
-                }
-                $traveledPath[] = $key;
-
-                return $this->getInternal($result, $pathToTravel, $traveledPath, $strict);
             }
 
             if (!ContainerAccessHelper::exists($carry, $key)) {

@@ -22,6 +22,23 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
         $this->assertEquals($expected, $actual);
     }
 
+    /**
+     * @dataProvider dataProviderForGetStrictSuccess
+     * @dataProvider dataProviderForGetStrictSuccessCitiesExample
+     * @dataProvider dataProviderForGetNonStrictSuccessCitiesExample
+     */
+    public function testGetNonStrictSuccess($source, $path, $expected)
+    {
+        // Given
+        $accessor = new NestedAccessor($source);
+
+        // When
+        $actual = $accessor->get($path, false);
+
+        // Then
+        $this->assertEquals($expected, $actual);
+    }
+
     public function dataProviderForGetStrictSuccess(): array
     {
         return [
@@ -682,6 +699,94 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
                 $cities,
                 '*.streets.**.houses',
                 [[1, 5, 9], [22, 35, 49], [11, 12, 15], [2, 6, 12]],
+            ],
+        ];
+    }
+
+    public function dataProviderForGetNonStrictSuccessCitiesExample(): array
+    {
+        $cities = [
+            [
+                'name' => 'London',
+                'country' => [
+                    'id' => 111,
+                    'name' => 'UK',
+                ],
+                'streets' => [
+                    [
+                        'id' => 1000,
+                        'name' => 'Carnaby Street',
+                        'houses' => [1, 5, 9],
+                    ],
+                    [
+                        'id' => 1002,
+                        'name' => 'Abbey Road',
+                        'houses' => [22, 35, 49],
+                    ],
+                    [
+                        'id' => 1003,
+                        'name' => 'Brick Lane',
+                    ],
+                ],
+            ],
+            [
+                'name' => 'Berlin',
+                'country' => [
+                    'id' => 222,
+                    'name' => 'Germany',
+                ],
+                'streets' => [
+                    [
+                        'id' => 2000,
+                        'name' => 'Oderbergerstrasse',
+                        'houses' => [2, 6, 12],
+                    ],
+                ],
+            ],
+            [
+                'name' => 'Madrid',
+                'country' => [
+                    'id' => 333,
+                    'name' => 'Spain',
+                ],
+            ],
+        ];
+
+        return [
+            [
+                $cities,
+                '*.name',
+                ['London', 'Berlin', 'Madrid'],
+            ],
+            [
+                $cities,
+                '*.country.*.name',
+                ['UK', 'Germany', 'Spain'],
+            ],
+            [
+                $cities,
+                '*.streets.*.*.name',
+                ['Carnaby Street', 'Abbey Road', 'Brick Lane', 'Oderbergerstrasse'],
+            ],
+            [
+                $cities,
+                '*.streets.**.name',
+                ['Carnaby Street', 'Abbey Road', 'Brick Lane', 'Oderbergerstrasse'],
+            ],
+            [
+                $cities,
+                '*.streets.**.houses.**',
+                [1, 5, 9, 22, 35, 49, 2, 6, 12],
+            ],
+            [
+                $cities,
+                '*.streets.**.houses.*',
+                [[1, 5, 9], [22, 35, 49], [2, 6, 12]],
+            ],
+            [
+                $cities,
+                '*.streets.**.houses',
+                [[1, 5, 9], [22, 35, 49], [2, 6, 12]],
             ],
         ];
     }
