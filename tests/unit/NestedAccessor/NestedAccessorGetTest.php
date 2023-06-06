@@ -7,7 +7,7 @@ use Smoren\Schemator\Components\NestedAccessor;
 class NestedAccessorGetTest extends \Codeception\Test\Unit
 {
     /**
-     * @ dataProvider dataProviderForGetStrictSuccess
+     * @dataProvider dataProviderForGetStrictSuccess
      * @dataProvider dataProviderForGetStrictSuccessCitiesExample
      */
     public function testGetStrictSuccess($source, $path, $expected)
@@ -122,7 +122,6 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
             ],
             [
                 [1, 2, 3, 'a' => ['b' => [[11, 22]], 'c' => [[33, 44]]]],
-                //'a.*.0.*',
                 'a.*.0.0',
                 [11, 22],
             ],
@@ -485,6 +484,114 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
                 ],
                 'second.0.0.0',
                 [1, 2, 3],
+            ],
+            [
+                [
+                    'a' => [
+                        [
+                            'b' => [
+                                [
+                                    'c' => [
+                                        [
+                                            'd' => 1,
+                                            'e' => [1, 2, 3],
+                                        ]
+                                    ],
+                                    'f' => [
+                                        [
+                                            'd' => 2,
+                                            'e' => [4, 5, 6],
+                                        ]
+                                    ],
+                                ],
+                            ],
+                            'i' => [
+                                [
+                                    'j' => [
+                                        [
+                                            'd' => 3,
+                                            'e' => [7, 8, 9],
+                                        ]
+                                    ]
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'a.*****.d',
+                [1, 2, 3],
+            ],
+            [
+                [
+                    'a' => [
+                        [
+                            'b' => [
+                                [
+                                    'c' => [
+                                        [
+                                            'd' => 1,
+                                            'e' => [1, 2, 3],
+                                        ]
+                                    ],
+                                    'f' => [
+                                        [
+                                            'd' => 2,
+                                            'e' => [4, 5, 6],
+                                        ]
+                                    ],
+                                ],
+                            ],
+                            'i' => [
+                                [
+                                    'j' => [
+                                        [
+                                            'd' => 3,
+                                            'e' => [7, 8, 9],
+                                        ]
+                                    ]
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'a.*****.e',
+                [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+            ],
+            [
+                [
+                    'a' => [
+                        [
+                            'b' => [
+                                [
+                                    'c' => [
+                                        [
+                                            'd' => 1,
+                                            'e' => [1, 2, 3],
+                                        ]
+                                    ],
+                                    'f' => [
+                                        [
+                                            'd' => 2,
+                                            'e' => [4, 5, 6],
+                                        ]
+                                    ],
+                                ],
+                            ],
+                            'i' => [
+                                [
+                                    'j' => [
+                                        [
+                                            'd' => 3,
+                                            'e' => [7, 8, 9],
+                                        ]
+                                    ]
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'a.*****.|.1.e',
+                [4, 5, 6],
             ],
         ];
     }

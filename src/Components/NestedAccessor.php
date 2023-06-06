@@ -50,9 +50,11 @@ class NestedAccessor
                 continue;
             }
 
-            if ($key === '**') {
+            if (preg_match('/^[*]+$/', $key)) {
+                for ($i = 0; $i < strlen($key) - 1; ++$i) {
+                    $pathToTravel[] = '*';
+                }
                 $key = '*';
-                $pathToTravel[] = '*';
             }
 
             if ($key === '*') {
