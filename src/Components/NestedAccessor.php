@@ -40,6 +40,7 @@ class NestedAccessor
     protected function getInternal($carry, array $pathToTravel, bool $strict)
     {
         $traveledPath = [];
+        $isResultMultiple = false;
         while (count($pathToTravel)) {
             $key = array_pop($pathToTravel);
             $prevKey = count($traveledPath)
@@ -47,6 +48,7 @@ class NestedAccessor
                 : null;
 
             if ($key === '|') {
+                $isResultMultiple = false;
                 $traveledPath[] = $key;
                 continue;
             }
@@ -60,7 +62,7 @@ class NestedAccessor
 
             if ($key === '*') {
                 if (!is_iterable($carry)) {
-                    return $this->handleError($key, $traveledPath, $strict);
+                    return $this->handleError($key, $traveledPath, $isResultMultiple, $strict);
                 }
 
                 $result = [];
@@ -69,7 +71,7 @@ class NestedAccessor
                     foreach ($carry as $item) {
                         if (!is_iterable($item)) {
                             if ($strict) {
-                                return $this->handleError($key, $traveledPath, $strict);
+                                return $this->handleError($key, $traveledPath, $isResultMultiple, $strict);
                             }
                             continue;
                         }
@@ -83,6 +85,7 @@ class NestedAccessor
                     }
                 }
 
+                $isResultMultiple = true;
                 $traveledPath[] = $key;
                 $carry = $result;
 
@@ -94,7 +97,7 @@ class NestedAccessor
                 foreach ($carry as $item) {
                     if (!ContainerAccessHelper::exists($item, $key)) {
                         if ($strict) {
-                            return $this->handleError($key, $traveledPath, $strict);
+                            return $this->handleError($key, $traveledPath, $isResultMultiple, $strict);
                         }
                         continue;
                     }
@@ -107,7 +110,7 @@ class NestedAccessor
             }
 
             if (!ContainerAccessHelper::exists($carry, $key)) {
-                return $this->handleError($key, $traveledPath, $strict);
+                return $this->handleError($key, $traveledPath, $isResultMultiple, $strict);
             }
 
             $carry = ContainerAccessHelper::get($carry, $key);
@@ -155,13 +158,14 @@ class NestedAccessor
     /**
      * @param string $key
      * @param string[] $path
+     * @param bool $isResultMultiple
      * @param bool $strict
-     * @return null
+     * @return null|array{}
      */
-    protected function handleError(string $key, array $path, bool $strict)
+    protected function handleError(string $key, array $path, bool $isResultMultiple, bool $strict): ?array
     {
         if (!$strict) {
-            return null;
+            return $isResultMultiple ? [] : null;
         }
 
         throw new \UnexpectedValueException(
