@@ -25,6 +25,7 @@ class NestedAccessor
     /**
      * @param string|string[]|null $path
      * @return mixed
+     * @throws \UnexpectedValueException
      */
     public function get($path = null, bool $strict = true)
     {
@@ -36,6 +37,7 @@ class NestedAccessor
      * @param string[] $pathToTravel
      * @param bool $strict
      * @return mixed
+     * @throws \UnexpectedValueException
      */
     protected function getInternal($carry, array $pathToTravel, bool $strict)
     {
