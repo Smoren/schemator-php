@@ -2,6 +2,7 @@
 
 namespace Smoren\Schemator\Components;
 
+use Smoren\Schemator\Exceptions\PathException;
 use Smoren\Schemator\Helpers\ContainerAccessHelper;
 
 class NestedAccessor
@@ -25,7 +26,7 @@ class NestedAccessor
     /**
      * @param string|string[]|null $path
      * @return mixed
-     * @throws \UnexpectedValueException
+     * @throws PathException
      */
     public function get($path = null, bool $strict = true)
     {
@@ -33,11 +34,38 @@ class NestedAccessor
     }
 
     /**
+     * @param string|string[]|null $path
+     * @return bool
+     */
+    public function exist($path): bool
+    {
+        try {
+            $this->get($path);
+            return true;
+        } catch (PathException $e) {
+            return false;
+        }
+    }
+
+    /**
+     * @param string|string[]|null $path
+     * @return bool
+     */
+    public function isset($path): bool
+    {
+        try {
+            return $this->get($path) !== null;
+        } catch (PathException $e) {
+            return false;
+        }
+    }
+
+    /**
      * @param mixed $carry
      * @param string[] $pathToTravel
      * @param bool $strict
      * @return mixed
-     * @throws \UnexpectedValueException
+     * @throws PathException
      */
     protected function getInternal($carry, array $pathToTravel, bool $strict)
     {
@@ -170,8 +198,6 @@ class NestedAccessor
             return $isResultMultiple ? [] : null;
         }
 
-        throw new \UnexpectedValueException(
-            "Key '{$key}' is not found on path '{$this->getPathString($path)}'"
-        );
+        throw new PathException($key, $path, $this->pathDelimiter);
     }
 }
