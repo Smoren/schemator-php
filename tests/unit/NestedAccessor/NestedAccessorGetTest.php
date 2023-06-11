@@ -7,7 +7,9 @@ use Smoren\Schemator\Components\NestedAccessor;
 class NestedAccessorGetTest extends \Codeception\Test\Unit
 {
     /**
-     * @dataProvider dataProviderForStrictSuccess
+     * @dataProvider dataProviderForStrictSuccessArray
+     * @dataProvider dataProviderForStrictSuccessArrayObject
+     * @dataProvider dataProviderForStrictSuccessStdClass
      * @dataProvider dataProviderForStrictSuccessCitiesExample
      */
     public function testStrictSuccess($source, $path, $expected)
@@ -23,7 +25,7 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
     }
 
     /**
-     * @dataProvider dataProviderForStrictError
+     * @dataProvider dataProviderForStrictErrorArray
      */
     public function testStrictError($source, $path, $expected)
     {
@@ -41,8 +43,10 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
     }
 
     /**
-     * @dataProvider dataProviderForStrictSuccess
-     * @dataProvider dataProviderForNonStrict
+     * @dataProvider dataProviderForStrictSuccessArray
+     * @dataProvider dataProviderForStrictSuccessArrayObject
+     * @dataProvider dataProviderForStrictSuccessStdClass
+     * @dataProvider dataProviderForNonStrictArray
      * @dataProvider dataProviderForStrictSuccessCitiesExample
      * @dataProvider dataProviderForNonStrictCitiesExample
      */
@@ -58,7 +62,25 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
         $this->assertEquals($expected, $actual);
     }
 
-    public function dataProviderForStrictSuccess(): array
+    public function testBadPathError()
+    {
+        // Given
+        $accessor = new NestedAccessor($source);
+
+        $source = ['a' => 1];
+        $path = (object)['a', 'b', 'c'];
+
+        try {
+            // When
+            $accessor->get($path);
+            $this->fail();
+        } catch (\InvalidArgumentException $e) {
+            // Then
+            $this->assertSame('Path must be numeric, string or array, object given', $e->getMessage());
+        }
+    }
+
+    public function dataProviderForStrictSuccessArray(): array
     {
         return [
             [
@@ -632,7 +654,522 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
         ];
     }
 
-    public function dataProviderForStrictError(): array
+    public function dataProviderForStrictSuccessArrayObject(): array
+    {
+        return [
+            [
+                new \ArrayObject([]),
+                [],
+                new \ArrayObject([]),
+            ],
+            [
+                new \ArrayObject([]),
+                null,
+                new \ArrayObject([]),
+            ],
+            [
+                [],
+                '*',
+                [],
+            ],
+            [
+                new \ArrayObject(['a' => 1]),
+                [],
+                new \ArrayObject(['a' => 1]),
+            ],
+            [
+                new \ArrayObject([1, 2, 3]),
+                null,
+                new \ArrayObject([1, 2, 3]),
+            ],
+            [
+                new \ArrayObject([1, 2, 3]),
+                '*',
+                [1, 2, 3],
+            ],
+            [
+                new \ArrayObject([1, 2, 3, 'a' => 4]),
+                '*',
+                [1, 2, 3, 4],
+            ],
+            [
+                new \ArrayObject([1, 2, 3, 'a' => 4]),
+                0,
+                1,
+            ],
+            [
+                new \ArrayObject([1, 2, 3, 'a' => 4]),
+                '0',
+                1,
+            ],
+            [
+                new \ArrayObject([1, 2, 3, 'a' => 4]),
+                '2',
+                3,
+            ],
+            [
+                new \ArrayObject([1, 2, 3, 'a' => 4]),
+                2,
+                3,
+            ],
+            [
+                new \ArrayObject([1, 2, 3, 'a' => 4]),
+                'a',
+                4,
+            ],
+            [
+                new \ArrayObject([1, 2, 3, 'a' => [1, 2, 'a' => 3]]),
+                'a',
+                [1, 2, 'a' => 3],
+            ],
+            [
+                new \ArrayObject([1, 2, 3, 'a' => [1, 2, 'a' => 3]]),
+                'a.*',
+                [1, 2, 3],
+            ],
+            [
+                new \ArrayObject([1, 2, 3, 'a' => ['b' => 11, 'c' => 22]]),
+                'a.*',
+                [11, 22],
+            ],
+            [
+                new \ArrayObject([1, 2, 3, 'a' => ['b' => [11], 'c' => [22]]]),
+                'a.*',
+                [[11], [22]],
+            ],
+            [
+                new \ArrayObject([1, 2, 3, 'a' => ['b' => [11], 'c' => [22]]]),
+                'a.*.0',
+                [11, 22],
+            ],
+            [
+                new \ArrayObject([1, 2, 3, 'a' => ['b' => [11], 'c' => [22]]]),
+                'a.*.*',
+                [11, 22],
+            ],
+            [
+                new \ArrayObject([1, 2, 3, 'a' => ['b' => [11, 22], 'c' => [33, 44]]]),
+                'a.*.*',
+                [11, 22, 33, 44],
+            ],
+            [
+                new \ArrayObject([1, 2, 3, 'a' => ['b' => [[11, 22]], 'c' => [[33, 44]]]]),
+                'a.*.0.0',
+                [11, 22],
+            ],
+            [
+                new \ArrayObject([1, 2, 3, 'a' => ['b' => [[11, 22]], 'c' => [[33, 44]]]]),
+                'a.*.0.*.*',
+                [11, 22, 33, 44],
+            ],
+            [
+                new \ArrayObject([1, 2, 3, 'a' => ['b' => [[11, 22]], 'c' => [[33, 44]]]]),
+                'a.*.0.*.1',
+                [22, 44],
+            ],
+            [
+                new \ArrayObject([1, 2, 3, 'a' => [1, 2, 'b' => ['c', 'd', 'e']]]),
+                'a.b',
+                ['c', 'd', 'e'],
+            ],
+            [
+                new \ArrayObject([1, 2, 3, 'a' => [1, 2, 'b' => ['c', 'd', 'e']]]),
+                'a.b.*',
+                ['c', 'd', 'e'],
+            ],
+            [
+                new \ArrayObject([1, 2, 3, 'a' => ['b' => ['c', 'd', 'e'], [11, 22]]]),
+                'a.*.*',
+                ['c', 'd', 'e', 11, 22],
+            ],
+            [
+                new \ArrayObject([1, 2, 3, 'a' => ['b' => [['c'], ['d'], ['e']], [[11], [22, 33]]]]),
+                'a.*.*.*',
+                ['c', 'd', 'e', 11, 22, 33],
+            ],
+            [
+                new \ArrayObject([1, 2, 3, 'a' => ['b' => [['c'], ['d'], ['e']], [[11], [22, 33]]]]),
+                'a.*.*.0',
+                ['c', 'd', 'e', 11, 22],
+            ],
+            [
+                new \ArrayObject([1, 2, 3, 'a' => ['b' => ['c', 'd', 'e'], [11, 22]]]),
+                ['a', '*', '*'],
+                ['c', 'd', 'e', 11, 22],
+            ],
+            [
+                new \ArrayObject([
+                    'first' => [
+                        [
+                            [
+                                'a' => [],
+                                'b' => ['aaa'],
+                                'c' => ['bbb'],
+                            ],
+                        ],
+                    ],
+                    'second' => new \ArrayObject([
+                        [
+                            [
+                                new \ArrayObject([1, 2, 3]),
+                                [11, 22, 33],
+                                [111, 222, 333],
+                            ],
+                            [
+                                [1111],
+                                [11111],
+                            ],
+                        ],
+                        [
+                            [
+                                [111111],
+                                [1111111],
+                            ],
+                        ],
+                    ]),
+                ]),
+                'second.*.*.*.0',
+                [1, 11, 111, 1111, 11111, 111111, 1111111],
+            ],
+            [
+                [
+                    'a' => new \ArrayObject([
+                        [
+                            'b' => [
+                                [
+                                    'c' => [
+                                        [
+                                            'd' => 1,
+                                            'e' => [1, 2, 3],
+                                        ]
+                                    ],
+                                    'f' => [
+                                        new \ArrayObject([
+                                            'd' => 2,
+                                            'e' => new \ArrayObject([4, 5, 6]),
+                                        ])
+                                    ],
+                                ],
+                            ],
+                            'i' => [
+                                [
+                                    'j' => [
+                                        [
+                                            'd' => 3,
+                                            'e' => [7, 8, 9],
+                                        ]
+                                    ]
+                                ],
+                            ],
+                        ],
+                    ]),
+                ],
+                'a.*****.|.1.e',
+                new \ArrayObject([4, 5, 6]),
+            ],
+        ];
+    }
+
+    public function dataProviderForStrictSuccessStdClass(): array
+    {
+        return [
+            [
+                (object)[],
+                [],
+                (object)[],
+            ],
+            [
+                (object)[],
+                null,
+                (object)[],
+            ],
+            [
+                (object)['a' => 1],
+                [],
+                (object)['a' => 1],
+            ],
+            [
+                [
+                    'a' => (object)[1, 2, 3],
+                    'b' => (object)[11, 22, 33],
+                    'c' => (object)[111, 222, 333],
+                ],
+                '*.0',
+                [1, 11, 111],
+            ],
+            [
+                [
+                    'a' => (object)[1, 2, 3],
+                    'b' => (object)[11, 22, 33],
+                    'c' => (object)[111, 222, 333],
+                ],
+                ['*', 0],
+                [1, 11, 111],
+            ],
+            [
+                [
+                    'a' => (object)[1, 2, 3],
+                    'b' => (object)[11, 22, 33],
+                    'c' => (object)[111, 222, 333],
+                ],
+                ['*', '2'],
+                [3, 33, 333],
+            ],
+            [
+                [
+                    'a' => (object)[1, 2, (object)[3]],
+                    'b' => (object)[11, 22, (object)[33]],
+                    'c' => (object)[111, 222, (object)[333]],
+                ],
+                ['*', '2'],
+                [(object)[3], (object)[33], (object)[333]],
+            ],
+            [
+                [
+                    'a' => (object)[1, 2, [3]],
+                    'b' => (object)[11, 22, [33]],
+                    'c' => (object)[111, 222, [333]],
+                ],
+                ['*', '2', '*', '*'],
+                [3, 33, 333],
+            ],
+            [
+                [
+                    [
+                        'a' => (object)[1, 2, 3],
+                        'b' => (object)[11, 22, 33],
+                        'c' => (object)[111, 222, 333],
+                    ],
+                ],
+                '*.*.0',
+                [1, 11, 111],
+            ],
+            [
+                [
+                    [
+                        [
+                            'a' => (object)[1, 2, 3],
+                            'b' => [11, 22, 33],
+                            'c' => [111, 222, 333],
+                        ],
+                    ],
+                    [
+                        [
+                            'a' => (object)[4, 5],
+                            'b' => [44, 55],
+                            'c' => [444, 555],
+                        ],
+                    ],
+                ],
+                '*.*.a',
+                [(object)[1, 2, 3], (object)[4, 5]],
+            ],
+            [
+                [
+                    [
+                        (object)[
+                            'a' => [1, 2, 3],
+                            'b' => [11, 22, 33],
+                            'c' => [111, 222, 333],
+                        ],
+                    ],
+                    [
+                        (object)[
+                            'a' => [4, 5],
+                            'b' => [44, 55],
+                            'c' => [444, 555],
+                        ],
+                    ],
+                ],
+                '*.*.a.0',
+                [1, 2, 3],
+            ],
+            [
+                [
+                    [
+                        (object)[
+                            'a' => [1, 2, 3],
+                            'b' => [11, 22, 33],
+                            'c' => [111, 222, 333],
+                        ],
+                    ],
+                    [
+                        (object)[
+                            'a' => [4, 5],
+                            'b' => [44, 55],
+                            'c' => [444, 555],
+                        ],
+                    ],
+                ],
+                '*.*.a.*.1',
+                [2, 5],
+            ],
+            [
+                [
+                    [
+                        (object)[
+                            'a' => [1, 2, 3],
+                            'b' => [11, 22, 33],
+                            'c' => [111, 222, 333],
+                        ],
+                    ],
+                    [
+                        (object)[
+                            'a' => [4, 5],
+                            'b' => [44, 55],
+                            'c' => [444, 555],
+                        ],
+                    ],
+                ],
+                '*.*.b.|.1',
+                [44, 55],
+            ],
+            [
+                (object)[
+                    'first' => [
+                        [
+                            [
+                                'a' => [],
+                                'b' => ['aaa'],
+                                'c' => ['bbb'],
+                            ],
+                        ],
+                    ],
+                    'second' => [
+                        [
+                            [
+                                (object)[1, 2, 3],
+                                (object)[11, 22, 33],
+                                (object)[111, 222, 333],
+                            ],
+                            [
+                                [1111],
+                                [11111],
+                            ],
+                        ],
+                        [
+                            [
+                                [111111],
+                                [1111111],
+                            ],
+                        ],
+                    ],
+                ],
+                'second.*.*.*.0',
+                [1, 11, 111, 1111, 11111, 111111, 1111111],
+            ],
+            [
+                (object)[
+                    'a' => [
+                        [
+                            'b' => [
+                                [
+                                    'c' => [
+                                        (object)[
+                                            'd' => 1,
+                                            'e' => [1, 2, 3],
+                                        ]
+                                    ],
+                                    'f' => [
+                                        (object)[
+                                            'd' => 2,
+                                            'e' => [4, 5, 6],
+                                        ]
+                                    ],
+                                ],
+                            ],
+                            'i' => [
+                                [
+                                    'j' => [
+                                        (object)[
+                                            'd' => 3,
+                                            'e' => [7, 8, 9],
+                                        ]
+                                    ]
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'a.*****.d',
+                [1, 2, 3],
+            ],
+            [
+                [
+                    'a' => [
+                        [
+                            'b' => [
+                                [
+                                    'c' => [
+                                        [
+                                            'd' => 1,
+                                            'e' => [1, 2, 3],
+                                        ]
+                                    ],
+                                    'f' => [
+                                        [
+                                            'd' => 2,
+                                            'e' => [4, 5, 6],
+                                        ]
+                                    ],
+                                ],
+                            ],
+                            'i' => [
+                                [
+                                    'j' => [
+                                        [
+                                            'd' => 3,
+                                            'e' => [7, 8, 9],
+                                        ]
+                                    ]
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'a.*****.e',
+                [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+            ],
+            [
+                [
+                    'a' => [
+                        [
+                            'b' => [
+                                [
+                                    'c' => [
+                                        (object)[
+                                            'd' => 1,
+                                            'e' => [1, 2, 3],
+                                        ]
+                                    ],
+                                    'f' => [
+                                        (object)[
+                                            'd' => 2,
+                                            'e' => [4, 5, 6],
+                                        ]
+                                    ],
+                                ],
+                            ],
+                            'i' => [
+                                [
+                                    'j' => [
+                                        (object)[
+                                            'd' => 3,
+                                            'e' => [7, 8, 9],
+                                        ]
+                                    ]
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'a.*****.|.1.e',
+                [4, 5, 6],
+            ],
+        ];
+    }
+
+    public function dataProviderForStrictErrorArray(): array
     {
         return [
             [
@@ -1180,7 +1717,7 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
         ];
     }
 
-    public function dataProviderForNonStrict(): array
+    public function dataProviderForNonStrictArray(): array
     {
         return [
             [
