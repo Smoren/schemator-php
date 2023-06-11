@@ -40,6 +40,32 @@ class ObjectAccessHelper
     }
 
     /**
+     * Returns reference to the object property.
+     *
+     * @param object $object
+     * @param string $propertyName
+     * @param mixed $defaultValue
+     *
+     * @return mixed
+     *
+     * @throws \InvalidArgumentException
+     */
+    public static function &getPropertyRef(object &$object, string $propertyName, $defaultValue = null)
+    {
+        if (static::hasPublicProperty($object, $propertyName)) {
+            return $object->{$propertyName};
+        }
+
+        if ($object instanceof stdClass) {
+            $object->{$propertyName} = $defaultValue;
+            return $object->{$propertyName};
+        }
+
+        $className = get_class($object);
+        throw new \InvalidArgumentException("Property '{$className}::{$propertyName}' is not readable");
+    }
+
+    /**
      * Returns value of the object property.
      *
      * Can access property by its name or by getter.

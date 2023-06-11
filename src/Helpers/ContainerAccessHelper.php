@@ -28,7 +28,7 @@ class ContainerAccessHelper
      *
      * @return TValue|null
      *
-     * @throws \UnexpectedValueException
+     * @throws \InvalidArgumentException
      */
     public static function get($container, $key, $defaultValue = null)
     {
@@ -45,6 +45,31 @@ class ContainerAccessHelper
     }
 
     /**
+     * Returns value from the container by key (sets and returns default value if key does not exist).
+     *
+     * @param array<TKey, TValue>|ArrayAccess<TKey, TValue>|object|mixed $container
+     * @param TKey $key
+     * @param TValue|null $defaultValue
+     *
+     * @return TValue|null
+     *
+     * @throws \InvalidArgumentException
+     */
+    public static function &getRef(&$container, $key, $defaultValue = null)
+    {
+        switch (true) {
+            case is_array($container):
+                return static::getRefFromArray($container, $key, $defaultValue);
+            case $container instanceof ArrayAccess:
+                return static::getRefFromArrayAccess($container, $key, $defaultValue);
+            case is_object($container):
+                return static::getRefFromObject($container, $key, $defaultValue);
+        }
+
+        return $defaultValue;
+    }
+
+    /**
      * Sets value to the container by key.
      *
      * @param array<TKey, TValue>|ArrayAccess<TKey, TValue>|object $container
@@ -53,7 +78,6 @@ class ContainerAccessHelper
      *
      * @return void
      *
-     * @throws \UnexpectedValueException
      * @throws \InvalidArgumentException
      */
     public static function set(&$container, $key, $value): void
@@ -112,6 +136,24 @@ class ContainerAccessHelper
     }
 
     /**
+     * Returns reference to value from the array by key (sets and returns default value if key does not exist).
+     *
+     * @param array<TKey, TValue> $container
+     * @param TKey $key
+     * @param TValue|null $defaultValue
+     *
+     * @return TValue|null
+     */
+    protected static function &getRefFromArray(array &$container, $key, $defaultValue)
+    {
+        if (!static::existsInArray($container, $key)) {
+            $container[$key] = $defaultValue;
+        }
+
+        return $container[$key];
+    }
+
+    /**
      * Returns true if the key exists in the array.
      *
      * @param array<TKey, TValue> $container
@@ -143,6 +185,25 @@ class ContainerAccessHelper
     }
 
     /**
+     * Returns reference to value from the ArrayAccess object by key
+     * (sets and returns default value if key does not exist).
+     *
+     * @param ArrayAccess<TKey, TValue> $container
+     * @param TKey $key
+     * @param TValue|null $defaultValue
+     *
+     * @return TValue|null
+     */
+    protected static function &getRefFromArrayAccess(ArrayAccess &$container, $key, $defaultValue)
+    {
+        if (!static::existsInArrayAccess($container, $key)) {
+            $container[$key] = $defaultValue;
+        }
+
+        return $container[$key];
+    }
+
+    /**
      * Returns true if the key exists in the ArrayAccess object.
      *
      * @param ArrayAccess<TKey, TValue> $container
@@ -164,7 +225,7 @@ class ContainerAccessHelper
      *
      * @return TValue|null
      *
-     * @throws \UnexpectedValueException
+     * @throws \InvalidArgumentException
      */
     protected static function getFromObject(object $container, $key, $defaultValue)
     {
@@ -176,6 +237,22 @@ class ContainerAccessHelper
     }
 
     /**
+     * Returns value from the object by key or default value if key does not exist.
+     *
+     * @param object $container
+     * @param TKey $key
+     * @param TValue|null $defaultValue
+     *
+     * @return TValue|null
+     *
+     * @throws \InvalidArgumentException
+     */
+    protected static function &getRefFromObject(object &$container, $key, $defaultValue)
+    {
+        return ObjectAccessHelper::getPropertyRef($container, $key, $defaultValue);
+    }
+
+    /**
      * Sets property value to the object if it is writable by name or by setter.
      *
      * @param object $container
@@ -184,13 +261,13 @@ class ContainerAccessHelper
      *
      * @return void
      *
-     * @throws \UnexpectedValueException
+     * @throws \InvalidArgumentException
      */
     protected static function setToObject(object $container, $key, $value): void
     {
         if (!ObjectAccessHelper::hasWritableProperty($container, strval($key)) && !($container instanceof stdClass)) {
             $className = get_class($container);
-            throw new \UnexpectedValueException("Property '{$className}::{$key}' is not writable");
+            throw new \InvalidArgumentException("Property '{$className}::{$key}' is not writable");
         }
 
         ObjectAccessHelper::setPropertyValue($container, strval($key), $value);

@@ -30,7 +30,7 @@ class NestedAccessor
      */
     public function get($path = null, bool $strict = true)
     {
-        return $this->getInternal($this->source, $this->getPathArray($path), $strict);
+        return $this->getInternal($this->source, $this->getPathStack($path), $strict);
     }
 
     /**
@@ -60,19 +60,26 @@ class NestedAccessor
         }
     }
 
+    public function set($path, $value): self
+    {
+        $source = &$this->getRef($this->getPathStack($path));
+        $source = $value;
+        return $this;
+    }
+
     /**
      * @param mixed $carry
-     * @param string[] $pathToTravel
+     * @param string[] $pathStack
      * @param bool $strict
      * @return mixed
      * @throws PathException
      */
-    protected function getInternal($carry, array $pathToTravel, bool $strict)
+    protected function getInternal($carry, array $pathStack, bool $strict)
     {
         $traveledPath = [];
         $isResultMultiple = false;
-        while (count($pathToTravel)) {
-            $key = array_pop($pathToTravel);
+        while (count($pathStack)) {
+            $key = array_pop($pathStack);
             $prevKey = count($traveledPath)
                 ? $traveledPath[count($traveledPath) - 1]
                 : null;
@@ -85,7 +92,7 @@ class NestedAccessor
 
             if (preg_match('/^[*]+$/', $key)) {
                 for ($i = 0; $i < strlen($key) - 1; ++$i) {
-                    $pathToTravel[] = '*';
+                    $pathStack[] = '*';
                 }
                 $key = '*';
             }
@@ -151,10 +158,39 @@ class NestedAccessor
     }
 
     /**
+     * @param string[] $pathStack
+     * @return mixed
+     */
+    protected function &getRef(array $pathStack)
+    {
+        $source = &$this->source;
+
+        while (count($pathStack)) {
+            $pathItem = array_pop($pathStack);
+            $source = &ContainerAccessHelper::getRef($source, $pathItem, []);
+
+            if (count($pathStack) && is_scalar($source)) {
+                $source = [];
+            }
+        }
+
+        return $source;
+    }
+
+    /**
      * @param string|string[]|null $path
      * @return string[]
      */
-    protected function getPathArray($path): array
+    protected function getPathStack($path): array
+    {
+        return array_reverse($this->getPathList($path));
+    }
+
+    /**
+     * @param string|string[]|null $path
+     * @return string[]
+     */
+    protected function getPathList($path): array
     {
         if ($path === null) {
             return [];
@@ -173,7 +209,7 @@ class NestedAccessor
             throw new \InvalidArgumentException("Path must be numeric, string or array, {$type} given");
         }
 
-        return array_reverse($path);
+        return $path;
     }
 
     /**
