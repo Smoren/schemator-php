@@ -78,6 +78,18 @@ class NestedAccessor
 
     /**
      * @param string|string[]|null $path
+     * @return $this
+     */
+    public function delete($path): self
+    {
+        [$key, $path] = $this->explodePathHead($path);
+        $source = &$this->getRef($this->getPathStack($path));
+        unset($source[$key]);
+        return $this;
+    }
+
+    /**
+     * @param string|string[]|null $path
      * @param mixed $value
      * @return $this
      */
@@ -97,9 +109,19 @@ class NestedAccessor
     protected function checkIsArray($path): void
     {
         if (!$this->exist($path) || !is_array($this->get($path))) {
-            $path = $this->getPathList($path);
-            throw new PathNotArrayException(strval(array_pop($path)), $path, $this->pathDelimiter);
+            [$key, $path] = $this->explodePathHead($path);
+            throw new PathNotArrayException($key, $path, $this->pathDelimiter);
         }
+    }
+
+    /**
+     * @param string|string[]|null $path
+     * @return array{string, string[]}
+     */
+    protected function explodePathHead($path): array
+    {
+        $path = $this->getPathList($path);
+        return [strval(array_pop($path)), $path];
     }
 
     /**

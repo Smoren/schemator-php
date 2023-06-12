@@ -7,9 +7,9 @@ use Smoren\Schemator\Components\NestedAccessor;
 class NestedAccessorSetTest extends \Codeception\Test\Unit
 {
     /**
-     * @dataProvider dataProviderForArray
+     * @dataProvider dataProviderForSetArray
      */
-    public function testArray($source, $path, $value, $expected)
+    public function testSetArray($source, $path, $value, $expected)
     {
         // Given
         $accessor = new NestedAccessor($source);
@@ -19,6 +19,21 @@ class NestedAccessorSetTest extends \Codeception\Test\Unit
 
         // Then
         $this->assertSame($value, $accessor->get($path));
+        $this->assertEquals($expected, $source);
+    }
+
+    /**
+     * @dataProvider dataProviderForDeleteArray
+     */
+    public function testDeleteArray($source, $path, $expected)
+    {
+        // Given
+        $accessor = new NestedAccessor($source);
+
+        // When
+        $accessor->delete($path);
+
+        // Then
         $this->assertEquals($expected, $source);
     }
 
@@ -37,7 +52,7 @@ class NestedAccessorSetTest extends \Codeception\Test\Unit
         $this->assertEquals($expected, $source);
     }
 
-    public function dataProviderForArray(): array
+    public function dataProviderForSetArray(): array
     {
         return [
             [
@@ -99,6 +114,37 @@ class NestedAccessorSetTest extends \Codeception\Test\Unit
                 ['a', 'b', 'd'],
                 [1],
                 ['a' => ['b' => ['c' => [0], 'd' => [1]]]],
+            ],
+        ];
+    }
+
+    public function dataProviderForDeleteArray(): array
+    {
+        return [
+            [
+                ['a' => []],
+                'a',
+                [],
+            ],
+            [
+                ['a' => [1]],
+                'a',
+                [],
+            ],
+            [
+                ['a' => ['b' => ['c' => [1, 2, 3, 4]]]],
+                'a.b.c',
+                ['a' => ['b' => []]],
+            ],
+            [
+                ['a' => ['b' => ['c' => [1, 2, 3, 4], 'd' => 1]]],
+                'a.b.c',
+                ['a' => ['b' => ['d' => 1]]],
+            ],
+            [
+                ['a' => ['b' => ['c' => [1, 2, 3, 4]]]],
+                'a.b',
+                ['a' => []],
             ],
         ];
     }
