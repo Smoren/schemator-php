@@ -5,8 +5,12 @@ namespace Smoren\Schemator\Components;
 use Smoren\Schemator\Exceptions\PathNotArrayException;
 use Smoren\Schemator\Exceptions\PathNotExistException;
 use Smoren\Schemator\Helpers\ContainerAccessHelper;
+use Smoren\Schemator\Interfaces\NestedAccessorInterface;
 
-class NestedAccessor
+/**
+ * @implements NestedAccessorInterface<string|string[]|null>
+ */
+class NestedAccessor implements NestedAccessorInterface
 {
     /**
      * @var array<mixed>|object
@@ -18,6 +22,8 @@ class NestedAccessor
     protected string $pathDelimiter;
 
     /**
+     * NestedAccessor contructor.
+     *
      * @param array<mixed>|object $source
      * @param non-empty-string $pathDelimiter
      */
@@ -28,18 +34,7 @@ class NestedAccessor
     }
 
     /**
-     * @param string|string[]|null $path
-     * @return mixed
-     * @throws PathNotExistException
-     */
-    public function get($path = null, bool $strict = true)
-    {
-        return $this->getInternal($this->source, $this->getPathStack($path), $strict);
-    }
-
-    /**
-     * @param string|string[]|null $path
-     * @return bool
+     * {@inheritDoc}
      */
     public function exist($path): bool
     {
@@ -52,8 +47,7 @@ class NestedAccessor
     }
 
     /**
-     * @param string|string[]|null $path
-     * @return bool
+     * {@inheritDoc}
      */
     public function isset($path): bool
     {
@@ -65,76 +59,15 @@ class NestedAccessor
     }
 
     /**
-     * @param string|string[]|null $path
-     * @param mixed $value
-     * @return $this
+     * {@inheritDoc}
      */
-    public function set($path, $value): self
+    public function get($path = null, bool $strict = true)
     {
-        $source = &$this->getRef($this->getPathStack($path));
-        $source = $value;
-        return $this;
-    }
-
-    /**
-     * @param string|string[]|null $path
-     * @return $this
-     */
-    public function delete($path): self
-    {
-        [$key, $path] = $this->explodePathHead($path);
-        $source = &$this->getRef($this->getPathStack($path));
-        unset($source[$key]);
-        return $this;
-    }
-
-    /**
-     * @param string|string[]|null $path
-     * @param mixed $value
-     * @return $this
-     */
-    public function append($path, $value): self
-    {
-        $this->checkIsArray($path);
-        /** @var array<mixed> $source */
-        $source = &$this->getRef($this->getPathStack($path));
-        $source[] = $value;
-        return $this;
-    }
-
-    /**
-     * @param string|string[]|null $path
-     * @return void
-     */
-    protected function checkIsArray($path): void
-    {
-        if (!$this->exist($path) || !is_array($this->get($path))) {
-            [$key, $path] = $this->explodePathHead($path);
-            throw new PathNotArrayException($key, $path, $this->pathDelimiter);
-        }
-    }
-
-    /**
-     * @param string|string[]|null $path
-     * @return array{string, string[]}
-     */
-    protected function explodePathHead($path): array
-    {
-        $path = $this->getPathList($path);
-        return [strval(array_pop($path)), $path];
-    }
-
-    /**
-     * @param mixed $carry
-     * @param string[] $pathStack
-     * @param bool $strict
-     * @return mixed
-     * @throws PathNotExistException
-     */
-    protected function getInternal($carry, array $pathStack, bool $strict)
-    {
+        $carry = $this->source;
+        $pathStack = $this->getPathStack($path);
         $traveledPath = [];
         $isResultMultiple = false;
+
         while (count($pathStack)) {
             $key = array_pop($pathStack);
             $prevKey = count($traveledPath)
@@ -213,6 +146,88 @@ class NestedAccessor
         }
 
         return $carry;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function set($path, $value): self
+    {
+        $source = &$this->getRef($this->getPathStack($path));
+        $source = $value;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function update($path, $value): self
+    {
+        $this->checkExist($path);
+
+        return $this->set($path, $value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function append($path, $value): self
+    {
+        $this->checkIsArrayAccessible($path);
+
+        /** @var array<mixed> $source */
+        $source = &$this->getRef($this->getPathStack($path));
+        $source[] = $value;
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function delete($path, bool $strict = true): self
+    {
+        $strict && $this->checkExist($path);
+
+        [$key, $path] = $this->beheadPath($path);
+        $source = &$this->getRef($this->getPathStack($path));
+        ContainerAccessHelper::delete($source, $key);
+        return $this;
+    }
+
+    /**
+     * @param string|string[]|null $path
+     *
+     * @throws PathNotExistException
+     */
+    protected function checkExist($path): void
+    {
+        $this->get($path);
+    }
+
+    /**
+     * @param string|string[]|null $path
+     *
+     * @return void
+     *
+     * @throws PathNotArrayException
+     */
+    protected function checkIsArrayAccessible($path): void
+    {
+        if (!$this->exist($path) || !ContainerAccessHelper::isArrayAccessible($this->get($path))) {
+            [$key, $path] = $this->beheadPath($path);
+            throw new PathNotArrayException($key, $path, $this->pathDelimiter);
+        }
+    }
+
+    /**
+     * @param string|string[]|null $path
+     * @return array{string, string[]}
+     */
+    protected function beheadPath($path): array
+    {
+        $path = $this->getPathList($path);
+        return [strval(array_pop($path)), $path];
     }
 
     /**

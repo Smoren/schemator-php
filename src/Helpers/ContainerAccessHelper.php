@@ -97,6 +97,32 @@ class ContainerAccessHelper
     }
 
     /**
+     * Deletes key from the container.
+     *
+     * @param array<TKey, TValue>|ArrayAccess<TKey, TValue>|object $container
+     * @param TKey $key
+     *
+     * @return void
+     *
+     * @throws \InvalidArgumentException
+     */
+    public static function delete(&$container, $key): void
+    {
+        switch (true) {
+            case is_array($container):
+            case $container instanceof ArrayAccess:
+                unset($container[$key]);
+                break;
+            case $container instanceof stdClass:
+                unset($container->{$key});
+                break;
+            default:
+                $type = gettype($container);
+                throw new \InvalidArgumentException("Cannot delete key from variable of type '{$type}'");
+        }
+    }
+
+    /**
      * Returns true if the accessible key exists in the container.
      *
      * @param array<TKey, TValue>|ArrayAccess<TKey, TValue>|object|mixed $container
@@ -115,6 +141,15 @@ class ContainerAccessHelper
                 return static::existsInObject($container, $key);
         }
         return false;
+    }
+
+    /**
+     * @param mixed $container
+     * @return bool
+     */
+    public static function isArrayAccessible($container): bool
+    {
+        return is_array($container) || ($container instanceof ArrayAccess);
     }
 
     /**
