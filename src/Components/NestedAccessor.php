@@ -249,15 +249,6 @@ class NestedAccessor
     }
 
     /**
-     * @param string[] $path
-     * @return string
-     */
-    protected function getPathString(array $path): string
-    {
-        return implode($this->pathDelimiter, $path);
-    }
-
-    /**
      * @param string $key
      * @param string[] $path
      * @param bool $isResultMultiple
