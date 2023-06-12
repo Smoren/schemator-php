@@ -6,7 +6,14 @@ use Smoren\Schemator\Exceptions\PathNotArrayException;
 use Smoren\Schemator\Exceptions\PathNotExistException;
 
 /**
+ * Nested accessor tool interface.
+ *
  * @template TPath of string|string[]|null
+ *
+ * Path delimiter for nested levels:
+ * - dot character by default (example path: `"city.id"`)
+ * - your custom character or string can be used as delimiter (example pathes: `"city/id"`, `"city[:]id"`)
+ * - custom delimiter can be passed as optional param to the constructor of this interface implementation.
  *
  * Examples paths:
  * - `""` or `null` or `[]` — get root container.
@@ -54,6 +61,7 @@ interface NestedAccessorInterface
      * - `""` or `null` or `[]` (for getting root container)
      * - `"city.country.name"` or `["city", "country", "name"]`
      * - `"country.cities.*.name"` or `["country", "cities", "*", "name"]`
+     * - `"country.cities.*.|.0.name"` or `["country", "cities", "*", "|", 0, "name"]`
      * - `"*.prices.*.*.value"` or `"*.prices.**.value"` or `["*", "prices", "*", "*", "value"]`
      *
      * @param TPath $path
