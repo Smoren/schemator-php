@@ -197,6 +197,7 @@ class ContainerAccessHelper
     protected static function &getRefFromArrayAccess(ArrayAccess &$container, $key, $defaultValue)
     {
         if (!static::existsInArrayAccess($container, $key)) {
+            /** @var TValue $defaultValue */
             $container[$key] = $defaultValue;
         }
 
@@ -249,7 +250,7 @@ class ContainerAccessHelper
      */
     protected static function &getRefFromObject(object &$container, $key, $defaultValue)
     {
-        return ObjectAccessHelper::getPropertyRef($container, $key, $defaultValue);
+        return ObjectAccessHelper::getPropertyRef($container, strval($key), $defaultValue);
     }
 
     /**

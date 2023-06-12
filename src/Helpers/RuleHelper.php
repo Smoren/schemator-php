@@ -1,6 +1,6 @@
 <?php
 
-namespace Smoren\Schemator\Util;
+namespace Smoren\Schemator\Helpers;
 
 /**
  * @internal
@@ -20,11 +20,13 @@ class RuleHelper
     {
         switch ($rule) {
             case '=':
+                // @phpstan-ignore-next-line
                 if (strval($value) === strval($args[0])) {
                     return true;
                 }
                 break;
             case '!=':
+                // @phpstan-ignore-next-line
                 if (strval($value) !== strval($args[0])) {
                     return true;
                 }

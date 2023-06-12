@@ -3,9 +3,9 @@
 namespace Smoren\Schemator\Filters;
 
 use ArrayIterator;
-use Smoren\Schemator\Util\ArrayHelper;
-use Smoren\Schemator\Util\RuleHelper;
 use Smoren\Schemator\Exceptions\SchematorException;
+use Smoren\Schemator\Helpers\ArrayHelper;
+use Smoren\Schemator\Helpers\RuleHelper;
 use Smoren\Schemator\Interfaces\FilterContextInterface;
 use Smoren\Schemator\Interfaces\FiltersStorageInterface;
 
@@ -53,6 +53,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
             throw SchematorException::createAsBadFilterSource($context);
         }
         if ($timezone === null) {
+            /** @var numeric $source */
             return date($format, intval($source));
         }
         return gmdate($format, $source + 3600 * $timezone);

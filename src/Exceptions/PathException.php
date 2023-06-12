@@ -2,19 +2,29 @@
 
 namespace Smoren\Schemator\Exceptions;
 
-class PathException extends \OutOfBoundsException
+abstract class PathException extends \OutOfBoundsException
 {
+    /**
+     * @var string
+     */
     protected string $key;
+    /**
+     * @var string[]
+     */
     protected array $path;
+    /**
+     * @var non-empty-string
+     */
     protected string $pathDelimiter;
 
     /**
      * @param string $key
-     * @param array $path
-     * @param string $pathDelimiter
+     * @param string[] $path
+     * @param non-empty-string $pathDelimiter
      */
     public function __construct(string $key, array $path, string $pathDelimiter)
     {
+        parent::__construct();
         $this->key = $key;
         $this->path = $path;
         $this->pathDelimiter = $pathDelimiter;

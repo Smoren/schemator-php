@@ -1,6 +1,6 @@
 <?php
 
-namespace Smoren\Schemator\Util;
+namespace Smoren\Schemator\Helpers;
 
 /**
  * @internal

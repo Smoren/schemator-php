@@ -3,7 +3,7 @@
 namespace Smoren\Schemator\Tests\Unit\NestedAccessor;
 
 use Smoren\Schemator\Components\NestedAccessor;
-use Smoren\Schemator\Exceptions\PathException;
+use Smoren\Schemator\Exceptions\PathNotExistException;
 
 class NestedAccessorGetTest extends \Codeception\Test\Unit
 {
@@ -37,7 +37,7 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
             // When
             $accessor->get($path);
             $this->fail();
-        } catch (PathException $e) {
+        } catch (PathNotExistException $e) {
             // Then
             $this->assertSame("Key '{$expected[0]}' is not found on path '{$expected[1]}'", $e->getMessage());
             $this->assertSame($expected, [$e->getKey(), $e->getPathString()]);
