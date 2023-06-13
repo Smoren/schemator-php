@@ -94,7 +94,8 @@ class NestedAccessor implements NestedAccessorInterface
 
                 $result = [];
 
-                if ($prevKey === '*') {
+                //if (true || $prevKey === '*') {
+                if (count($traveledPath) > 0) {
                     foreach ($carry as $item) {
                         if (!is_iterable($item)) {
                             if ($strict) {
@@ -119,7 +120,7 @@ class NestedAccessor implements NestedAccessorInterface
                 continue;
             }
 
-            if ($prevKey === '*') {
+            if ($isResultMultiple) {
                 $result = [];
                 /** @var iterable<mixed> $carry */
                 foreach ($carry as $item) {

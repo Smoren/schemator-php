@@ -9,9 +9,9 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
 {
     /**
      * @dataProvider dataProviderForStrictSuccessArray
-     * @dataProvider dataProviderForStrictSuccessArrayObject
-     * @dataProvider dataProviderForStrictSuccessStdClass
-     * @dataProvider dataProviderForStrictSuccessCitiesExample
+     * @ dataProvider dataProviderForStrictSuccessArrayObject
+     * @ dataProvider dataProviderForStrictSuccessStdClass
+     * @ dataProvider dataProviderForStrictSuccessCitiesExample
      */
     public function testStrictSuccess($source, $path, $expected)
     {
@@ -153,23 +153,13 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
                 [1, 2, 'a' => 3],
             ],
             [
-                [1, 2, 3, 'a' => [1, 2, 'a' => 3]],
+                [1, 2, 3, 'a' => ['b' => [11, 12], 'c' => [22, 23]]],
                 'a.*',
-                [1, 2, 3],
+                [11, 12, 22, 23],
             ],
             [
-                [1, 2, 3, 'a' => ['b' => 11, 'c' => 22]],
-                'a.*',
-                [11, 22],
-            ],
-            [
-                [1, 2, 3, 'a' => ['b' => [11], 'c' => [22]]],
-                'a.*',
-                [[11], [22]],
-            ],
-            [
-                [1, 2, 3, 'a' => ['b' => [11], 'c' => [22]]],
-                'a.*.0',
+                [1, 2, 3, 'a' => ['b' => [11, 12], 'c' => [22, 23]]],
+                'a.0',
                 [11, 22],
             ],
             [
@@ -2746,6 +2736,133 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
                 $cities,
                 '0.name.*',
                 null,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForExampleSingle
+     * @dataProvider dataProviderForExampleMultipleIndexed
+     */
+    public function testExamples($source, $path, $expected)
+    {
+        // Given
+        $accessor = new NestedAccessor($source);
+
+        // When
+        $actual = $accessor->get($path);
+
+        // Then
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function dataProviderForExampleSingle(): array
+    {
+        $source = [1, 2, 3, 'a' => ['b' => [[11, 22]], 'c' => [[33, 44]]]];
+
+        return [
+            [
+                $source,
+                'a',
+                ['b' => [[11, 22]], 'c' => [[33, 44]]],
+            ],
+            [
+                $source,
+                'a.*',
+                [[11, 22], [33, 44]],
+            ],
+            [
+                $source,
+                'a.*.0',
+                [11, 33],
+            ],
+            [
+                $source,
+                'a.*.|.0',
+                [11, 22],
+            ],
+        ];
+    }
+
+    public function dataProviderForExampleMultipleIndexed(): array
+    {
+        $source = [
+            ['a' => ['b' => [[11, 22]], 'c' => [[33, 44]]]],
+            ['a' => ['b' => [[12, 23]], 'd' => [[34, 45]]]],
+            ['a' => ['b' => [[13, 24]], 'e' => [[35, 46]]]],
+        ];
+
+        return [
+            [
+                $source,
+                '*.a',
+                [
+                    ['b' => [[11, 22]], 'c' => [[33, 44]]],
+                    ['b' => [[12, 23]], 'd' => [[34, 45]]],
+                    ['b' => [[13, 24]], 'e' => [[35, 46]]],
+                ],
+            ],
+            [
+                $source,
+                '*.a.b',
+                [
+                    [[11, 22]],
+                    [[12, 23]],
+                    [[13, 24]],
+                ],
+            ],
+            [
+                $source,
+                '*.a.b.0',
+                [
+                    [11, 22],
+                    [12, 23],
+                    [13, 24],
+                ],
+            ],
+            [
+                $source,
+                '*.a.b.|.0',
+                [[11, 22]],
+            ],
+            [
+                $source,
+                '*.a.b.*',
+                [
+                    [11, 22],
+                    [12, 23],
+                    [13, 24],
+                ],
+            ],
+            [
+                $source,
+                '*.a.b.*.0',
+                [11, 12, 13],
+            ],
+            [
+                $source,
+                '*.a.b.*.1',
+                [22, 23, 24],
+            ],
+            [
+                $source,
+                '*.a.b.*.*',
+                [11, 22, 12, 23, 13, 24],
+            ],
+            [
+                $source,
+                '*.a.b.*.|.0',
+                [11, 22],
+            ],
+            [
+                $source,
+                '*.a.b.*.|.1',
+                [12, 23],
+            ],
+            [
+                $source,
+                '*.a.b.*.|.2',
+                [13, 24],
             ],
         ];
     }
