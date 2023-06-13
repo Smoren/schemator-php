@@ -209,8 +209,9 @@ class Schemator implements SchematorInterface
      */
     protected function runFilter(array $filterConfig, $source, $rootSource)
     {
-        // @phpstan-ignore-next-line
-        $filterName = strval(array_shift($filterConfig));
+        /** @var scalar $filterName */
+        $filterName = array_shift($filterConfig);
+        $filterName = strval($filterName);
 
         if (
             !isset($this->filterMap[$filterName])

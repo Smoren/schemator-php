@@ -20,14 +20,22 @@ class RuleHelper
     {
         switch ($rule) {
             case '=':
-                // @phpstan-ignore-next-line
-                if (strval($value) === strval($args[0])) {
+                /**
+                 * @var scalar $lhs
+                 * @var scalar $rhs
+                 */
+                [$lhs, $rhs] = [$value, $args[0]];
+                if (strval($lhs) === strval($rhs)) {
                     return true;
                 }
                 break;
             case '!=':
-                // @phpstan-ignore-next-line
-                if (strval($value) !== strval($args[0])) {
+                /**
+                 * @var scalar $lhs
+                 * @var scalar $rhs
+                 */
+                [$lhs, $rhs] = [$value, $args[0]];
+                if (strval($lhs) !== strval($rhs)) {
                     return true;
                 }
                 break;

@@ -185,16 +185,19 @@ class NestedAccessor implements NestedAccessorInterface
     {
         $strict && $this->checkExist($path);
 
-        [$key, $path] = $this->beheadPath($path);
+        [$key, $path] = $this->cutPathTail($path);
         $source = &$this->getRef($this->getPathStack($path));
         ContainerAccessHelper::delete($source, $key);
         return $this;
     }
 
     /**
+     * Checks if given path exist in container.
+     *
      * @param string|string[]|null $path
      *
-     * @throws PathNotExistException
+     * @throws PathNotExistException when path does not exist in container.
+     * @throws \InvalidArgumentException when invalid path passed.
      */
     protected function checkExist($path): void
     {
@@ -202,33 +205,50 @@ class NestedAccessor implements NestedAccessorInterface
     }
 
     /**
+     * Check if value by given path is array or ArrayAccess instance.
+     *
      * @param string|string[]|null $path
      *
      * @return void
      *
-     * @throws PathNotArrayException
+     * @throws PathNotArrayException if path is not an array or ArrayAccess instance.
+     * @throws \InvalidArgumentException when invalid path passed.
      */
     protected function checkIsArrayAccessible($path): void
     {
         if (!$this->exist($path) || !ContainerAccessHelper::isArrayAccessible($this->get($path))) {
-            [$key, $path] = $this->beheadPath($path);
+            [$key, $path] = $this->cutPathTail($path);
             throw new PathNotArrayException($key, $path, $this->pathDelimiter);
         }
     }
 
     /**
+     * Cuts last key from given path.
+     *
+     * Returns array of last key and truncated path.
+     *
      * @param string|string[]|null $path
-     * @return array{string, string[]}
+     *
+     * @return array{string, string[]} [lastKey, truncatedPath]
+     *
+     * @throws \InvalidArgumentException when invalid path passed.
      */
-    protected function beheadPath($path): array
+    protected function cutPathTail($path): array
     {
         $path = $this->getPathList($path);
         return [strval(array_pop($path)), $path];
     }
 
     /**
+     * Returns ref to value stored by given path.
+     *
+     * Creates path if it does not exist.
+     *
      * @param string[] $pathStack
+     *
      * @return mixed
+     *
+     * @throws \InvalidArgumentException when invalid path passed.
      */
     protected function &getRef(array $pathStack)
     {
@@ -247,8 +267,13 @@ class NestedAccessor implements NestedAccessorInterface
     }
 
     /**
+     * Converts given path to stack array.
+     *
      * @param string|string[]|null $path
+     *
      * @return string[]
+     *
+     * @throws \InvalidArgumentException when invalid path passed.
      */
     protected function getPathStack($path): array
     {
@@ -256,8 +281,13 @@ class NestedAccessor implements NestedAccessorInterface
     }
 
     /**
+     * Converts given path to array.
+     *
      * @param string|string[]|mixed|null $path
+     *
      * @return string[]
+     *
+     * @throws \InvalidArgumentException when invalid path passed.
      */
     protected function getPathList($path): array
     {
@@ -282,11 +312,16 @@ class NestedAccessor implements NestedAccessorInterface
     }
 
     /**
+     * Handle path errors.
+     *
      * @param string $key
      * @param string[] $path
      * @param bool $isResultMultiple
      * @param bool $strict
+     *
      * @return null|array{}
+     *
+     * @throws PathNotExistException always in strict mode.
      */
     protected function handleError(string $key, array $path, bool $isResultMultiple, bool $strict): ?array
     {

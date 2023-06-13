@@ -30,6 +30,8 @@ interface NestedAccessorInterface
      * @param TPath $path
      *
      * @return bool
+     *
+     * @throws \InvalidArgumentException when invalid path passed.
      */
     public function exist($path): bool;
 
@@ -42,6 +44,8 @@ interface NestedAccessorInterface
      * @param TPath $path
      *
      * @return bool
+     *
+     * @throws \InvalidArgumentException when invalid path passed.
      */
     public function isset($path): bool;
 
@@ -69,6 +73,7 @@ interface NestedAccessorInterface
      * @return mixed
      *
      * @throws PathNotExistException when path does not exist in container (only in strict mode).
+     * @throws \InvalidArgumentException when invalid path passed.
      */
     public function get($path = null, bool $strict = true);
 
@@ -86,6 +91,8 @@ interface NestedAccessorInterface
      * @param mixed $value
      *
      * @return $this
+     *
+     * @throws \InvalidArgumentException when invalid path passed.
      */
     public function set($path, $value): NestedAccessorInterface;
 
@@ -101,6 +108,7 @@ interface NestedAccessorInterface
      * @return $this
      *
      * @throws PathNotExistException when path does not exist in container.
+     * @throws \InvalidArgumentException when invalid path passed.
      */
     public function update($path, $value): self;
 
@@ -116,6 +124,7 @@ interface NestedAccessorInterface
      * @return $this
      *
      * @throws PathNotArrayException if values stored by path is not an array or ArrayAccess instance.
+     * @throws \InvalidArgumentException when invalid path passed.
      */
     public function append($path, $value): self;
 
@@ -129,6 +138,9 @@ interface NestedAccessorInterface
      * @param bool $strict
      *
      * @return $this
+     *
+     * @throws PathNotExistException when path does not exist in container (in strict mode only).
+     * @throws \InvalidArgumentException when invalid path passed.
      */
     public function delete($path, bool $strict = true): self;
 }
