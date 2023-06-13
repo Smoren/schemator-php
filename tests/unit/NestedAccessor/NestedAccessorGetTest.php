@@ -155,12 +155,12 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
             [
                 [1, 2, 3, 'a' => ['b' => [11, 12], 'c' => [22, 23]]],
                 'a.*',
-                [11, 12, 22, 23],
+                [[11, 12], [22, 23]],
             ],
             [
                 [1, 2, 3, 'a' => ['b' => [11, 12], 'c' => [22, 23]]],
-                'a.0',
-                [11, 22],
+                'a.*.|.0',
+                [11, 12],
             ],
             [
                 [1, 2, 3, 'a' => ['b' => [11], 'c' => [22]]],
@@ -178,6 +178,11 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
                 [11, 22, 33, 44],
             ],
             [
+                [1, 2, 3, 'a' => ['b' => [11, 22], 'c' => [33, 44]]],
+                'a.*.0',
+                [11, 33],
+            ],
+            [
                 [1, 2, 3, 'a' => [[11, 22], [33, 44]]],
                 'a.*',
                 [[11, 22], [33, 44]],
@@ -190,16 +195,16 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
             [
                 [1, 2, 3, 'a' => ['b' => [[11, 22]], 'c' => [[33, 44]]]],
                 'a.*.0.0',
-                [11, 22],
+                [11, 33],
             ],
             [
                 [1, 2, 3, 'a' => ['b' => [[11, 22]], 'c' => [[33, 44]]]],
-                'a.*.0.*.*',
+                'a.*.0.*',
                 [11, 22, 33, 44],
             ],
             [
                 [1, 2, 3, 'a' => ['b' => [[11, 22]], 'c' => [[33, 44]]]],
-                'a.*.0.*.1',
+                'a.*.0.1',
                 [22, 44],
             ],
             [
@@ -274,7 +279,7 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
                     'b' => [11, 22, [33]],
                     'c' => [111, 222, [333]],
                 ],
-                ['*', '2', '*', '*'],
+                ['*', '2', '*'],
                 [3, 33, 333],
             ],
             [
@@ -355,7 +360,7 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
                     ],
                 ],
                 '*.*.a.0',
-                [1, 2, 3],
+                [1, 4],
             ],
             [
                 [
@@ -374,8 +379,8 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
                         ],
                     ],
                 ],
-                '*.*.a.*.1',
-                [2, 5],
+                '*.*.a.*',
+                [1, 2, 3, 4, 5],
             ],
             [
                 [
@@ -481,7 +486,7 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
                         ],
                     ],
                 ],
-                'second.*.*.0.*.0',
+                'second.*.*.0.0',
                 [1, 1111, 111111],
             ],
             [
@@ -515,7 +520,7 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
                         ],
                     ],
                 ],
-                'second.*.*.0.*.*',
+                'second.*.*.0.*',
                 [1, 2, 3, 1111, 111111],
             ],
             [
@@ -2769,16 +2774,26 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
             [
                 $source,
                 'a.*',
-                [[11, 22], [33, 44]],
+                [[[11, 22]], [[33, 44]]],
             ],
             [
                 $source,
                 'a.*.0',
+                [[11, 22], [33, 44]],
+            ],
+            [
+                $source,
+                'a.*.0.0',
                 [11, 33],
             ],
             [
                 $source,
-                'a.*.|.0',
+                'a.*.0.1',
+                [22, 44],
+            ],
+            [
+                $source,
+                'a.*.0.|.0',
                 [11, 22],
             ],
         ];

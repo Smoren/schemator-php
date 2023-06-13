@@ -95,7 +95,8 @@ class NestedAccessor implements NestedAccessorInterface
                 $result = [];
 
                 //if (true || $prevKey === '*') {
-                if (count($traveledPath) > 0) {
+                //if (count($traveledPath) > 0) {
+                if ($isResultMultiple) {
                     foreach ($carry as $item) {
                         if (!is_iterable($item)) {
                             if ($strict) {
