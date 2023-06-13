@@ -70,10 +70,6 @@ class NestedAccessor implements NestedAccessorInterface
 
         while (count($pathStack)) {
             $key = array_pop($pathStack);
-            $prevKey = count($traveledPath)
-                ? $traveledPath[count($traveledPath) - 1]
-                : null;
-
             if ($key === '|') {
                 $isResultMultiple = false;
                 $traveledPath[] = $key;
@@ -94,8 +90,6 @@ class NestedAccessor implements NestedAccessorInterface
 
                 $result = [];
 
-                //if (true || $prevKey === '*') {
-                //if (count($traveledPath) > 0) {
                 if ($isResultMultiple) {
                     foreach ($carry as $item) {
                         if (!is_iterable($item)) {

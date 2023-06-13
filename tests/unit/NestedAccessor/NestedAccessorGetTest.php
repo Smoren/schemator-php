@@ -8,10 +8,147 @@ use Smoren\Schemator\Exceptions\PathNotExistException;
 class NestedAccessorGetTest extends \Codeception\Test\Unit
 {
     /**
+     * @dataProvider dataProviderForExampleSingle
+     * @dataProvider dataProviderForExampleMultipleIndexed
+     */
+    public function testExamples($source, $path, $expected)
+    {
+        // Given
+        $accessor = new NestedAccessor($source);
+
+        // When
+        $actual = $accessor->get($path);
+
+        // Then
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function dataProviderForExampleSingle(): array
+    {
+        $source = [1, 2, 3, 'a' => ['b' => [[11, 22]], 'c' => [[33, 44]]]];
+
+        return [
+            [
+                $source,
+                'a',
+                ['b' => [[11, 22]], 'c' => [[33, 44]]],
+            ],
+            [
+                $source,
+                'a.*',
+                [[[11, 22]], [[33, 44]]],
+            ],
+            [
+                $source,
+                'a.*.0',
+                [[11, 22], [33, 44]],
+            ],
+            [
+                $source,
+                'a.*.0.0',
+                [11, 33],
+            ],
+            [
+                $source,
+                'a.*.0.1',
+                [22, 44],
+            ],
+            [
+                $source,
+                'a.*.0.|.0',
+                [11, 22],
+            ],
+        ];
+    }
+
+    public function dataProviderForExampleMultipleIndexed(): array
+    {
+        $source = [
+            ['a' => ['b' => [[11, 22]], 'c' => [[33, 44]]]],
+            ['a' => ['b' => [[12, 23]], 'd' => [[34, 45]]]],
+            ['a' => ['b' => [[13, 24]], 'e' => [[35, 46]]]],
+        ];
+
+        return [
+            [
+                $source,
+                '*.a',
+                [
+                    ['b' => [[11, 22]], 'c' => [[33, 44]]],
+                    ['b' => [[12, 23]], 'd' => [[34, 45]]],
+                    ['b' => [[13, 24]], 'e' => [[35, 46]]],
+                ],
+            ],
+            [
+                $source,
+                '*.a.b',
+                [
+                    [[11, 22]],
+                    [[12, 23]],
+                    [[13, 24]],
+                ],
+            ],
+            [
+                $source,
+                '*.a.b.0',
+                [
+                    [11, 22],
+                    [12, 23],
+                    [13, 24],
+                ],
+            ],
+            [
+                $source,
+                '*.a.b.|.0',
+                [[11, 22]],
+            ],
+            [
+                $source,
+                '*.a.b.*',
+                [
+                    [11, 22],
+                    [12, 23],
+                    [13, 24],
+                ],
+            ],
+            [
+                $source,
+                '*.a.b.*.0',
+                [11, 12, 13],
+            ],
+            [
+                $source,
+                '*.a.b.*.1',
+                [22, 23, 24],
+            ],
+            [
+                $source,
+                '*.a.b.*.*',
+                [11, 22, 12, 23, 13, 24],
+            ],
+            [
+                $source,
+                '*.a.b.*.|.0',
+                [11, 22],
+            ],
+            [
+                $source,
+                '*.a.b.*.|.1',
+                [12, 23],
+            ],
+            [
+                $source,
+                '*.a.b.*.|.2',
+                [13, 24],
+            ],
+        ];
+    }
+
+    /**
      * @dataProvider dataProviderForStrictSuccessArray
-     * @ dataProvider dataProviderForStrictSuccessArrayObject
-     * @ dataProvider dataProviderForStrictSuccessStdClass
-     * @ dataProvider dataProviderForStrictSuccessCitiesExample
+     * @dataProvider dataProviderForStrictSuccessArrayObject
+     * @dataProvider dataProviderForStrictSuccessStdClass
+     * @dataProvider dataProviderForStrictSuccessCitiesExample
      */
     public function testStrictSuccess($source, $path, $expected)
     {
@@ -769,16 +906,16 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
             [
                 new \ArrayObject([1, 2, 3, 'a' => ['b' => [[11, 22]], 'c' => [[33, 44]]]]),
                 'a.*.0.0',
-                [11, 22],
+                [11, 33],
             ],
             [
                 new \ArrayObject([1, 2, 3, 'a' => ['b' => [[11, 22]], 'c' => [[33, 44]]]]),
-                'a.*.0.*.*',
+                'a.*.0.*',
                 [11, 22, 33, 44],
             ],
             [
                 new \ArrayObject([1, 2, 3, 'a' => ['b' => [[11, 22]], 'c' => [[33, 44]]]]),
-                'a.*.0.*.1',
+                'a.*.0.1',
                 [22, 44],
             ],
             [
@@ -944,7 +1081,7 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
                     'b' => (object)[11, 22, [33]],
                     'c' => (object)[111, 222, [333]],
                 ],
-                ['*', '2', '*', '*'],
+                ['*', '2', '*'],
                 [3, 33, 333],
             ],
             [
@@ -996,7 +1133,7 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
                     ],
                 ],
                 '*.*.a.0',
-                [1, 2, 3],
+                [1, 4],
             ],
             [
                 [
@@ -1015,7 +1152,7 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
                         ],
                     ],
                 ],
-                '*.*.a.*.1',
+                '*.*.a.1',
                 [2, 5],
             ],
             [
@@ -1258,8 +1395,8 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
             ],
             [
                 [1, 2, 3, 'a' => ['b' => [[11, 22]], 'c' => [[33, 44]]]],
-                'a.*.0.*.*.a',
-                ['a', 'a.*.0.*.*'],
+                'a.*.0.*.a',
+                ['a', 'a.*.0.*'],
             ],
             [
                 [1, 2, 3, 'a' => [1, 2, 'b' => ['c', 'd', 'e']]],
@@ -1310,8 +1447,8 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
                     'b' => [11, 22, 33],
                     'c' => [111, 222, [333]],
                 ],
-                ['*', '2', '*', '*'],
-                ['*', '*.2.*'],
+                ['*', '2', '*'],
+                ['*', '*.2'],
             ],
             [
                 [
@@ -1888,7 +2025,7 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
                     'b' => [11, 22],
                     'c' => [111, 222, [333]],
                 ],
-                ['*', '2', '*', '*'],
+                ['*', '2', '*'],
                 [3, 333],
             ],
             [
@@ -1979,7 +2116,7 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
                         ],
                     ],
                 ],
-                '*.*.z.*.1',
+                '*.*.z.1',
                 [],
             ],
             [
@@ -1999,7 +2136,7 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
                         ],
                     ],
                 ],
-                '*.*.a.*.2',
+                '*.*.a.2',
                 [3],
             ],
             [
@@ -2106,7 +2243,7 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
                         ],
                     ],
                 ],
-                'second.*.*.0.*.1',
+                'second.*.*.0.1',
                 [2, 999],
             ],
             [
@@ -2140,7 +2277,41 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
                         ],
                     ],
                 ],
-                'second.*.*.2.*.*',
+                'second.*.*.2',
+                [[111, 222, 333]],
+            ],
+            [
+                [
+                    'first' => [
+                        [
+                            [
+                                'a' => [],
+                                'b' => ['aaa'],
+                                'c' => ['bbb'],
+                            ],
+                        ],
+                    ],
+                    'second' => [
+                        [
+                            [
+                                [1, 2, 3],
+                                [11, 22, 33],
+                                [111, 222, 333],
+                            ],
+                            [
+                                [1111],
+                                [11111],
+                            ],
+                        ],
+                        [
+                            [
+                                [111111],
+                                [1111111],
+                            ],
+                        ],
+                    ],
+                ],
+                'second.*.*.2.*',
                 [111, 222, 333],
             ],
             [
@@ -2409,7 +2580,7 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
                     'b' => [11, 22],
                     'c' => [111, 222, [333]],
                 ]),
-                ['*', '2', '*', '*'],
+                ['*', '2', '*'],
                 [3, 333],
             ],
             [
@@ -2606,32 +2777,22 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
             ],
             [
                 $cities,
-                '*.country.*.name',
+                '*.country.name',
                 ['UK', 'Germany', 'Spain'],
             ],
             [
                 $cities,
-                '*.streets.*.*.name',
+                '*.streets.*.name',
                 ['Carnaby Street', 'Abbey Road', 'Brick Lane', 'Oderbergerstrasse'],
             ],
             [
                 $cities,
-                '*.streets.**.name',
-                ['Carnaby Street', 'Abbey Road', 'Brick Lane', 'Oderbergerstrasse'],
-            ],
-            [
-                $cities,
-                '*.streets.**.houses.**',
+                '*.streets.*.houses.*',
                 [1, 5, 9, 22, 35, 49, 11, 12, 15, 2, 6, 12],
             ],
             [
                 $cities,
-                '*.streets.**.houses.*',
-                [[1, 5, 9], [22, 35, 49], [11, 12, 15], [2, 6, 12]],
-            ],
-            [
-                $cities,
-                '*.streets.**.houses',
+                '*.streets.*.houses',
                 [[1, 5, 9], [22, 35, 49], [11, 12, 15], [2, 6, 12]],
             ],
         ];
@@ -2694,190 +2855,43 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
             ],
             [
                 $cities,
-                '*.country.*.name',
+                '*.country.name',
                 ['UK', 'Germany', 'Spain'],
             ],
             [
                 $cities,
-                '*.streets.*.*.name',
+                '*.streets.*.name',
                 ['Carnaby Street', 'Abbey Road', 'Brick Lane', 'Oderbergerstrasse'],
             ],
             [
                 $cities,
-                '*.streets.**.name',
-                ['Carnaby Street', 'Abbey Road', 'Brick Lane', 'Oderbergerstrasse'],
-            ],
-            [
-                $cities,
-                '*.streets.**.houses.**',
+                '*.streets.*.houses.*',
                 [1, 5, 9, 22, 35, 49, 2, 6, 12],
             ],
             [
                 $cities,
-                '*.streets.**.houses.*',
+                '*.streets.*.houses',
                 [[1, 5, 9], [22, 35, 49], [2, 6, 12]],
             ],
             [
                 $cities,
-                '*.streets.**.houses',
-                [[1, 5, 9], [22, 35, 49], [2, 6, 12]],
-            ],
-            [
-                $cities,
-                '*.streets.**.test',
+                '*.streets.*.test',
                 [],
             ],
             [
                 $cities,
-                'streets.**.test',
+                'streets.*.test',
                 null,
             ],
             [
                 $cities,
-                '*.name.**.test',
+                '*.name.*.test',
                 [],
             ],
             [
                 $cities,
                 '0.name.*',
                 null,
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider dataProviderForExampleSingle
-     * @dataProvider dataProviderForExampleMultipleIndexed
-     */
-    public function testExamples($source, $path, $expected)
-    {
-        // Given
-        $accessor = new NestedAccessor($source);
-
-        // When
-        $actual = $accessor->get($path);
-
-        // Then
-        $this->assertEquals($expected, $actual);
-    }
-
-    public function dataProviderForExampleSingle(): array
-    {
-        $source = [1, 2, 3, 'a' => ['b' => [[11, 22]], 'c' => [[33, 44]]]];
-
-        return [
-            [
-                $source,
-                'a',
-                ['b' => [[11, 22]], 'c' => [[33, 44]]],
-            ],
-            [
-                $source,
-                'a.*',
-                [[[11, 22]], [[33, 44]]],
-            ],
-            [
-                $source,
-                'a.*.0',
-                [[11, 22], [33, 44]],
-            ],
-            [
-                $source,
-                'a.*.0.0',
-                [11, 33],
-            ],
-            [
-                $source,
-                'a.*.0.1',
-                [22, 44],
-            ],
-            [
-                $source,
-                'a.*.0.|.0',
-                [11, 22],
-            ],
-        ];
-    }
-
-    public function dataProviderForExampleMultipleIndexed(): array
-    {
-        $source = [
-            ['a' => ['b' => [[11, 22]], 'c' => [[33, 44]]]],
-            ['a' => ['b' => [[12, 23]], 'd' => [[34, 45]]]],
-            ['a' => ['b' => [[13, 24]], 'e' => [[35, 46]]]],
-        ];
-
-        return [
-            [
-                $source,
-                '*.a',
-                [
-                    ['b' => [[11, 22]], 'c' => [[33, 44]]],
-                    ['b' => [[12, 23]], 'd' => [[34, 45]]],
-                    ['b' => [[13, 24]], 'e' => [[35, 46]]],
-                ],
-            ],
-            [
-                $source,
-                '*.a.b',
-                [
-                    [[11, 22]],
-                    [[12, 23]],
-                    [[13, 24]],
-                ],
-            ],
-            [
-                $source,
-                '*.a.b.0',
-                [
-                    [11, 22],
-                    [12, 23],
-                    [13, 24],
-                ],
-            ],
-            [
-                $source,
-                '*.a.b.|.0',
-                [[11, 22]],
-            ],
-            [
-                $source,
-                '*.a.b.*',
-                [
-                    [11, 22],
-                    [12, 23],
-                    [13, 24],
-                ],
-            ],
-            [
-                $source,
-                '*.a.b.*.0',
-                [11, 12, 13],
-            ],
-            [
-                $source,
-                '*.a.b.*.1',
-                [22, 23, 24],
-            ],
-            [
-                $source,
-                '*.a.b.*.*',
-                [11, 22, 12, 23, 13, 24],
-            ],
-            [
-                $source,
-                '*.a.b.*.|.0',
-                [11, 22],
-            ],
-            [
-                $source,
-                '*.a.b.*.|.1',
-                [12, 23],
-            ],
-            [
-                $source,
-                '*.a.b.*.|.2',
-                [13, 24],
             ],
         ];
     }
