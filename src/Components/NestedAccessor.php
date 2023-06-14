@@ -13,6 +13,9 @@ use Smoren\Schemator\Interfaces\NestedAccessorInterface;
  */
 class NestedAccessor implements NestedAccessorInterface
 {
+    public const OPERATOR_FOR_EACH = '*';
+    public const OPERATOR_PIPE = '|';
+
     /**
      * @var array<mixed>|object
      */
@@ -71,20 +74,21 @@ class NestedAccessor implements NestedAccessorInterface
 
         while (count($pathStack)) {
             $key = array_pop($pathStack);
-            if ($key === '|') {
+            if ($key === static::OPERATOR_PIPE) {
                 $isResultMultiple = false;
                 $traveledPath[] = $key;
                 continue;
             }
 
-            if (preg_match('/^[*]+$/', $key)) {
+            $opForEach = static::OPERATOR_FOR_EACH;
+            if (preg_match("/^[{$opForEach}]+$/", $key)) {
                 for ($i = 0; $i < strlen($key) - 1; ++$i) {
-                    $pathStack[] = '*';
+                    $pathStack[] = static::OPERATOR_FOR_EACH;
                 }
-                $key = '*';
+                $key = static::OPERATOR_FOR_EACH;
             }
 
-            if ($key === '*') {
+            if ($key === static::OPERATOR_FOR_EACH) {
                 if (!is_iterable($carry)) {
                     return $this->handleError($key, $traveledPath, $isResultMultiple, $strict);
                 }
