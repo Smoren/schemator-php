@@ -66,7 +66,7 @@ interface NestedAccessorInterface
      * - `"city.country.name"` or `["city", "country", "name"]`
      * - `"country.cities.*.name"` or `["country", "cities", "*", "name"]`
      * - `"country.cities.*.|.0.name"` or `["country", "cities", "*", "|", 0, "name"]`
-     * - `"*.prices.*.*.value"` or `"*.prices.**.value"` or `["*", "prices", "*", "*", "value"]`
+     * - `"*.prices.*.value"` or `["*", "prices", "*", "value"]`
      *
      * @param TPath $path
      *
