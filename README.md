@@ -60,7 +60,7 @@ $input = [
 $schema = [
     'city_id' => 'id',
     'city_name' => 'name',
-    'city_street_names' => 'streets.name',
+    'city_street_names' => 'streets.*.name',
     'country_id' => 'country.id',
     'country_name' => 'country.name',
     'country_neighbours' => 'country.neighbours',
@@ -182,13 +182,11 @@ $input = [
 ];
 
 $schema = [
-    'city_street_names.all' => ['streets.name', ['implode', ', ']],
-    'city_street_names.sorted' => ['streets.name', ['sort'], ['implode', ', ']],
-    'city_street_names.filtered' => ['streets.name', ['filter', function (string $candidate) {
-        return strpos($candidate, 'Ban') !== false;
-    }]],
+    'city_street_names.all' => ['streets.*.name', ['implode', ', ']],
+    'city_street_names.sorted' => ['streets.*.name', ['sort'], ['implode', ', ']],
+    'city_street_names.filtered' => ['streets.*.name', ['filter', fn (string $candidate) => strpos($candidate, 'Ban') !== false]],
     'lnd' => ['lnd_path', ['path']],
-    'city_street_houses' => ['streets.houses', ['flatten']],
+    'city_street_houses' => ['streets.*.houses', ['flatten']],
 ];
 
 $schemator = SchematorFactory::create();
@@ -409,7 +407,7 @@ $cities = [
 $schema = [
     'city_id' => 'id',
     'city_name' => 'name',
-    'city_street_names' => 'streets.name',
+    'city_street_names' => 'streets.*.name',
     'country_id' => 'country.id',
     'country_name' => 'country.name',
 ];
