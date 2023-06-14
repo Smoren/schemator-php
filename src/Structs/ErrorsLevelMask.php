@@ -2,7 +2,6 @@
 
 namespace Smoren\Schemator\Structs;
 
-use Smoren\BitmapTools\Models\Bitmap;
 use Smoren\Schemator\Exceptions\SchematorException;
 
 /**

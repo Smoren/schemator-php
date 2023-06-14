@@ -2,15 +2,15 @@
 
 namespace Smoren\Schemator\Components;
 
-use Smoren\BitmapTools\Interfaces\BitmapInterface;
-use Smoren\BitmapTools\Models\Bitmap;
 use Smoren\Schemator\Exceptions\PathException;
+use Smoren\Schemator\Exceptions\SchematorException;
 use Smoren\Schemator\Factories\NestedAccessorFactory;
+use Smoren\Schemator\Interfaces\BitmapInterface;
 use Smoren\Schemator\Interfaces\NestedAccessorFactoryInterface;
 use Smoren\Schemator\Interfaces\SchematorInterface;
+use Smoren\Schemator\Structs\Bitmap;
 use Smoren\Schemator\Structs\ErrorsLevelMask;
 use Smoren\Schemator\Structs\FilterContext;
-use Smoren\Schemator\Exceptions\SchematorException;
 use Throwable;
 use TypeError;
 

@@ -2,7 +2,7 @@
 
 namespace Smoren\Schemator\Interfaces;
 
-use Smoren\BitmapTools\Interfaces\BitmapInterface;
+use Smoren\Schemator\Interfaces\BitmapInterface;
 
 /**
  * Interface SchematorBuilderInterface
