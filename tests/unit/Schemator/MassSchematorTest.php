@@ -1,9 +1,7 @@
 <?php
 
-namespace Smoren\Schemator\Tests\Unit;
+namespace Smoren\Schemator\Tests\Unit\Schemator;
 
-use Smoren\Schemator\Components\MassSchemator;
-use Smoren\Schemator\Components\Schemator;
 use Smoren\Schemator\Exceptions\SchematorException;
 use Smoren\Schemator\Factories\SchematorFactory;
 
@@ -21,7 +19,7 @@ class MassSchematorTest extends \Codeception\Test\Unit
         $schema = [
             'city_id' => 'id',
             'city_name' => 'name',
-            'city_street_names' => 'streets.name',
+            'city_street_names' => 'streets.*.name',
             'country_id' => 'country.id',
             'country_name' => 'country.name',
         ];
@@ -65,7 +63,7 @@ class MassSchematorTest extends \Codeception\Test\Unit
         $gen1 = $massSchemator->generate($cities, [
             'city_id' => 'id',
             'city_name' => 'name',
-            'city_street_names' => 'streets.name',
+            'city_street_names' => 'streets.*.name',
             'country_id' => 'country.id',
             'country_name' => 'country.name',
         ]);

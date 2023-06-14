@@ -4,9 +4,9 @@ namespace Smoren\Schemator\Components;
 
 use Smoren\BitmapTools\Interfaces\BitmapInterface;
 use Smoren\BitmapTools\Models\Bitmap;
-use Smoren\NestedAccessor\Interfaces\NestedAccessorFactoryInterface;
-use Smoren\NestedAccessor\Factories\NestedAccessorFactory;
-use Smoren\NestedAccessor\Exceptions\NestedAccessorException;
+use Smoren\Schemator\Exceptions\PathException;
+use Smoren\Schemator\Factories\NestedAccessorFactory;
+use Smoren\Schemator\Interfaces\NestedAccessorFactoryInterface;
 use Smoren\Schemator\Interfaces\SchematorInterface;
 use Smoren\Schemator\Structs\ErrorsLevelMask;
 use Smoren\Schemator\Structs\FilterContext;
@@ -59,6 +59,7 @@ class Schemator implements SchematorInterface
      */
     public function convert($source, array $schema)
     {
+        $result = [];
         $toAccessor = $this->nestedAccessorFactory->create($result, $this->pathDelimiter);
 
         foreach ($schema as $keyTo => $keyFrom) {
@@ -138,7 +139,7 @@ class Schemator implements SchematorInterface
                 $key,
                 $this->needToThrow(SchematorException::CANNOT_GET_VALUE)
             );
-        } catch (NestedAccessorException $e) {
+        } catch (PathException $e) {
             throw SchematorException::createAsCannotGetValue($source, $key, $e);
         }
     }

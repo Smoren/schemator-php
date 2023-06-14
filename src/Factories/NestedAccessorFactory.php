@@ -6,9 +6,6 @@ use Smoren\Schemator\Components\NestedAccessor;
 use Smoren\Schemator\Interfaces\NestedAccessorFactoryInterface;
 use Smoren\Schemator\Interfaces\NestedAccessorInterface;
 
-/**
- * @implements NestedAccessorFactoryInterface<string|string[]|null>
- */
 class NestedAccessorFactory implements NestedAccessorFactoryInterface
 {
     /**
