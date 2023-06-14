@@ -4,6 +4,7 @@ namespace Smoren\Schemator\Interfaces;
 
 use Smoren\Schemator\Exceptions\PathNotArrayException;
 use Smoren\Schemator\Exceptions\PathNotExistException;
+use Smoren\Schemator\Exceptions\PathNotWritableException;
 
 /**
  * Nested accessor tool interface.
@@ -92,9 +93,10 @@ interface NestedAccessorInterface
      *
      * @return $this
      *
+     * @throws PathNotWritableException when path is not writable.
      * @throws \InvalidArgumentException when invalid path passed.
      */
-    public function set($path, $value): NestedAccessorInterface;
+    public function set($path, $value): self;
 
     /**
      * Updates value by path.
@@ -108,6 +110,7 @@ interface NestedAccessorInterface
      * @return $this
      *
      * @throws PathNotExistException when path does not exist in container.
+     * @throws PathNotWritableException when path is not writable.
      * @throws \InvalidArgumentException when invalid path passed.
      */
     public function update($path, $value): self;
@@ -124,6 +127,7 @@ interface NestedAccessorInterface
      * @return $this
      *
      * @throws PathNotArrayException if values stored by path is not an array or ArrayAccess instance.
+     * @throws PathNotExistException when path does not exist in container.
      * @throws \InvalidArgumentException when invalid path passed.
      */
     public function append($path, $value): self;
@@ -140,6 +144,7 @@ interface NestedAccessorInterface
      * @return $this
      *
      * @throws PathNotExistException when path does not exist in container (in strict mode only).
+     * @throws PathNotWritableException when path is not writable.
      * @throws \InvalidArgumentException when invalid path passed.
      */
     public function delete($path, bool $strict = true): self;

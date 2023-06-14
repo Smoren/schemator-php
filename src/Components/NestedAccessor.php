@@ -4,6 +4,7 @@ namespace Smoren\Schemator\Components;
 
 use Smoren\Schemator\Exceptions\PathNotArrayException;
 use Smoren\Schemator\Exceptions\PathNotExistException;
+use Smoren\Schemator\Exceptions\PathNotWritableException;
 use Smoren\Schemator\Helpers\ContainerAccessHelper;
 use Smoren\Schemator\Interfaces\NestedAccessorInterface;
 
@@ -22,7 +23,7 @@ class NestedAccessor implements NestedAccessorInterface
     protected string $pathDelimiter;
 
     /**
-     * NestedAccessor contructor.
+     * NestedAccessor constructor.
      *
      * @param array<mixed>|object $source
      * @param non-empty-string $pathDelimiter
@@ -175,6 +176,7 @@ class NestedAccessor implements NestedAccessorInterface
         /** @var array<mixed> $source */
         $source = &$this->getRef($this->getPathStack($path));
         $source[] = $value;
+
         return $this;
     }
 
@@ -183,11 +185,24 @@ class NestedAccessor implements NestedAccessorInterface
      */
     public function delete($path, bool $strict = true): self
     {
-        $strict && $this->checkExist($path);
+        try {
+            $this->checkExist($path);
+        } catch (PathNotExistException $e) {
+            if ($strict) {
+                throw $e;
+            }
+            return $this;
+        }
 
         [$key, $path] = $this->cutPathTail($path);
         $source = &$this->getRef($this->getPathStack($path));
-        ContainerAccessHelper::delete($source, $key);
+
+        try {
+            ContainerAccessHelper::delete($source, $key);
+        } catch (\InvalidArgumentException $e) {
+            throw new PathNotWritableException($key, $path, $this->pathDelimiter);
+        }
+
         return $this;
     }
 
@@ -211,12 +226,18 @@ class NestedAccessor implements NestedAccessorInterface
      *
      * @return void
      *
+     * @throws PathNotExistException when path does not exist in container.
      * @throws PathNotArrayException if path is not an array or ArrayAccess instance.
      * @throws \InvalidArgumentException when invalid path passed.
      */
     protected function checkIsArrayAccessible($path): void
     {
-        if (!$this->exist($path) || !ContainerAccessHelper::isArrayAccessible($this->get($path))) {
+        if (!$this->exist($path)) {
+            [$key, $path] = $this->cutPathTail($path);
+            throw new PathNotExistException($key, $path, $this->pathDelimiter);
+        }
+
+        if (!ContainerAccessHelper::isArrayAccessible($this->get($path))) {
             [$key, $path] = $this->cutPathTail($path);
             throw new PathNotArrayException($key, $path, $this->pathDelimiter);
         }
@@ -248,15 +269,22 @@ class NestedAccessor implements NestedAccessorInterface
      *
      * @return mixed
      *
-     * @throws \InvalidArgumentException when invalid path passed.
+     * @throws PathNotWritableException when path is not writable.
      */
     protected function &getRef(array $pathStack)
     {
         $source = &$this->source;
+        $traveledPath = [];
 
         while (count($pathStack)) {
             $pathItem = array_pop($pathStack);
-            $source = &ContainerAccessHelper::getRef($source, $pathItem, []);
+            $traveledPath[] = $pathItem;
+
+            try {
+                $source = &ContainerAccessHelper::getRef($source, $pathItem, []);
+            } catch (\InvalidArgumentException $e) {
+                throw new PathNotWritableException($pathItem, $traveledPath, $this->pathDelimiter);
+            }
 
             if (count($pathStack) && is_scalar($source)) {
                 $source = [];
