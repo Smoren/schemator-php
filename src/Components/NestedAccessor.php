@@ -394,13 +394,9 @@ class NestedAccessor implements NestedAccessorInterface
             $traveledPath[] = $key;
         }
 
-        $someExist = !$isResultMultiple || count($carry);
+        $someExist = !$isResultMultiple || (is_array($carry) && count($carry));
+        $allExist = $allExist && $someExist;
 
-        return [
-            $carry,
-            $allExist && $someExist,
-            $someExist,
-            $isResultMultiple
-        ];
+        return [$carry, $allExist, $someExist, $isResultMultiple];
     }
 }
