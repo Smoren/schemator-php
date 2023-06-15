@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smoren\Schemator\Components;
 
 use Smoren\Schemator\Exceptions\PathNotArrayException;
@@ -81,7 +83,7 @@ class NestedAccessor implements NestedAccessorInterface
             }
 
             $opForEach = static::OPERATOR_FOR_EACH;
-            if (preg_match("/^[{$opForEach}]+$/", $key)) {
+            if (preg_match("/^[{$opForEach}]+$/", strval($key))) {
                 for ($i = 0; $i < strlen($key) - 1; ++$i) {
                     $pathStack[] = static::OPERATOR_FOR_EACH;
                 }
@@ -90,7 +92,7 @@ class NestedAccessor implements NestedAccessorInterface
 
             if ($key === static::OPERATOR_FOR_EACH) {
                 if (!is_iterable($carry)) {
-                    return $this->handleError($key, $traveledPath, $isResultMultiple, $strict);
+                    return $this->handleError(strval($key), $traveledPath, $isResultMultiple, $strict);
                 }
 
                 $result = [];
@@ -99,7 +101,7 @@ class NestedAccessor implements NestedAccessorInterface
                     foreach ($carry as $item) {
                         if (!is_iterable($item)) {
                             if ($strict) {
-                                return $this->handleError($key, $traveledPath, $isResultMultiple, $strict);
+                                return $this->handleError(strval($key), $traveledPath, $isResultMultiple, $strict);
                             }
                             continue;
                         }
@@ -126,7 +128,7 @@ class NestedAccessor implements NestedAccessorInterface
                 foreach ($carry as $item) {
                     if (!ContainerAccessHelper::exists($item, $key)) {
                         if ($strict) {
-                            return $this->handleError($key, $traveledPath, $isResultMultiple, $strict);
+                            return $this->handleError(strval($key), $traveledPath, $isResultMultiple, $strict);
                         }
                         continue;
                     }
@@ -139,7 +141,7 @@ class NestedAccessor implements NestedAccessorInterface
             }
 
             if (!ContainerAccessHelper::exists($carry, $key)) {
-                return $this->handleError($key, $traveledPath, $isResultMultiple, $strict);
+                return $this->handleError(strval($key), $traveledPath, $isResultMultiple, $strict);
             }
 
             $carry = ContainerAccessHelper::get($carry, $key);

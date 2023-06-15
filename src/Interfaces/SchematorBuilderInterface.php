@@ -1,8 +1,8 @@
 <?php
 
-namespace Smoren\Schemator\Interfaces;
+declare(strict_types=1);
 
-use Smoren\Schemator\Interfaces\BitmapInterface;
+namespace Smoren\Schemator\Interfaces;
 
 /**
  * Interface SchematorBuilderInterface

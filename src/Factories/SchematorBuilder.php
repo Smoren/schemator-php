@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smoren\Schemator\Factories;
 
 use Smoren\Schemator\Interfaces\BitmapInterface;

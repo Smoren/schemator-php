@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smoren\Schemator\Exceptions;
 
 abstract class PathException extends \OutOfBoundsException

@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smoren\Schemator\Interfaces;
 
-use Smoren\Schemator\Interfaces\BitmapInterface;
 use Smoren\Schemator\Exceptions\SchematorException;
 
 /**

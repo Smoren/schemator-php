@@ -111,9 +111,14 @@ class ContainerAccessHelper
     {
         switch (true) {
             case is_array($container):
-            case $container instanceof ArrayAccess:
-                unset($container[$key]);
+                if (array_key_exists($key, $container)) {
+                    unset($container[$key]);
+                }
                 break;
+            case $container instanceof ArrayAccess:
+                if ($container->offsetExists($key)) {
+                    $container->offsetUnset($key);
+                }
             case $container instanceof stdClass:
                 unset($container->{$key});
                 break;
