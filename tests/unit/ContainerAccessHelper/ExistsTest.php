@@ -20,7 +20,7 @@ class ExistsTest extends \Codeception\Test\Unit
     public function testArray(array $input, string $key, bool $expected): void
     {
         // When
-        $result = ContainerAccessHelper::exists($input, $key);
+        $result = ContainerAccessHelper::exist($input, $key);
 
         // Then
         $this->assertEquals($expected, $result);
@@ -52,7 +52,7 @@ class ExistsTest extends \Codeception\Test\Unit
     public function testArrayAccess(ArrayAccess $input, string $key, bool $expected): void
     {
         // When
-        $result = ContainerAccessHelper::exists($input, $key);
+        $result = ContainerAccessHelper::exist($input, $key);
 
         // Then
         $this->assertEquals($expected, $result);
@@ -88,7 +88,7 @@ class ExistsTest extends \Codeception\Test\Unit
     public function testStdClass(stdClass $input, string $key, bool $expected): void
     {
         // When
-        $result = ContainerAccessHelper::exists($input, $key);
+        $result = ContainerAccessHelper::exist($input, $key);
 
         // Then
         $this->assertEquals($expected, $result);
@@ -124,7 +124,7 @@ class ExistsTest extends \Codeception\Test\Unit
     public function testObject(object $input, string $key, bool $expected): void
     {
         // When
-        $result = ContainerAccessHelper::exists($input, $key);
+        $result = ContainerAccessHelper::exist($input, $key);
 
         // Then
         $this->assertEquals($expected, $result);
@@ -154,7 +154,7 @@ class ExistsTest extends \Codeception\Test\Unit
     public function testScalar($input, string $key): void
     {
         // When
-        $result = ContainerAccessHelper::exists($input, $key);
+        $result = ContainerAccessHelper::exist($input, $key);
 
         // Then
         $this->assertFalse($result);

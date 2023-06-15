@@ -42,26 +42,33 @@ class NestedAccessor implements NestedAccessorInterface
     /**
      * {@inheritDoc}
      */
-    public function exist($path): bool
+    public function exist($path, bool $strict = true): bool
     {
-        try {
-            $this->get($path);
-            return true;
-        } catch (PathNotExistException $e) {
-            return false;
+        [, $allExist, $someExist] = $this->getInternal($path, false);
+
+        if ($strict) {
+            return $allExist;
         }
+
+        return $someExist;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function isset($path): bool
+    public function isset($path, bool $strict = true): bool
     {
-        try {
-            return $this->get($path) !== null;
-        } catch (PathNotExistException $e) {
+        [$result, $allExist, $someExist] = $this->getInternal($path, false);
+
+        if ($result === null) {
             return false;
         }
+
+        if ($strict) {
+            return $allExist;
+        }
+
+        return $someExist;
     }
 
     /**
@@ -69,86 +76,8 @@ class NestedAccessor implements NestedAccessorInterface
      */
     public function get($path = null, bool $strict = true)
     {
-        $carry = $this->source;
-        $pathStack = $this->getPathStack($path);
-        $traveledPath = [];
-        $isResultMultiple = false;
-
-        while (count($pathStack)) {
-            $key = array_pop($pathStack);
-            if ($key === static::OPERATOR_PIPE) {
-                $isResultMultiple = false;
-                $traveledPath[] = $key;
-                continue;
-            }
-
-            $opForEach = static::OPERATOR_FOR_EACH;
-            if (preg_match("/^[{$opForEach}]+$/", strval($key))) {
-                for ($i = 0; $i < strlen($key) - 1; ++$i) {
-                    $pathStack[] = static::OPERATOR_FOR_EACH;
-                }
-                $key = static::OPERATOR_FOR_EACH;
-            }
-
-            if ($key === static::OPERATOR_FOR_EACH) {
-                if (!is_iterable($carry)) {
-                    return $this->handleError(strval($key), $traveledPath, $isResultMultiple, $strict);
-                }
-
-                $result = [];
-
-                if ($isResultMultiple) {
-                    foreach ($carry as $item) {
-                        if (!is_iterable($item)) {
-                            if ($strict) {
-                                return $this->handleError(strval($key), $traveledPath, $isResultMultiple, $strict);
-                            }
-                            continue;
-                        }
-                        foreach ($item as $subItem) {
-                            $result[] = $subItem;
-                        }
-                    }
-                } else {
-                    foreach ($carry as $item) {
-                        $result[] = $item;
-                    }
-                }
-
-                $isResultMultiple = true;
-                $traveledPath[] = $key;
-                $carry = $result;
-
-                continue;
-            }
-
-            if ($isResultMultiple) {
-                $result = [];
-                /** @var iterable<mixed> $carry */
-                foreach ($carry as $item) {
-                    if (!ContainerAccessHelper::exists($item, $key)) {
-                        if ($strict) {
-                            return $this->handleError(strval($key), $traveledPath, $isResultMultiple, $strict);
-                        }
-                        continue;
-                    }
-                    $result[] = ContainerAccessHelper::get($item, $key);
-                }
-                $traveledPath[] = $key;
-                $carry = $result;
-
-                continue;
-            }
-
-            if (!ContainerAccessHelper::exists($carry, $key)) {
-                return $this->handleError(strval($key), $traveledPath, $isResultMultiple, $strict);
-            }
-
-            $carry = ContainerAccessHelper::get($carry, $key);
-            $traveledPath[] = $key;
-        }
-
-        return $carry;
+        [$result] = $this->getInternal($path, $strict);
+        return $result;
     }
 
     /**
@@ -364,5 +293,114 @@ class NestedAccessor implements NestedAccessorInterface
         }
 
         throw new PathNotExistException($key, $path, $this->pathDelimiter);
+    }
+
+    /**
+     * @param string|string[]|null $path
+     * @param bool $strict
+     * @return array{mixed, bool, bool, bool}
+     */
+    public function getInternal($path = null, bool $strict = true): array
+    {
+        $carry = $this->source;
+        $pathStack = $this->getPathStack($path);
+        $traveledPath = [];
+        $isResultMultiple = false;
+        $allExist = true;
+
+        while (count($pathStack)) {
+            $key = array_pop($pathStack);
+            if ($key === static::OPERATOR_PIPE) {
+                $isResultMultiple = false;
+                $traveledPath[] = $key;
+                continue;
+            }
+
+            $opForEach = static::OPERATOR_FOR_EACH;
+            if (preg_match("/^[{$opForEach}]+$/", strval($key))) {
+                for ($i = 0; $i < strlen($key) - 1; ++$i) {
+                    $pathStack[] = static::OPERATOR_FOR_EACH;
+                }
+                $key = static::OPERATOR_FOR_EACH;
+            }
+
+            if ($key === static::OPERATOR_FOR_EACH) {
+                if (!is_iterable($carry)) {
+                    return [
+                        $this->handleError(strval($key), $traveledPath, $isResultMultiple, $strict),
+                        false,
+                        false,
+                        $isResultMultiple,
+                    ];
+                }
+
+                $result = [];
+
+                if ($isResultMultiple) {
+                    foreach ($carry as $item) {
+                        if (!is_iterable($item)) {
+                            if ($strict) {
+                                $this->handleError(strval($key), $traveledPath, $isResultMultiple, $strict);
+                            }
+                            $allExist = false;
+                            continue;
+                        }
+                        foreach ($item as $subItem) {
+                            $result[] = $subItem;
+                        }
+                    }
+                } else {
+                    foreach ($carry as $item) {
+                        $result[] = $item;
+                    }
+                }
+
+                $isResultMultiple = true;
+                $traveledPath[] = $key;
+                $carry = $result;
+
+                continue;
+            }
+
+            if ($isResultMultiple) {
+                $result = [];
+                /** @var iterable<mixed> $carry */
+                foreach ($carry as $item) {
+                    if (!ContainerAccessHelper::exist($item, $key)) {
+                        if ($strict) {
+                            $this->handleError(strval($key), $traveledPath, $isResultMultiple, $strict);
+                        }
+                        $allExist = false;
+                        continue;
+                    }
+                    $result[] = ContainerAccessHelper::get($item, $key);
+                }
+                $traveledPath[] = $key;
+                $carry = $result;
+
+                continue;
+            }
+
+            if (!ContainerAccessHelper::exist($carry, $key)) {
+                return [
+                    $this->handleError(strval($key), $traveledPath, $isResultMultiple, $strict),
+                    false,
+                    false,
+                    $isResultMultiple,
+                ];
+            }
+
+            $carry = ContainerAccessHelper::get($carry, $key);
+            $traveledPath[] = $key;
+        }
+
+        $someExist = !$isResultMultiple || count($carry);
+
+        return [
+            $carry,
+            $allExist && $someExist,
+            $someExist,
+            $isResultMultiple
+        ];
     }
 }

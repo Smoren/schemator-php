@@ -137,7 +137,7 @@ class ContainerAccessHelper
      *
      * @return bool
      */
-    public static function exists($container, $key): bool
+    public static function exist($container, $key): bool
     {
         switch (true) {
             case is_array($container):

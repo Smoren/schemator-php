@@ -27,30 +27,40 @@ interface NestedAccessorInterface
     /**
      * Returns true if path exists in the container.
      *
+     * For multiple result ("for each" operator in path):
+     * - return true if path exists in all sub-containers in strict mode;
+     * - return true if path exists in any sub-container in non-strict mode.
+     *
      * Available path parts:
      * @see NestedAccessorInterface::get()
      *
      * @param TPath $path
+     * @param bool $strict
      *
      * @return bool
      *
      * @throws \InvalidArgumentException when invalid path passed.
      */
-    public function exist($path): bool;
+    public function exist($path, bool $strict = true): bool;
 
     /**
      * Returns true if path exists in the container and it is not null.
      *
+     * For multiple result ("for each" operator in path):
+     * - return true if path exists in all sub-containers in strict mode;
+     * - return true if path exists in any sub-container in non-strict mode.
+     *
      * Available path parts:
      * @see NestedAccessorInterface::get()
      *
      * @param TPath $path
+     * @param bool $strict
      *
      * @return bool
      *
      * @throws \InvalidArgumentException when invalid path passed.
      */
-    public function isset($path): bool;
+    public function isset($path, bool $strict = true): bool;
 
     /**
      * Returns value stored by path (or array of values when path contains asterisk characters).
