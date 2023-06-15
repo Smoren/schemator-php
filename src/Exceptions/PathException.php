@@ -52,6 +52,6 @@ abstract class PathException extends \OutOfBoundsException
      */
     public function getPathString(): string
     {
-        return implode($this->pathDelimiter, $this->path);
+        return implode($this->pathDelimiter, $this->getPath());
     }
 }
