@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Smoren\Schemator\Tests\Unit\ObjectAccessHelper;
 
 use Codeception\Test\Unit;
