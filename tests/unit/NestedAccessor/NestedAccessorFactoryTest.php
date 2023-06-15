@@ -7,9 +7,6 @@ use Smoren\Schemator\Factories\NestedAccessorFactory;
 
 class NestedAccessorFactoryTest extends \Codeception\Test\Unit
 {
-    /**
-     * @throws NestedAccessorException
-     */
     public function testExplicitFactory()
     {
         $sourceArray = ['test' => 1];

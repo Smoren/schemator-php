@@ -10,9 +10,11 @@ use Smoren\Schemator\Tests\Unit\Fixtures\ClassWithAccessibleProperties;
 class NestedAccessorDeleteTest extends \Codeception\Test\Unit
 {
     /**
-     * @dataProvider dataProviderForDeleteArray
+     * @dataProvider dataProviderForArray
+     * @dataProvider dataProviderForArrayAccess
+     * @dataProvider dataProviderForStdClass
      */
-    public function testDeleteStrictSuccessArray($source, $path, $expected)
+    public function testStrictSuccess($source, $path, $expected)
     {
         // Given
         $accessor = new NestedAccessor($source);
@@ -24,7 +26,7 @@ class NestedAccessorDeleteTest extends \Codeception\Test\Unit
         $this->assertEquals($expected, $source);
     }
 
-    public function dataProviderForDeleteArray(): array
+    public function dataProviderForArray(): array
     {
         return [
             [
@@ -55,10 +57,72 @@ class NestedAccessorDeleteTest extends \Codeception\Test\Unit
         ];
     }
 
+    public function dataProviderForArrayAccess(): array
+    {
+        return [
+            [
+                new \ArrayObject(['a' => []]),
+                'a',
+                new \ArrayObject([]),
+            ],
+            [
+                new \ArrayObject(['a' => [1]]),
+                'a',
+                new \ArrayObject([]),
+            ],
+            [
+                new \ArrayObject(['a' => ['b' => ['c' => [1, 2, 3, 4]]]]),
+                'a.b.c',
+                new \ArrayObject(['a' => ['b' => []]]),
+            ],
+            [
+                ['a' => new \ArrayObject(['b' => ['c' => [1, 2, 3, 4], 'd' => 1]])],
+                'a.b.c',
+                ['a' => new \ArrayObject(['b' => ['d' => 1]])],
+            ],
+            [
+                ['a' => new \ArrayObject(['b' => ['c' => [1, 2, 3, 4]]])],
+                'a.b',
+                ['a' => new \ArrayObject([])],
+            ],
+        ];
+    }
+
+    public function dataProviderForStdClass(): array
+    {
+        return [
+            [
+                (object)['a' => []],
+                'a',
+                (object)[],
+            ],
+            [
+                (object)['a' => [1]],
+                'a',
+                (object)[],
+            ],
+            [
+                (object)['a' => ['b' => ['c' => [1, 2, 3, 4]]]],
+                'a.b.c',
+                (object)['a' => ['b' => []]],
+            ],
+            [
+                ['a' => (object)['b' => ['c' => [1, 2, 3, 4], 'd' => 1]]],
+                'a.b.c',
+                ['a' => (object)['b' => ['d' => 1]]],
+            ],
+            [
+                ['a' => (object)['b' => ['c' => [1, 2, 3, 4]]]],
+                'a.b',
+                ['a' => (object)[]],
+            ],
+        ];
+    }
+
     /**
      * @dataProvider dataProviderForNotExist
      */
-    public function testDeleteNotExistError($source, $path)
+    public function testNotExistError($source, $path)
     {
         // Given
         $accessor = new NestedAccessor($source);
@@ -73,7 +137,7 @@ class NestedAccessorDeleteTest extends \Codeception\Test\Unit
     /**
      * @dataProvider dataProviderForNotExist
      */
-    public function testDeleteNotExistNonStrict($source, $path, $expected)
+    public function testNotExistNonStrict($source, $path, $expected)
     {
         // Given
         $accessor = new NestedAccessor($source);
@@ -120,7 +184,7 @@ class NestedAccessorDeleteTest extends \Codeception\Test\Unit
     /**
      * @dataProvider dataProviderForNotWritableError
      */
-    public function testDeleteNotWritableError($source, $path)
+    public function testNotWritableError($source, $path)
     {
         // Given
         $accessor = new NestedAccessor($source);

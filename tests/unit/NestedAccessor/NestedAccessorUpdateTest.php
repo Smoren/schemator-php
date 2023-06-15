@@ -11,8 +11,10 @@ class NestedAccessorUpdateTest extends \Codeception\Test\Unit
 {
     /**
      * @dataProvider dataProviderForArray
+     * @dataProvider dataProviderForArrayAccess
+     * @dataProvider dataProviderForStdClass
      */
-    public function testArray($source, $path, $value, $expected)
+    public function testSuccess($source, $path, $value, $expected)
     {
         // Given
         $accessor = new NestedAccessor($source);
@@ -45,6 +47,54 @@ class NestedAccessorUpdateTest extends \Codeception\Test\Unit
                 ['a', 'b', 'c'],
                 'value',
                 ['a' => ['b' => ['c' => 'value']]],
+            ],
+        ];
+    }
+
+    public function dataProviderForArrayAccess(): array
+    {
+        return [
+            [
+                new \ArrayObject(['a' => 1]),
+                'a',
+                2,
+                new \ArrayObject(['a' => 2]),
+            ],
+            [
+                new \ArrayObject(['a' => 1]),
+                ['a'],
+                2,
+                new \ArrayObject(['a' => 2]),
+            ],
+            [
+                ['a' => new \ArrayObject(['b' => ['c' => [0]]])],
+                ['a', 'b', 'c'],
+                'value',
+                ['a' => new \ArrayObject(['b' => ['c' => 'value']])],
+            ],
+        ];
+    }
+
+    public function dataProviderForStdClass(): array
+    {
+        return [
+            [
+                (object)['a' => 1],
+                'a',
+                2,
+                (object)['a' => 2],
+            ],
+            [
+                (object)['a' => 1],
+                ['a'],
+                2,
+                (object)['a' => 2],
+            ],
+            [
+                ['a' => (object)['b' => ['c' => [0]]]],
+                ['a', 'b', 'c'],
+                'value',
+                ['a' => (object)['b' => ['c' => 'value']]],
             ],
         ];
     }
