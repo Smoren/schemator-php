@@ -7,9 +7,9 @@ use Smoren\Schemator\Components\NestedAccessor;
 class NestedAccessorSetTest extends \Codeception\Test\Unit
 {
     /**
-     * @dataProvider dataProviderForSetArray
+     * @dataProvider dataProviderForArray
      */
-    public function testSetArray($source, $path, $value, $expected)
+    public function testArray($source, $path, $value, $expected)
     {
         // Given
         $accessor = new NestedAccessor($source);
@@ -22,7 +22,7 @@ class NestedAccessorSetTest extends \Codeception\Test\Unit
         $this->assertEquals($expected, $source);
     }
 
-    public function dataProviderForSetArray(): array
+    public function dataProviderForArray(): array
     {
         return [
             [
