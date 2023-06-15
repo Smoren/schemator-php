@@ -1,6 +1,6 @@
 <?php
 
-namespace Smoren\Schemator\Tests\Unit\ObjectAccessHelperHelper;
+namespace Smoren\Schemator\Tests\Unit\ObjectAccessHelper;
 
 use Codeception\Test\Unit;
 use Smoren\Schemator\Helpers\ObjectAccessHelper;

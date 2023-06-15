@@ -7,9 +7,10 @@ use Smoren\Schemator\Components\NestedAccessor;
 class NestedAccessorExistTest extends \Codeception\Test\Unit
 {
     /**
-     * @dataProvider dataProviderForTrueStrict
+     * @dataProvider dataProviderForExistTrueStrict
+     * @dataProvider dataProviderForEqualNull
      */
-    public function testTrueStrict($source, $path)
+    public function testExistTrueStrict($source, $path)
     {
         // Given
         $accessor = new NestedAccessor($source);
@@ -22,11 +23,26 @@ class NestedAccessorExistTest extends \Codeception\Test\Unit
     }
 
     /**
-     * @dataProvider dataProviderForFalseStrict
-     * @dataProvider dataProviderForTrueNonStrict
-     * @dataProvider dataProviderForFalseNonStrict
+     * @dataProvider dataProviderForExistTrueStrict
      */
-    public function testFalseStrict($source, $path)
+    public function testIssetTrueStrict($source, $path)
+    {
+        // Given
+        $accessor = new NestedAccessor($source);
+
+        // When
+        $actual = $accessor->isset($path);
+
+        // Then
+        $this->assertTrue($actual);
+    }
+
+    /**
+     * @dataProvider dataProviderForExistFalseStrict
+     * @dataProvider dataProviderForExistTrueNonStrict
+     * @dataProvider dataProviderForExistFalseNonStrict
+     */
+    public function testExistFalseStrict($source, $path)
     {
         // Given
         $accessor = new NestedAccessor($source);
@@ -39,10 +55,29 @@ class NestedAccessorExistTest extends \Codeception\Test\Unit
     }
 
     /**
-     * @dataProvider dataProviderForTrueNonStrict
-     * @dataProvider dataProviderForTrueStrict
+     * @dataProvider dataProviderForExistFalseStrict
+     * @dataProvider dataProviderForExistTrueNonStrict
+     * @dataProvider dataProviderForExistFalseNonStrict
+     * @dataProvider dataProviderForEqualNull
      */
-    public function testTrueNonStrict($source, $path)
+    public function testIssetFalseStrict($source, $path)
+    {
+        // Given
+        $accessor = new NestedAccessor($source);
+
+        // When
+        $actual = $accessor->isset($path);
+
+        // Then
+        $this->assertFalse($actual);
+    }
+
+    /**
+     * @dataProvider dataProviderForExistTrueNonStrict
+     * @dataProvider dataProviderForExistTrueStrict
+     * @dataProvider dataProviderForEqualNull
+     */
+    public function testExistTrueNonStrict($source, $path)
     {
         // Given
         $accessor = new NestedAccessor($source);
@@ -55,9 +90,25 @@ class NestedAccessorExistTest extends \Codeception\Test\Unit
     }
 
     /**
-     * @dataProvider dataProviderForFalseNonStrict
+     * @dataProvider dataProviderForExistTrueNonStrict
+     * @dataProvider dataProviderForExistTrueStrict
      */
-    public function testFalseNonStrict($source, $path)
+    public function testIssetTrueNonStrict($source, $path)
+    {
+        // Given
+        $accessor = new NestedAccessor($source);
+
+        // When
+        $actual = $accessor->isset($path, false);
+
+        // Then
+        $this->assertTrue($actual);
+    }
+
+    /**
+     * @dataProvider dataProviderForExistFalseNonStrict
+     */
+    public function testExistFalseNonStrict($source, $path)
     {
         // Given
         $accessor = new NestedAccessor($source);
@@ -69,7 +120,23 @@ class NestedAccessorExistTest extends \Codeception\Test\Unit
         $this->assertFalse($actual);
     }
 
-    public function dataProviderForTrueStrict(): array
+    /**
+     * @dataProvider dataProviderForExistFalseNonStrict
+     * @dataProvider dataProviderForEqualNull
+     */
+    public function testIssetFalseNonStrict($source, $path)
+    {
+        // Given
+        $accessor = new NestedAccessor($source);
+
+        // When
+        $actual = $accessor->isset($path, false);
+
+        // Then
+        $this->assertFalse($actual);
+    }
+
+    public function dataProviderForExistTrueStrict(): array
     {
         return [
             [
@@ -98,10 +165,6 @@ class NestedAccessorExistTest extends \Codeception\Test\Unit
             ],
             [
                 [1, 2, 3, 'a' => 4],
-                0,
-            ],
-            [
-                [null, 2, 3, 'a' => 4],
                 0,
             ],
             [
@@ -603,7 +666,7 @@ class NestedAccessorExistTest extends \Codeception\Test\Unit
         ];
     }
 
-    public function dataProviderForFalseStrict(): array
+    public function dataProviderForExistFalseStrict(): array
     {
         return [
             [
@@ -1115,7 +1178,7 @@ class NestedAccessorExistTest extends \Codeception\Test\Unit
         ];
     }
 
-    public function dataProviderForTrueNonStrict(): array
+    public function dataProviderForExistTrueNonStrict(): array
     {
         return [
             [
@@ -1409,7 +1472,7 @@ class NestedAccessorExistTest extends \Codeception\Test\Unit
         ];
     }
 
-    public function dataProviderForFalseNonStrict(): array
+    public function dataProviderForExistFalseNonStrict(): array
     {
         return [
             [
@@ -1672,6 +1735,28 @@ class NestedAccessorExistTest extends \Codeception\Test\Unit
                 ],
                 'a.*****.|.1.f',
                 null,
+            ],
+        ];
+    }
+
+    public function dataProviderForEqualNull(): array
+    {
+        return [
+            [
+                null,
+                [],
+            ],
+            [
+                [null, 2, 3, 'a' => 4],
+                0,
+            ],
+            [
+                ['a' => null, 'b' => 1],
+                'a',
+            ],
+            [
+                [null, null],
+                '1',
             ],
         ];
     }
