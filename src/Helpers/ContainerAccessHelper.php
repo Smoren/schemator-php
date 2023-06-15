@@ -66,7 +66,8 @@ class ContainerAccessHelper
                 return static::getRefFromObject($container, $key, $defaultValue);
         }
 
-        return $defaultValue;
+        $type = gettype($container);
+        throw new \InvalidArgumentException("Cannot get ref to key '{$key}' from container of type '{$type}'");
     }
 
     /**
