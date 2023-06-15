@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: ['7.4', '8.0', '8.1', '8.2']
+        php: ['7.4', '8.0', '8.1', '8.2', '8.3']
 
     steps:
       - name: Set up PHP
@@ -25,7 +25,7 @@ jobs:
           tools: composer:v2
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -65,7 +65,7 @@ jobs:
           tools: composer:v2
 
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
