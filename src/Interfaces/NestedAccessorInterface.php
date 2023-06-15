@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Smoren\Schemator\Interfaces;
 
-use Smoren\Schemator\Exceptions\PathNotArrayException;
+use Smoren\Schemator\Exceptions\PathNotArrayAccessibleException;
 use Smoren\Schemator\Exceptions\PathNotExistException;
 use Smoren\Schemator\Exceptions\PathNotWritableException;
 
@@ -131,16 +131,16 @@ interface NestedAccessorInterface
      * Appends value to the container stored by path.
      *
      * Available path parts:
-     * @see NestedAccessorInterface::set()
-     *
      * @param TPath $path
      * @param mixed $value
      *
      * @return $this
      *
-     * @throws PathNotArrayException if values stored by path is not an array or ArrayAccess instance.
+     * @throws PathNotArrayAccessibleException if values stored by path is not an array or ArrayAccess instance.
      * @throws PathNotExistException when path does not exist in container.
      * @throws \InvalidArgumentException when invalid path passed.
+     *@see NestedAccessorInterface::set()
+     *
      */
     public function append($path, $value): self;
 

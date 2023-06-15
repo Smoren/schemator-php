@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Smoren\Schemator\Exceptions;
 
-class PathNotArrayException extends PathException
+class PathNotArrayAccessibleException extends PathException
 {
     /**
      * {@inheritDoc}
@@ -12,6 +12,6 @@ class PathNotArrayException extends PathException
     public function __construct(string $key, array $path, string $pathDelimiter)
     {
         parent::__construct($key, $path, $pathDelimiter);
-        $this->message = "Value by key '{$this->key}' is not an array on path '{$this->getPathString()}'";
+        $this->message = "Value by key '{$this->key}' is not array accessible on path '{$this->getPathString()}'";
     }
 }

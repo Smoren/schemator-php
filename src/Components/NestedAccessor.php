@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Smoren\Schemator\Components;
 
-use Smoren\Schemator\Exceptions\PathNotArrayException;
+use Smoren\Schemator\Exceptions\PathNotArrayAccessibleException;
 use Smoren\Schemator\Exceptions\PathNotExistException;
 use Smoren\Schemator\Exceptions\PathNotWritableException;
 use Smoren\Schemator\Helpers\ContainerAccessHelper;
@@ -162,7 +162,7 @@ class NestedAccessor implements NestedAccessorInterface
      * @return void
      *
      * @throws PathNotExistException when path does not exist in container.
-     * @throws PathNotArrayException if path is not an array or ArrayAccess instance.
+     * @throws PathNotArrayAccessibleException if path is not an array or ArrayAccess instance.
      * @throws \InvalidArgumentException when invalid path passed.
      */
     protected function checkIsArrayAccessible($path): void
@@ -174,7 +174,7 @@ class NestedAccessor implements NestedAccessorInterface
 
         if (!ContainerAccessHelper::isArrayAccessible($this->get($path))) {
             [$key, $path] = $this->cutPathTail($path);
-            throw new PathNotArrayException($key, $path, $this->pathDelimiter);
+            throw new PathNotArrayAccessibleException($key, $path, $this->pathDelimiter);
         }
     }
 
