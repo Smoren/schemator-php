@@ -119,6 +119,7 @@ class ContainerAccessHelper
                 if ($container->offsetExists($key)) {
                     $container->offsetUnset($key);
                 }
+                break;
             case $container instanceof stdClass:
                 unset($container->{$key});
                 break;
