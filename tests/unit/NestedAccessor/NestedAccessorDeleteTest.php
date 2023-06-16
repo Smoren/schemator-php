@@ -202,9 +202,9 @@ class NestedAccessorDeleteTest extends \Codeception\Test\Unit
     {
         return [
             [new ClassWithAccessibleProperties(), 'publicProperty'],
-            [new ClassWithAccessibleProperties(), 'publicPropertyWithGetterAccess'],
-            [new ClassWithAccessibleProperties(), 'protectedPropertyWithGetterAccess'],
-            [new ClassWithAccessibleProperties(), 'privatePropertyWithGetterAccess'],
+            [new ClassWithAccessibleProperties(), 'publicPropertyWithMethodsAccess'],
+            [new ClassWithAccessibleProperties(), 'protectedPropertyWithMethodsAccess'],
+            [new ClassWithAccessibleProperties(), 'privatePropertyWithMethodsAccess'],
         ];
     }
 }

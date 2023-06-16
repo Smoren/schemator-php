@@ -96,11 +96,11 @@ class HasPropertyTest extends Unit
     {
         return [
             [new ClassWithAccessibleProperties(), 'publicProperty'],
-            [new ClassWithAccessibleProperties(), 'publicPropertyWithGetterAccess'],
+            [new ClassWithAccessibleProperties(), 'publicPropertyWithMethodsAccess'],
             [new ClassWithAccessibleProperties(), 'protectedProperty'],
-            [new ClassWithAccessibleProperties(), 'protectedPropertyWithGetterAccess'],
+            [new ClassWithAccessibleProperties(), 'protectedPropertyWithMethodsAccess'],
             [new ClassWithAccessibleProperties(), 'privateProperty'],
-            [new ClassWithAccessibleProperties(), 'privatePropertyWithGetterAccess'],
+            [new ClassWithAccessibleProperties(), 'privatePropertyWithMethodsAccess'],
         ];
     }
 

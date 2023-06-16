@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Smoren\Schemator\Tests\Unit\NestedAccessor;
 
 use Smoren\Schemator\Components\NestedAccessor;
+use Smoren\Schemator\Tests\Unit\Fixtures\ClassWithAccessibleProperties;
 
 class NestedAccessorSetTest extends \Codeception\Test\Unit
 {
@@ -220,6 +221,42 @@ class NestedAccessorSetTest extends \Codeception\Test\Unit
                 ['a', 'b', 'd'],
                 [1],
                 ['a' => ['b' => (object)['c' => [0], 'd' => [1]]]],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForObject
+     */
+    public function testObject($source, $path, $value)
+    {
+        // Given
+        $accessor = new NestedAccessor($source);
+
+        // When
+        $accessor->set($path, $value);
+
+        // Then
+        $this->assertEquals($value, $accessor->get($path));
+    }
+
+    public function dataProviderForObject(): array
+    {
+        return [
+            [
+                new ClassWithAccessibleProperties(),
+                'protectedPropertyWithMethodsAccess',
+                22,
+            ],
+            [
+                ['a' => new ClassWithAccessibleProperties()],
+                'a.protectedPropertyWithMethodsAccess',
+                23,
+            ],
+            [
+                ['a' => new ClassWithAccessibleProperties()],
+                'a.privatePropertyWithMethodsAccess',
+                24,
             ],
         ];
     }

@@ -159,9 +159,9 @@ class SetTest extends Unit
     {
         return [
             [new ClassWithAccessibleProperties(), 'publicProperty', 42],
-            [new ClassWithAccessibleProperties(), 'publicPropertyWithGetterAccess', 42],
-            [new ClassWithAccessibleProperties(), 'protectedPropertyWithGetterAccess', 42],
-            [new ClassWithAccessibleProperties(), 'privatePropertyWithGetterAccess', 42],
+            [new ClassWithAccessibleProperties(), 'publicPropertyWithMethodsAccess', 42],
+            [new ClassWithAccessibleProperties(), 'protectedPropertyWithMethodsAccess', 42],
+            [new ClassWithAccessibleProperties(), 'privatePropertyWithMethodsAccess', 42],
         ];
     }
 

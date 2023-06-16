@@ -6,6 +6,8 @@ namespace Smoren\Schemator\Helpers;
 
 use ReflectionMethod;
 use ReflectionProperty;
+use Smoren\Schemator\Interfaces\ProxyInterface;
+use Smoren\Schemator\Structs\ObjectPropertyProxy;
 use stdClass;
 
 /**
@@ -46,7 +48,7 @@ class ObjectAccessHelper
      * @param string $propertyName
      * @param mixed $defaultValue
      *
-     * @return mixed
+     * @return mixed|ProxyInterface<object>
      *
      * @throws \InvalidArgumentException
      */
@@ -61,8 +63,8 @@ class ObjectAccessHelper
             return $object->{$propertyName};
         }
 
-        $className = get_class($object);
-        throw new \InvalidArgumentException("Property '{$className}::{$propertyName}' is not readable");
+        $proxy = new ObjectPropertyProxy($object, $propertyName);
+        return $proxy;
     }
 
     /**

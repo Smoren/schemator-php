@@ -184,8 +184,8 @@ class GetRefTest extends Unit
         return [
             [new ClassWithAccessibleProperties(), 'publicProperty', null, 1],
             [new ClassWithAccessibleProperties(), 'publicProperty', 42, 1],
-            [new ClassWithAccessibleProperties(), 'publicPropertyWithGetterAccess', null, 2],
-            [new ClassWithAccessibleProperties(), 'publicPropertyWithGetterAccess', 42, 2],
+            [new ClassWithAccessibleProperties(), 'publicPropertyWithMethodsAccess', null, 2],
+            [new ClassWithAccessibleProperties(), 'publicPropertyWithMethodsAccess', 42, 2],
         ];
     }
 

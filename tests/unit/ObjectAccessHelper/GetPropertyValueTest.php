@@ -102,12 +102,12 @@ class GetPropertyValueTest extends Unit
         return [
             [new ClassWithAccessibleProperties(), 'publicProperty', 1],
             [new ClassWithAccessibleProperties(), 'publicProperty', 1],
-            [new ClassWithAccessibleProperties(), 'publicPropertyWithGetterAccess', 2],
-            [new ClassWithAccessibleProperties(), 'publicPropertyWithGetterAccess', 2],
-            [new ClassWithAccessibleProperties(), 'protectedPropertyWithGetterAccess', 4],
-            [new ClassWithAccessibleProperties(), 'protectedPropertyWithGetterAccess', 4],
-            [new ClassWithAccessibleProperties(), 'privatePropertyWithGetterAccess', 6],
-            [new ClassWithAccessibleProperties(), 'privatePropertyWithGetterAccess', 6],
+            [new ClassWithAccessibleProperties(), 'publicPropertyWithMethodsAccess', 2],
+            [new ClassWithAccessibleProperties(), 'publicPropertyWithMethodsAccess', 2],
+            [new ClassWithAccessibleProperties(), 'protectedPropertyWithMethodsAccess', 4],
+            [new ClassWithAccessibleProperties(), 'protectedPropertyWithMethodsAccess', 4],
+            [new ClassWithAccessibleProperties(), 'privatePropertyWithMethodsAccess', 6],
+            [new ClassWithAccessibleProperties(), 'privatePropertyWithMethodsAccess', 6],
         ];
     }
 

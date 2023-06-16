@@ -72,8 +72,8 @@ class GetPropertyRefTest extends Unit
         return [
             [new ClassWithAccessibleProperties(), 'publicProperty', 1],
             [new ClassWithAccessibleProperties(), 'publicProperty', 1],
-            [new ClassWithAccessibleProperties(), 'publicPropertyWithGetterAccess', 2],
-            [new ClassWithAccessibleProperties(), 'publicPropertyWithGetterAccess', 2],
+            [new ClassWithAccessibleProperties(), 'publicPropertyWithMethodsAccess', 2],
+            [new ClassWithAccessibleProperties(), 'publicPropertyWithMethodsAccess', 2],
         ];
     }
 
@@ -83,15 +83,37 @@ class GetPropertyRefTest extends Unit
      * @return void
      * @dataProvider fromObjectFailDataProvider
      */
-    public function testFromObjectFail(object $input, string $key): void
+    public function testFromObjectGetFail(object $input, string $key): void
     {
+        // When
+        $proxy = ObjectAccessHelper::getPropertyRef($input, $key);
+
         try {
-            // When
-            ObjectAccessHelper::getPropertyRef($input, $key);
+            $proxy->getValue();
             $this->fail();
-        } catch (\InvalidArgumentException $e) {
+        } catch (\BadMethodCallException $e) {
             // Then
             $this->assertSame("Property '" . get_class($input) . "::{$key}' is not readable", $e->getMessage());
+        }
+    }
+
+    /**
+     * @param object $input
+     * @param string $key
+     * @return void
+     * @dataProvider fromObjectFailDataProvider
+     */
+    public function testFromObjectSetFail(object $input, string $key): void
+    {
+        // When
+        $proxy = ObjectAccessHelper::getPropertyRef($input, $key);
+
+        try {
+            $proxy->setValue(150);
+            $this->fail();
+        } catch (\BadMethodCallException $e) {
+            // Then
+            $this->assertSame("Property '" . get_class($input) . "::{$key}' is not writable", $e->getMessage());
         }
     }
 
@@ -108,6 +130,30 @@ class GetPropertyRefTest extends Unit
             [new ClassWithAccessibleProperties(), 'protectedProperty'],
             [new ClassWithAccessibleProperties(), 'privateProperty'],
             [new ClassWithAccessibleProperties(), 'privateProperty'],
+        ];
+    }
+
+    /**
+     * @param object $input
+     * @param string $key
+     * @param $expected
+     * @return void
+     * @dataProvider fromObjectProxySuccessDataProvider
+     */
+    public function testFromObjectProxySuccess(object $input, string $key, $expected): void
+    {
+        // When
+        $proxy = ObjectAccessHelper::getPropertyRef($input, $key);
+
+        // Then
+        $this->assertEquals($expected, $proxy->getValue());
+    }
+
+    public function fromObjectProxySuccessDataProvider(): array
+    {
+        return [
+            [new ClassWithAccessibleProperties(), 'protectedPropertyWithMethodsAccess', 4],
+            [new ClassWithAccessibleProperties(), 'privatePropertyWithMethodsAccess', 6],
         ];
     }
 }

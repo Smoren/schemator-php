@@ -166,16 +166,16 @@ class GetTest extends Unit
             [new ClassWithAccessibleProperties(), 'unknownProperty', 42, 42],
             [new ClassWithAccessibleProperties(), 'publicProperty', null, 1],
             [new ClassWithAccessibleProperties(), 'publicProperty', 42, 1],
-            [new ClassWithAccessibleProperties(), 'publicPropertyWithGetterAccess', null, 2],
-            [new ClassWithAccessibleProperties(), 'publicPropertyWithGetterAccess', 42, 2],
+            [new ClassWithAccessibleProperties(), 'publicPropertyWithMethodsAccess', null, 2],
+            [new ClassWithAccessibleProperties(), 'publicPropertyWithMethodsAccess', 42, 2],
             [new ClassWithAccessibleProperties(), 'protectedProperty', null, null],
             [new ClassWithAccessibleProperties(), 'protectedProperty', 42, 42],
-            [new ClassWithAccessibleProperties(), 'protectedPropertyWithGetterAccess', null, 4],
-            [new ClassWithAccessibleProperties(), 'protectedPropertyWithGetterAccess', 42, 4],
+            [new ClassWithAccessibleProperties(), 'protectedPropertyWithMethodsAccess', null, 4],
+            [new ClassWithAccessibleProperties(), 'protectedPropertyWithMethodsAccess', 42, 4],
             [new ClassWithAccessibleProperties(), 'privateProperty', null, null],
             [new ClassWithAccessibleProperties(), 'privateProperty', 42, 42],
-            [new ClassWithAccessibleProperties(), 'privatePropertyWithGetterAccess', null, 6],
-            [new ClassWithAccessibleProperties(), 'privatePropertyWithGetterAccess', 42, 6],
+            [new ClassWithAccessibleProperties(), 'privatePropertyWithMethodsAccess', null, 6],
+            [new ClassWithAccessibleProperties(), 'privatePropertyWithMethodsAccess', 42, 6],
         ];
     }
 

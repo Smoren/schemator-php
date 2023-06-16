@@ -139,11 +139,11 @@ class ExistsTest extends \Codeception\Test\Unit
             [new ClassWithAccessibleProperties(), '0', false],
             [new ClassWithAccessibleProperties(), 'unknownProperty', false],
             [new ClassWithAccessibleProperties(), 'publicProperty', true],
-            [new ClassWithAccessibleProperties(), 'publicPropertyWithGetterAccess', true],
+            [new ClassWithAccessibleProperties(), 'publicPropertyWithMethodsAccess', true],
             [new ClassWithAccessibleProperties(), 'protectedProperty', false],
-            [new ClassWithAccessibleProperties(), 'protectedPropertyWithGetterAccess', true],
+            [new ClassWithAccessibleProperties(), 'protectedPropertyWithMethodsAccess', true],
             [new ClassWithAccessibleProperties(), 'privateProperty', false],
-            [new ClassWithAccessibleProperties(), 'privatePropertyWithGetterAccess', true],
+            [new ClassWithAccessibleProperties(), 'privatePropertyWithMethodsAccess', true],
         ];
     }
 

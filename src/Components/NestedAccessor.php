@@ -9,6 +9,7 @@ use Smoren\Schemator\Exceptions\PathNotExistException;
 use Smoren\Schemator\Exceptions\PathNotWritableException;
 use Smoren\Schemator\Helpers\ContainerAccessHelper;
 use Smoren\Schemator\Interfaces\NestedAccessorInterface;
+use Smoren\Schemator\Interfaces\ProxyInterface;
 
 /**
  * @implements NestedAccessorInterface<string|string[]|null>
@@ -86,7 +87,12 @@ class NestedAccessor implements NestedAccessorInterface
     public function set($path, $value): self
     {
         $source = &$this->getRef($this->getPathStack($path));
-        $source = $value;
+
+        if ($source instanceof ProxyInterface) {
+            $source->setValue($value);
+        } else {
+            $source = $value;
+        }
 
         return $this;
     }
@@ -202,7 +208,7 @@ class NestedAccessor implements NestedAccessorInterface
      *
      * @param string[] $pathStack
      *
-     * @return mixed
+     * @return mixed|ProxyInterface<object>
      *
      * @throws PathNotWritableException when path is not writable.
      */

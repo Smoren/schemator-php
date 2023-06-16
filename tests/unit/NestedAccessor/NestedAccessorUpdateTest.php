@@ -102,6 +102,42 @@ class NestedAccessorUpdateTest extends \Codeception\Test\Unit
     }
 
     /**
+     * @dataProvider dataProviderForObject
+     */
+    public function testObject($source, $path, $value)
+    {
+        // Given
+        $accessor = new NestedAccessor($source);
+
+        // When
+        $accessor->update($path, $value);
+
+        // Then
+        $this->assertEquals($value, $accessor->get($path));
+    }
+
+    public function dataProviderForObject(): array
+    {
+        return [
+            [
+                new ClassWithAccessibleProperties(),
+                'protectedPropertyWithMethodsAccess',
+                22,
+            ],
+            [
+                ['a' => new ClassWithAccessibleProperties()],
+                'a.protectedPropertyWithMethodsAccess',
+                23,
+            ],
+            [
+                ['a' => new ClassWithAccessibleProperties()],
+                'a.privatePropertyWithMethodsAccess',
+                24,
+            ],
+        ];
+    }
+
+    /**
      * @dataProvider dataProviderForPathNotExistError
      */
     public function testPathNotExistError($source, $path, $value)
@@ -139,40 +175,19 @@ class NestedAccessorUpdateTest extends \Codeception\Test\Unit
                 ['a', 'a', 'c'],
                 'value',
             ],
-        ];
-    }
-
-    /**
-     * @dataProvider dataProviderForPathNotWritableError
-     */
-    public function testPathNotWritableError($source, $path, $value)
-    {
-        // Given
-        $accessor = new NestedAccessor($source);
-
-        // Then
-        $this->expectException(PathNotWritableException::class);
-
-        // When
-        $accessor->update($path, $value);
-    }
-
-    public function dataProviderForPathNotWritableError(): array
-    {
-        return [
             [
                 new ClassWithAccessibleProperties(),
-                'protectedPropertyWithGetterAccess',
+                'protectedProperty',
                 2,
             ],
             [
                 ['a' => new ClassWithAccessibleProperties()],
-                'a.protectedPropertyWithGetterAccess',
+                'a.protectedProperty',
                 2,
             ],
             [
                 ['a' => new ClassWithAccessibleProperties()],
-                'a.privatePropertyWithGetterAccess',
+                'a.privateProperty',
                 2,
             ],
         ];

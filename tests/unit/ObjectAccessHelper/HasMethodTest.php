@@ -28,12 +28,12 @@ class HasMethodTest extends Unit
     public function fromObjectTrueDataProvider(): array
     {
         return [
-            [new ClassWithAccessibleProperties(), 'getPublicPropertyWithGetterAccess'],
-            [new ClassWithAccessibleProperties(), 'setPublicPropertyWithGetterAccess'],
-            [new ClassWithAccessibleProperties(), 'getProtectedPropertyWithGetterAccess'],
-            [new ClassWithAccessibleProperties(), 'setProtectedPropertyWithGetterAccess'],
-            [new ClassWithAccessibleProperties(), 'getPrivatePropertyWithGetterAccess'],
-            [new ClassWithAccessibleProperties(), 'setPrivatePropertyWithGetterAccess'],
+            [new ClassWithAccessibleProperties(), 'getPublicPropertyWithMethodsAccess'],
+            [new ClassWithAccessibleProperties(), 'setPublicPropertyWithMethodsAccess'],
+            [new ClassWithAccessibleProperties(), 'getProtectedPropertyWithMethodsAccess'],
+            [new ClassWithAccessibleProperties(), 'setProtectedPropertyWithMethodsAccess'],
+            [new ClassWithAccessibleProperties(), 'getPrivatePropertyWithMethodsAccess'],
+            [new ClassWithAccessibleProperties(), 'setPrivatePropertyWithMethodsAccess'],
             [new ClassWithAccessibleProperties(), 'privateMethod'],
             [new ClassWithAccessibleProperties(), 'privateMethod'],
         ];

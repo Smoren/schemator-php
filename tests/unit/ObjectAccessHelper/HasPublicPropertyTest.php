@@ -96,7 +96,7 @@ class HasPublicPropertyTest extends Unit
     {
         return [
             [new ClassWithAccessibleProperties(), 'publicProperty'],
-            [new ClassWithAccessibleProperties(), 'publicPropertyWithGetterAccess'],
+            [new ClassWithAccessibleProperties(), 'publicPropertyWithMethodsAccess'],
         ];
     }
 
@@ -122,9 +122,9 @@ class HasPublicPropertyTest extends Unit
             [new ClassWithAccessibleProperties(), '0'],
             [new ClassWithAccessibleProperties(), 'unknownProperty'],
             [new ClassWithAccessibleProperties(), 'protectedProperty'],
-            [new ClassWithAccessibleProperties(), 'protectedPropertyWithGetterAccess'],
+            [new ClassWithAccessibleProperties(), 'protectedPropertyWithMethodsAccess'],
             [new ClassWithAccessibleProperties(), 'privateProperty'],
-            [new ClassWithAccessibleProperties(), 'privatePropertyWithGetterAccess'],
+            [new ClassWithAccessibleProperties(), 'privatePropertyWithMethodsAccess'],
         ];
     }
 }

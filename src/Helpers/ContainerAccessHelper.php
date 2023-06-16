@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Smoren\Schemator\Helpers;
 
 use ArrayAccess;
+use Smoren\Schemator\Interfaces\ProxyInterface;
+use Smoren\Schemator\Structs\ObjectPropertyProxy;
 use stdClass;
 
 /**
@@ -51,7 +53,7 @@ class ContainerAccessHelper
      * @param TKey $key
      * @param TValue|null $defaultValue
      *
-     * @return TValue|null
+     * @return TValue|ProxyInterface<TValue>|null
      *
      * @throws \InvalidArgumentException
      */
@@ -286,7 +288,7 @@ class ContainerAccessHelper
      * @param TKey $key
      * @param TValue|null $defaultValue
      *
-     * @return TValue|null
+     * @return TValue|ProxyInterface<TValue>|null
      *
      * @throws \InvalidArgumentException
      */

@@ -6,41 +6,59 @@ namespace Smoren\Schemator\Tests\Unit\Fixtures;
 
 class ClassWithAccessibleProperties
 {
+    /**
+     * @var int
+     */
     public int $publicProperty = 1;
-    public int $publicPropertyWithGetterAccess = 2;
+    /**
+     * @var int
+     */
     protected int $protectedProperty = 3;
-    protected int $protectedPropertyWithGetterAccess = 4;
+    /**
+     * @var int
+     */
     private int $privateProperty = 5;
-    private int $privatePropertyWithGetterAccess = 6;
+    /**
+     * @var int
+     */
+    public int $publicPropertyWithMethodsAccess = 2;
+    /**
+     * @var int
+     */
+    protected int $protectedPropertyWithMethodsAccess = 4;
+    /**
+     * @var int
+     */
+    private int $privatePropertyWithMethodsAccess = 6;
 
-    public function getPublicPropertyWithGetterAccess(): int
+    public function getPublicPropertyWithMethodsAccess(): int
     {
-        return $this->publicPropertyWithGetterAccess;
+        return $this->publicPropertyWithMethodsAccess;
     }
 
-    public function setPublicPropertyWithGetterAccess(int $value): void
+    public function setPublicPropertyWithMethodsAccess(int $value): void
     {
-        $this->publicPropertyWithGetterAccess = $value;
+        $this->publicPropertyWithMethodsAccess = $value;
     }
 
-    public function getProtectedPropertyWithGetterAccess(): int
+    public function getProtectedPropertyWithMethodsAccess(): int
     {
-        return $this->protectedPropertyWithGetterAccess;
+        return $this->protectedPropertyWithMethodsAccess;
     }
 
-    public function setProtectedPropertyWithGetterAccess(int $value): void
+    public function setProtectedPropertyWithMethodsAccess(int $value): void
     {
-        $this->protectedPropertyWithGetterAccess = $value;
+        $this->protectedPropertyWithMethodsAccess = $value;
     }
 
-    public function getPrivatePropertyWithGetterAccess(): int
+    public function getPrivatePropertyWithMethodsAccess(): int
     {
-        return $this->privatePropertyWithGetterAccess;
+        return $this->privatePropertyWithMethodsAccess;
     }
 
-    public function setPrivatePropertyWithGetterAccess(int $value): void
+    public function setPrivatePropertyWithMethodsAccess(int $value): void
     {
-        $this->privatePropertyWithGetterAccess = $value;
+        $this->privatePropertyWithMethodsAccess = $value;
     }
 
     protected function protectedMethod(): int

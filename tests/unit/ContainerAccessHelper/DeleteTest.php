@@ -123,16 +123,16 @@ class DeleteTest extends Unit
             [new ClassWithAccessibleProperties(), 'unknownProperty'],
             [new ClassWithAccessibleProperties(), 'publicProperty'],
             [new ClassWithAccessibleProperties(), 'publicProperty'],
-            [new ClassWithAccessibleProperties(), 'publicPropertyWithGetterAccess'],
-            [new ClassWithAccessibleProperties(), 'publicPropertyWithGetterAccess'],
+            [new ClassWithAccessibleProperties(), 'publicPropertyWithMethodsAccess'],
+            [new ClassWithAccessibleProperties(), 'publicPropertyWithMethodsAccess'],
             [new ClassWithAccessibleProperties(), 'protectedProperty'],
             [new ClassWithAccessibleProperties(), 'protectedProperty'],
-            [new ClassWithAccessibleProperties(), 'protectedPropertyWithGetterAccess'],
-            [new ClassWithAccessibleProperties(), 'protectedPropertyWithGetterAccess'],
+            [new ClassWithAccessibleProperties(), 'protectedPropertyWithMethodsAccess'],
+            [new ClassWithAccessibleProperties(), 'protectedPropertyWithMethodsAccess'],
             [new ClassWithAccessibleProperties(), 'privateProperty'],
             [new ClassWithAccessibleProperties(), 'privateProperty'],
-            [new ClassWithAccessibleProperties(), 'privatePropertyWithGetterAccess'],
-            [new ClassWithAccessibleProperties(), 'privatePropertyWithGetterAccess'],
+            [new ClassWithAccessibleProperties(), 'privatePropertyWithMethodsAccess'],
+            [new ClassWithAccessibleProperties(), 'privatePropertyWithMethodsAccess'],
         ];
     }
 
