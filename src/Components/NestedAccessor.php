@@ -89,7 +89,12 @@ class NestedAccessor implements NestedAccessorInterface
         $source = &$this->getRef($this->getPathStack($path));
 
         if ($source instanceof ProxyInterface) {
-            $source->setValue($value);
+            try {
+                $source->setValue($value);
+            } catch (\BadMethodCallException $e) {
+                [$key, $path] = $this->cutPathTail($path);
+                throw new PathNotWritableException($key, $path, $this->pathDelimiter);
+            }
         } else {
             $source = $value;
         }

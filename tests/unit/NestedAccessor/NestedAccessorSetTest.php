@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Smoren\Schemator\Tests\Unit\NestedAccessor;
 
 use Smoren\Schemator\Components\NestedAccessor;
+use Smoren\Schemator\Exceptions\PathNotWritableException;
 use Smoren\Schemator\Tests\Unit\Fixtures\ClassWithAccessibleProperties;
 
 class NestedAccessorSetTest extends \Codeception\Test\Unit
@@ -89,6 +90,12 @@ class NestedAccessorSetTest extends \Codeception\Test\Unit
                 ['a', 'b', 'd'],
                 [1],
                 ['a' => ['b' => ['c' => [0], 'd' => [1]]]],
+            ],
+            [
+                ['a' => ['b' => 1]],
+                ['a', 'b', 'd'],
+                [1],
+                ['a' => ['b' => ['d' => [1]]]],
             ],
         ];
     }
@@ -257,6 +264,42 @@ class NestedAccessorSetTest extends \Codeception\Test\Unit
                 ['a' => new ClassWithAccessibleProperties()],
                 'a.privatePropertyWithMethodsAccess',
                 24,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForPathNotWritable
+     */
+    public function testPathNotWritable($source, $path, $value)
+    {
+        // Given
+        $accessor = new NestedAccessor($source);
+
+        // Then
+        $this->expectException(PathNotWritableException::class);
+
+        // When
+        $accessor->set($path, $value);
+    }
+
+    public function dataProviderForPathNotWritable(): array
+    {
+        return [
+            [
+                new ClassWithAccessibleProperties(),
+                'protectedProperty',
+                22,
+            ],
+            [
+                new ClassWithAccessibleProperties(),
+                'privateProperty',
+                22,
+            ],
+            [
+                1,
+                'test',
+                22,
             ],
         ];
     }
