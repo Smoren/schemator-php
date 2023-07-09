@@ -12,6 +12,6 @@ class PathNotExistException extends PathException
     public function __construct(string $key, array $path, string $pathDelimiter)
     {
         parent::__construct($key, $path, $pathDelimiter);
-        $this->message = "Key '{$this->key}' is not found on path '{$this->getPathString()}'";
+        $this->message = "Key '{$this->key}' is not found in path '{$this->getPathString()}'";
     }
 }

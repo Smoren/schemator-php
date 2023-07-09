@@ -15,7 +15,7 @@ use Smoren\Schemator\Exceptions\PathNotWritableException;
  *
  * Path delimiter for nested levels:
  * - dot character by default (example path: `"city.id"`)
- * - your custom character or string can be used as delimiter (example pathes: `"city/id"`, `"city[:]id"`)
+ * - your custom character or string can be used as delimiter (example paths: `"city/id"`, `"city[:]id"`)
  * - custom delimiter can be passed as optional param to the constructor of this interface implementation.
  *
  * Examples paths:
@@ -44,7 +44,7 @@ interface NestedAccessorInterface
     public function exist($path, bool $strict = true): bool;
 
     /**
-     * Returns true if path exists in the container and it is not null.
+     * Returns true if path exists in the container and is not null.
      *
      * For multiple result ("for each" operator in path):
      * - return true if path exists in all sub-containers in strict mode;
@@ -71,7 +71,7 @@ interface NestedAccessorInterface
      * - string names of properties (public or available by public getters);
      * - asterisk character `*` as "for each" operator;
      * - repeating asterisks mean going through nesting levels);
-     * - several asterisks can be combined into one part of the path (e.g. `***`);
+     * - several asterisks can be combined into one part of the path (e.g., `***`);
      * - pipe character `|` as canceling "for each" operation.
      *
      * Examples:

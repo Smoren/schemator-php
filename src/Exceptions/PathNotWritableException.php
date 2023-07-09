@@ -12,6 +12,6 @@ class PathNotWritableException extends PathException
     public function __construct(string $key, array $path, string $pathDelimiter)
     {
         parent::__construct($key, $path, $pathDelimiter);
-        $this->message = "Cannot create key '{$this->key}' on path '{$this->getPathString()}'";
+        $this->message = "Cannot create key '{$this->key}' in path '{$this->getPathString()}'";
     }
 }
