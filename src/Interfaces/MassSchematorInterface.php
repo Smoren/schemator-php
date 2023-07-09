@@ -24,7 +24,7 @@ interface MassSchematorInterface
     public function generate(iterable $source, array $schema): Generator;
 
     /**
-     * Converts input data array with using schema
+     * Converts input data array according to schema
      * @param iterable<int, array<string, mixed>|object> $source iterable source of items to convert
      * every one by schemator
      * @param array<string, mixed> $schema schema for converting

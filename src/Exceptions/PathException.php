@@ -30,7 +30,7 @@ abstract class PathException extends \OutOfBoundsException
         $this->key = $key;
         $this->path = $path;
         $this->pathDelimiter = $pathDelimiter;
-        parent::__construct("Key '{$this->key}' is not found on path '{$this->getPathString()}'");
+        parent::__construct("Key '{$this->key}' is not found in path '{$this->getPathString()}'");
     }
 
     /**

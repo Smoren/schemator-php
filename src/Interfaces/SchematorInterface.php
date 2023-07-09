@@ -13,7 +13,7 @@ use Smoren\Schemator\Exceptions\SchematorException;
 interface SchematorInterface
 {
     /**
-     * Converts input data with using schema
+     * Converts input data according to schema
      * @param array<string, mixed>|object $source input data to convert
      * @param array<string, mixed> $schema schema for converting
      * @return array<string, mixed>|mixed converted data

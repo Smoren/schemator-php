@@ -9,7 +9,7 @@ interface BitmapInterface
     /**
      * Creates Bitmap instance from one of int value, list of true bits or another Bitmap instance.
      *
-     * @param BitmapInterface|int|array<int> $value value (e. g. 5 or [0, 2])
+     * @param BitmapInterface|int|array<int> $value value (e.g., 5 or [0, 2])
      * @return BitmapInterface
      */
     public static function create($value): BitmapInterface;

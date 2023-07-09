@@ -12,6 +12,6 @@ class PathNotArrayAccessibleException extends PathException
     public function __construct(string $key, array $path, string $pathDelimiter)
     {
         parent::__construct($key, $path, $pathDelimiter);
-        $this->message = "Value by key '{$this->key}' is not array accessible on path '{$this->getPathString()}'";
+        $this->message = "Value by key '{$this->key}' is not array accessible in path '{$this->getPathString()}'";
     }
 }
