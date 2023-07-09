@@ -40,7 +40,7 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
             $this->fail();
         } catch (PathNotExistException $e) {
             // Then
-            $this->assertSame("Key '{$expected[0]}' is not found on path '{$expected[1]}'", $e->getMessage());
+            $this->assertSame("Key '{$expected[0]}' is not found in path '{$expected[1]}'", $e->getMessage());
             $this->assertSame($expected, [$e->getKey(), $e->getPathString()]);
         }
     }
