@@ -9,7 +9,7 @@
 ![Schemator logo](docs/images/schemator-logo.png)
 
 Schematic data mapper is a tool for converting nested data structures
-(any compositions of associative arrays, non-associative arrays and objects)
+(any composition of associative arrays, non-associative arrays and objects)
 according to the given conversion schema.
 
 ## How to install to your project
@@ -683,7 +683,7 @@ Result:
 
 ### filter
 
-Returns array contains elements from given array, that match the predicates from params list.
+Returns array containing elements from given array that match the predicates from the params list.
 
 Rules:
 
@@ -729,7 +729,7 @@ Result:
 
 ### replace
 
-Returns array of elements from given array with replaces by rules from params list.
+Returns array of elements with values replaced according to the rules in the params list.
 
 Rules:
 
@@ -752,7 +752,7 @@ Rules:
 Given:
 
 ```php
-["numbers" => [-5, -3, -1, 1, 3, 5]]
+["numbers" => [-5, -3, -1, 0, 1, 3, 5]]
 ```
 
 Schema:
