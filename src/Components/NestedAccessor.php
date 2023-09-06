@@ -424,6 +424,7 @@ class NestedAccessor implements NestedAccessorInterface
      *
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->get($offset);
