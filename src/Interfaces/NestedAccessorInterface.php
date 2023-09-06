@@ -12,6 +12,7 @@ use Smoren\Schemator\Exceptions\PathNotWritableException;
  * Nested accessor tool interface.
  *
  * @template TPath of string|string[]|null
+ * @extends \ArrayAccess<TPath, mixed>
  *
  * Path delimiter for nested levels:
  * - dot character by default (example path: `"city.id"`)
