@@ -421,6 +421,8 @@ class NestedAccessor implements NestedAccessorInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @return mixed
      */
     public function offsetGet($offset)
     {
@@ -428,10 +430,9 @@ class NestedAccessor implements NestedAccessorInterface
     }
 
     /**
-     * @
      * {@inheritDoc}
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->set($offset, $value);
     }
@@ -439,7 +440,7 @@ class NestedAccessor implements NestedAccessorInterface
     /**
      * {@inheritDoc}
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         $this->delete($offset);
     }
