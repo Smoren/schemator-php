@@ -21,7 +21,7 @@ class NestedAccessorSetTest extends \Codeception\Test\Unit
         $accessor = new NestedAccessor($source);
 
         // When
-        $accessor->set($path, $value);
+        $accessor[$path] = $value;
 
         // Then
         $this->assertSame($value, $accessor->get($path));
@@ -241,7 +241,7 @@ class NestedAccessorSetTest extends \Codeception\Test\Unit
         $accessor = new NestedAccessor($source);
 
         // When
-        $accessor->set($path, $value);
+        $accessor[$path] = $value;
 
         // Then
         $this->assertEquals($value, $accessor->get($path));
@@ -280,7 +280,7 @@ class NestedAccessorSetTest extends \Codeception\Test\Unit
         $this->expectException(PathNotWritableException::class);
 
         // When
-        $accessor->set($path, $value);
+        $accessor[$path] = $value;
     }
 
     public function dataProviderForPathNotWritable(): array

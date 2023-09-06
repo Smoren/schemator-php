@@ -22,7 +22,7 @@ use Smoren\Schemator\Exceptions\PathNotWritableException;
  * - `""` or `null` or `[]` — get root container.
  * - `"city.country.name"` or `["city", "country", "name"]` — get name of the country stored in the city sub-container.
  */
-interface NestedAccessorInterface
+interface NestedAccessorInterface extends \ArrayAccess
 {
     /**
      * Returns true if path exists in the container.

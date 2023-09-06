@@ -22,7 +22,7 @@ class NestedAccessorDeleteTest extends \Codeception\Test\Unit
         $accessor = new NestedAccessor($source);
 
         // When
-        $accessor->delete($path);
+        unset($accessor[$path]);
 
         // Then
         $this->assertEquals($expected, $source);
@@ -133,7 +133,7 @@ class NestedAccessorDeleteTest extends \Codeception\Test\Unit
         $this->expectException(PathNotExistException::class);
 
         // When
-        $accessor->delete($path);
+        unset($accessor[$path]);
     }
 
     /**
@@ -195,7 +195,7 @@ class NestedAccessorDeleteTest extends \Codeception\Test\Unit
         $this->expectException(PathNotWritableException::class);
 
         // When
-        $accessor->delete($path);
+        unset($accessor[$path]);
     }
 
     public function dataProviderForNotWritableError(): array

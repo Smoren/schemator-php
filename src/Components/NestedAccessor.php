@@ -410,4 +410,37 @@ class NestedAccessor implements NestedAccessorInterface
 
         return [$carry, $allExist, $someExist, $isResultMultiple];
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function offsetExists($offset): bool
+    {
+        return $this->exist($offset);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function offsetGet($offset)
+    {
+        return $this->get($offset);
+    }
+
+    /**
+     * @
+     * {@inheritDoc}
+     */
+    public function offsetSet($offset, $value)
+    {
+        $this->set($offset, $value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function offsetUnset($offset)
+    {
+        $this->delete($offset);
+    }
 }

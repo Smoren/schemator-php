@@ -18,7 +18,7 @@ class NestedAccessorExistTest extends \Codeception\Test\Unit
         $accessor = new NestedAccessor($source);
 
         // When
-        $actual = $accessor->exist($path);
+        $actual = isset($accessor[$path]);
 
         // Then
         $this->assertTrue($actual);
@@ -50,7 +50,7 @@ class NestedAccessorExistTest extends \Codeception\Test\Unit
         $accessor = new NestedAccessor($source);
 
         // When
-        $actual = $accessor->exist($path);
+        $actual = isset($accessor[$path]);
 
         // Then
         $this->assertFalse($actual);

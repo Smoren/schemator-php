@@ -20,7 +20,7 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
         $accessor = new NestedAccessor($source);
 
         // When
-        $actual = $accessor->get($path);
+        $actual = $accessor[$path];
 
         // Then
         $this->assertEquals($expected, $actual);
@@ -36,7 +36,7 @@ class NestedAccessorGetTest extends \Codeception\Test\Unit
 
         try {
             // When
-            $accessor->get($path);
+            $accessor[$path];
             $this->fail();
         } catch (PathNotExistException $e) {
             // Then
