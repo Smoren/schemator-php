@@ -38,6 +38,12 @@ interface SchematorInterface
     public function setPathDelimiter(string $value): void;
 
     /**
+     * Getter for pathDelimiter property
+     * @return string
+     */
+    public function getPathDelimiter(): string;
+
+    /**
      * Setter for errorsLevelMask property
      * @param BitmapInterface $value new value
      * @return void

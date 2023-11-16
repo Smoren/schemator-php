@@ -824,12 +824,16 @@ class SchematorTest extends Unit
         $this->assertNull($schemator->getValue($input, ['mynull', ['replace', [[0, '<=', 122]]]]));
     }
 
-    public function testFilterSelect()
+    public function testFilterSelectStrict()
     {
         $source = [
             'id' => 100,
             'name' => 'Test',
             'description' => 'A lot of text',
+            'city' => [
+                'id' => 10,
+                'name' => 'London',
+            ],
         ];
 
         $schemator = SchematorFactory::createBuilder()
@@ -840,8 +844,22 @@ class SchematorTest extends Unit
         $result = $schemator->convert($source, ['test' => [null, ['select', 'id', 'name']]]);
         $this->assertEquals(['test' => ['id' => 100, 'name' => 'Test']], $result);
 
-        $result = $schemator->convert($source, ['test' => [null, ['select', 'id', 'unknown']]]);
-        $this->assertEquals(['test' => ['id' => 100, 'unknown' => null]], $result);
+        $result = $schemator->convert($source, ['test' => [null, ['select', 'id', 'name', 'city.name']]]);
+        $this->assertEquals(['test' => ['id' => 100, 'name' => 'Test', 'city_name' => 'London']], $result);
+
+        try {
+            $schemator->convert($source, ['test' => [null, ['select', 'id', 'unknown']]]);
+            $this->assertTrue(false);
+        } catch (SchematorException $e) {
+            $this->assertEquals(SchematorException::CANNOT_GET_VALUE, $e->getCode());
+        }
+
+        try {
+            $schemator->convert($source, ['test' => [null, ['select', 'id', 'city.unknown']]]);
+            $this->assertTrue(false);
+        } catch (SchematorException $e) {
+            $this->assertEquals(SchematorException::CANNOT_GET_VALUE, $e->getCode());
+        }
 
         try {
             $schemator->convert($source, ['test' => ['id', ['select', 'id', 'unknown']]]);
@@ -849,6 +867,38 @@ class SchematorTest extends Unit
         } catch (SchematorException $e) {
             $this->assertEquals(SchematorException::BAD_FILTER_SOURCE, $e->getCode());
         }
+
+        $result = $schemator->convert($source, [
+            null => [
+                null,
+                ['select', 'id', 'name'],
+                ['implode', ': '],
+            ]
+        ]);
+
+        $this->assertEquals('100: Test', $result);
+    }
+
+    public function testFilterSelectNonStrict()
+    {
+        $source = [
+            'id' => 100,
+            'name' => 'Test',
+            'description' => 'A lot of text',
+        ];
+
+        $schemator = SchematorFactory::createBuilder()
+            ->withFilters(new BaseFiltersStorage())
+            ->get();
+
+        $result = $schemator->convert($source, ['test' => [null, ['select', 'id', 'name']]]);
+        $this->assertEquals(['test' => ['id' => 100, 'name' => 'Test']], $result);
+
+        $result = $schemator->convert($source, ['test' => [null, ['select', 'id', 'unknown']]]);
+        $this->assertEquals(['test' => ['id' => 100, 'unknown' => null]], $result);
+
+        $result = $schemator->convert($source, ['test' => [null, ['select', 'id', 'city.unknown']]]);
+        $this->assertEquals(['test' => ['id' => 100, 'city_unknown' => null]], $result);
 
         $result = $schemator->convert($source, [
             null => [

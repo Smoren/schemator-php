@@ -10,6 +10,7 @@ use Smoren\Schemator\Helpers\ArrayHelper;
 use Smoren\Schemator\Helpers\RuleHelper;
 use Smoren\Schemator\Interfaces\FilterContextInterface;
 use Smoren\Schemator\Interfaces\FiltersStorageInterface;
+use Smoren\Schemator\Structs\FilterContext;
 
 /**
  * Class BaseFiltersStorage
@@ -56,9 +57,11 @@ class BaseFiltersStorage implements FiltersStorageInterface
         }
 
         $result = [];
+        $pathDelimiter = $context->getSchemator()->getPathDelimiter();
 
+        /** @var string $arg */
         foreach ($args as $arg) {
-            $result[$arg] = $source[$arg] ?? null;
+            $result[str_replace($pathDelimiter, '_', $arg)] = $context->getSchemator()->getValue($source, $arg);
         }
 
         return $result;

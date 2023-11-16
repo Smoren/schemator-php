@@ -111,6 +111,14 @@ class Schemator implements SchematorInterface
     /**
      * @inheritDoc
      */
+    public function getPathDelimiter(): string
+    {
+        return $this->pathDelimiter;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setErrorsLevelMask(BitmapInterface $value): void
     {
         $this->errorsLevelMask = $value;
