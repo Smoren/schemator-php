@@ -41,6 +41,30 @@ class BaseFiltersStorage implements FiltersStorageInterface
     }
 
     /**
+     * Selects values from array by keys list
+     * @param FilterContextInterface $context filter context
+     * @param mixed ...$args formatter callback's arguments
+     * @return array<mixed>
+     * @throws SchematorException
+     */
+    public static function select(FilterContextInterface $context, ...$args): array
+    {
+        $source = $context->getSource();
+
+        if (!is_array($source)) {
+            throw SchematorException::createAsBadFilterSource($context);
+        }
+
+        $result = [];
+
+        foreach ($args as $arg) {
+            $result[$arg] = $source[$arg] ?? null;
+        }
+
+        return $result;
+    }
+
+    /**
      * Returns formatted date from timestamp
      * @param FilterContextInterface $context filter context
      * @param string $format php date format
@@ -319,6 +343,7 @@ class BaseFiltersStorage implements FiltersStorageInterface
         return [
             'const' => [$this, 'const'],
             'format' => [$this, 'format'],
+            'select' => [$this, 'select'],
             'date' => [$this, 'date'],
             'implode' => [$this, 'implode'],
             'explode' => [$this, 'explode'],

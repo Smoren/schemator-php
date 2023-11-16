@@ -149,7 +149,7 @@ class Schemator implements SchematorInterface
     /**
      * Returns value got by filters key
      * @param array<string, mixed>|object $source source to get value from
-     * @param array<int, string|array<int, mixed>> $filters filters config
+     * @param array<int, string|array<int, mixed>|null> $filters filters config
      * @return mixed|null
      * @throws SchematorException
      */
@@ -157,7 +157,7 @@ class Schemator implements SchematorInterface
     {
         $result = $source;
         foreach ($filters as $filterConfig) {
-            if (is_string($filterConfig)) {
+            if (is_string($filterConfig) || $filterConfig === null) {
                 $result = $this->getValue($result, $filterConfig);
             } elseif (is_array($filterConfig)) {
                 $result = $this->runFilter($filterConfig, $result, $source);

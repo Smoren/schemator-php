@@ -824,6 +824,43 @@ class SchematorTest extends Unit
         $this->assertNull($schemator->getValue($input, ['mynull', ['replace', [[0, '<=', 122]]]]));
     }
 
+    public function testFilterSelect()
+    {
+        $source = [
+            'id' => 100,
+            'name' => 'Test',
+            'description' => 'A lot of text',
+        ];
+
+        $schemator = SchematorFactory::createBuilder()
+            ->withErrorsLevelMask(ErrorsLevelMask::all())
+            ->withFilters(new BaseFiltersStorage())
+            ->get();
+
+        $result = $schemator->convert($source, ['test' => [null, ['select', 'id', 'name']]]);
+        $this->assertEquals(['test' => ['id' => 100, 'name' => 'Test']], $result);
+
+        $result = $schemator->convert($source, ['test' => [null, ['select', 'id', 'unknown']]]);
+        $this->assertEquals(['test' => ['id' => 100, 'unknown' => null]], $result);
+
+        try {
+            $schemator->convert($source, ['test' => ['id', ['select', 'id', 'unknown']]]);
+            $this->assertTrue(false);
+        } catch (SchematorException $e) {
+            $this->assertEquals(SchematorException::BAD_FILTER_SOURCE, $e->getCode());
+        }
+
+        $result = $schemator->convert($source, [
+            null => [
+                null,
+                ['select', 'id', 'name'],
+                ['implode', ': '],
+            ]
+        ]);
+
+        $this->assertEquals('100: Test', $result);
+    }
+
     public function testErrorsLevel()
     {
         $schemator = SchematorFactory::create();
